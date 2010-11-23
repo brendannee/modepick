@@ -662,78 +662,85 @@ function showGeoLocatorError(error){
      $('#warnings_panel').append("<li>Your current location couldn't be determined.  Please enter the start and end locations manually.</li>");
   }
 }
+
+function resizeWindow( e ) {
+  var newWindowHeight = $(window).height();
+  var sidebarTopHeight = parseInt($("#sidebar-top").height()) +parseInt($("#resultsBox").css("margin-top")) +parseInt($("#resultsBox").css("margin-bottom") +parseInt($("#resultsBox").css("padding-top")) +parseInt($("#resultsBox").css("padding-bottom")) +parseInt($("#resultsBox").css("border-width-top")) +parseInt($("#resultsBox").css("border-width-bottom")));
+  $("#sidebar").css("height", (newWindowHeight));
+  $("#sidebar").css("max-height", (newWindowHeight));
+  $("#resultsBox").css("max-height", (newWindowHeight-sidebarTopHeight));
+  $("#map_canvas").css("height", (newWindowHeight) );
+  $("#loading_image").css("top", ((newWindowHeight)/3) );
+}
     
 google.setOnLoadCallback(function(){
-    resizeWindow();
-    //If the User resizes the window, adjust the #container height
-    $(window).bind("resize", resizeWindow);
-    function resizeWindow( e ) {
-      var newWindowHeight = $(window).height();
-      var sidebarTopHeight = parseInt($("#sidebar-top").height())+parseInt($("#summary").height())+parseInt($("#resultsBox").css("margin-top"))+parseInt($("#resultsBox").css("margin-bottom"));
-      $("#sidebar").css("height", (newWindowHeight) );
-      $("#sidebar").css("max-height", (newWindowHeight) );
-      $("#resultsBox").css("max-height", (newWindowHeight-sidebarTopHeight));
-      $("#map_canvas").css("height", (newWindowHeight) );
-      $("#loading_image").css("top", ((newWindowHeight)/2) );
-    }
+  //If the User resizes the window, adjust the #container height
+  $(window).bind("resize", resizeWindow);
 
-    $("#departuredate").datepicker({
-      onSelect: function(dateText, inst){
-        //Make return date at least departure date
-        if(dates.compare($("#returndate").val(),dateText)<0){
-          $("#returndate").val(dateText);
-        }
+  $("#departuredate").datepicker({
+    onSelect: function(dateText, inst){
+      //Make return date at least departure date
+      if(dates.compare($("#returndate").val(),dateText)<0){
+        $("#returndate").val(dateText);
       }
-    });
-    $("#returndate").datepicker();
-  
-    //Set Todays Date and Time
-    var currentTime = new Date()
-    var minutes = currentTime.getMinutes();
-    var hours = currentTime.getHours();
-    var month = currentTime.getMonth() + 1;
-    var day = currentTime.getDate();
-    var year = currentTime.getFullYear();
-    minutes = Math.round((minutes/15+1))*15;
-    if(minutes>59){
-      hours=hours+1;
-      minutes=minutes-60;
     }
-    if (minutes < 10){
-      minutes = "0" + minutes;
+  });
+  $("#returndate").datepicker();
+
+  //Set Todays Date and Time
+  var currentTime = new Date()
+  var minutes = currentTime.getMinutes();
+  var hours = currentTime.getHours();
+  var month = currentTime.getMonth() + 1;
+  var day = currentTime.getDate();
+  var year = currentTime.getFullYear();
+  minutes = Math.round((minutes/15+1))*15;
+  if(minutes>59){
+    hours=hours+1;
+    minutes=minutes-60;
+  }
+  if (minutes < 10){
+    minutes = "0" + minutes;
+  }
+  if(hours>23){
+    hours = hours-24;
+  }
+
+  if (hours < 10){
+    $('#departuretime').val("0" + hours + ":" + minutes);
+  } else {
+    $('#departuretime').val(hours + ":" + minutes);
+  }
+
+  if(hours+1>23){
+    $('#returntime').val("0" + (hours+1-24) + ":" + minutes);
+  } else{
+    if (hours+1 < 10){
+      $('#returntime').val("0" + (hours+1) + ":" + minutes);
+    }else{
+      $('#returntime').val((hours+1) + ":" + minutes);
     }
-    if(hours>23){
-      hours = hours-24;
-    }
+  }
+
+  $("#departuredate").val(month + "/" + day + "/" + year);
+  $("#returndate").val(month + "/" + day + "/" + year);
+
+  //clear welcome screen
+  $('#inputs input').focus(function(){
+    $('#welcome_screen').fadeOut();
+  })
+
+  // Launch Map
+  launchMap();
+
+  //Enable Tooltips
+  tooltips();
+
+  //Show geolocation if browser supports it
+  if (navigator.geolocation) {  
+   $("#slocation").show();
+  }
  
-    if (hours < 10){
-      $('#departuretime').val("0" + hours + ":" + minutes);
-    } else {
-      $('#departuretime').val(hours + ":" + minutes);
-    }
-  
-    if(hours+1>23){
-     $('#returntime').val("0" + (hours+1-24) + ":" + minutes);
-    } else{
-      if (hours+1 < 10){
-        $('#returntime').val("0" + (hours+1) + ":" + minutes);
-      }else{
-        $('#returntime').val((hours+1) + ":" + minutes);
-      }
-    }
-
-    $("#departuredate").val(month + "/" + day + "/" + year);
-    $("#returndate").val(month + "/" + day + "/" + year);
-  
-    //clear welcome screen
-    $('#inputs input').focus(function(){
-      $('#welcome_screen').fadeOut();
-    })
-    
-    launchMap();
-
-    tooltips();
-     if (navigator.geolocation) {  
-       $("#slocation").show();
-     }
+  //Resize window after geolocation section loads
+  resizeWindow();
 });
