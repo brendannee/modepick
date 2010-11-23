@@ -94,24 +94,26 @@
       </div>
       <div id="resultsBox">
         <div id="results">
-          <h2>Trip Results</h2>
-          <div id="onewaytime"></div>
-          <div id="reservationtime"></div>
-          <div id="totaldistance"></div>
-          <div id="ccsresult">
-            <h2>City Carshare: <span id="ccstotal"></span></h2>
+          <div id="tripresults">
+            <h2>Trip Results</h2>
+            <div id="onewaytime"></div>
+            <div id="reservationtime"></div>
+            <div id="totaldistance"></div>
+          </div>
+          <div id="ccsresult" class="mode">
+            <h2><a href="http://citycarshare.com" title="More Info">City Carshare</a>: <span id="ccstotal"></span></h2>
             <ul id="ccssummary" class="summary"></ul>
           </div>
-          <div id="zipcarresult">
-            <h2>Zipcar: <span id="zipcartotal"></span></h2>
+          <div id="zipcarresult" class="mode">
+            <h2><a href="http://zipcar.com" title="More Info">Zipcar</a>: <span id="zipcartotal"></span></h2>
             <ul id="zipcarsummary" class="summary"></ul>
           </div>
-          <div id="taxiresult">
+          <div id="taxiresult" class="mode">
             <h2>Roundtrip Taxi: <span id="taxitotal"></span></h2>
             <ul id="taxisummary" class="summary"></ul>
           </div>
-          <div id="uberresult">
-            <h2>Roundtrip <a href="http://uberapp.com">Uber</a>: <span id="ubertotal"></span></h2>
+          <div id="uberresult" class="mode">
+            <h2>Roundtrip <a href="http://uberapp.com" title="More Info">Uber</a>: <span id="ubertotal"></span></h2>
             <ul id="ubersummary" class="summary"></ul>
           </div>
         </div>

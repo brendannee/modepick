@@ -128,7 +128,7 @@ ul.input_boxes li .textbox{
 }
 
 #resultsBox{
-	padding:3px 5px;
+
 	margin:10px;
 	font-size:14px;
 	clear:both;
@@ -139,16 +139,24 @@ ul.input_boxes li .textbox{
 	overflow:auto;
 }
 
-#resultsBox h2{
-  margin:0;
-}
-
 #results{
   display:none;
 }
 
+#tripresults{
+  padding:3px 5px 0 5px;
+}
+
+.mode{
+  padding:7px 5px;
+}
+
+.mode:hover{
+  background:#E2ECE7;
+}
+
 #results h2{
-  margin-top:15px;
+  margin:0;
 }
 
 #results h2 span{
@@ -176,7 +184,7 @@ ul.input_boxes li .textbox{
 }
 
 #warnings_panel{
-  padding:0;
+  padding:0 5px;
   margin-left:20px;
   margin-top:0;
   margin-bottom:0;

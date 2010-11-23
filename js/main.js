@@ -316,11 +316,11 @@ function computeTotalDistance(result) {
   estimateCosts();
   
   if($('#extramiles').val()!=''){
-    $("#totaldistance").html("Distance: " +  (tripdist+parseFloat($('#extramiles').val())) + " miles (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
+    $("#totaldistance").html("Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
   } else {
-    $("#totaldistance").html("Distance: " +  tripdist + " miles (" + Math.round(onewaydistance) + " mi each way)");
+    $("#totaldistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
-  $("#onewaytime").html("Est. driving time: " + timetext);
+  $("#onewaytime").html("Est. driving time: <strong>" + timetext + "</strong>");
   
   //Check if estimated driving time exceeds trip time
   if(triptime<(onewaytime*2/60)){
@@ -537,7 +537,7 @@ function computeTotalTime(){
     return false;
   }
   
-  $('#reservationtime').html("Reservation Time: " + formatTime(triptime));
+  $('#reservationtime').html("Reservation Time: <strong>" + formatTime(triptime) + "</strong>");
   return true;
   
 }
