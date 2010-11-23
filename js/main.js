@@ -116,6 +116,11 @@ var cabfares = {
   waitingminute:.45,
   tippercent:10
 }
+var uberfares = {
+  flag:8,
+  mileage:4.9,
+  idleminute:1.25
+}
 
 function tooltips(){
     // select all desired input fields and attach tooltips to them 
@@ -546,6 +551,7 @@ function estimateCosts(){
   var ccscost = 0;
   var zipcarcost = 0;
   var taxicost = 0;
+  var ubercost = 0;
   
   var ccsplan = ccsplans[$('#ccsplan').val()];
   var zipcarplan = zipcarplans[$('#zipcarplan').val()];
@@ -604,18 +610,35 @@ function estimateCosts(){
   $('#zipcartotal').html(formatCurrency(zipcarcost));
   
   //Taxi (assume 1 minute of waiting per half mile)
+  $('#taxisummary').html("");
   taxicost+= cabfares.firstfifth*2 + (cabfares.additionalfifth*((tripdist-0.2)*5)) + cabfares.waitingminute*(tripdist*2);
   //add tip
   var tipamount = taxicost*(cabfares.tippercent/100);
   taxicost = taxicost*(1+(cabfares.tippercent/100));
 
   $('#taxitotal').html(formatCurrency(taxicost));
-  $('#taxisummary').html("");
   $('#taxisummary').append("<li>Flag Drop x 2<div>"+formatCurrency(cabfares.firstfifth*2)+"</div></li>");
   $('#taxisummary').append("<li>"+tripdist+" mi x $2.25 per mi<div>"+formatCurrency((cabfares.additionalfifth*((tripdist-0.2)*5)))+"</div></li>");
   $('#taxisummary').append("<li>Waiting in Traffic (~"+(tripdist*2)+" min)<div>"+formatCurrency(cabfares.waitingminute*(tripdist*2))+"</div></li>");
   $('#taxisummary').append("<li>10% Tip<div>"+formatCurrency(tipamount)+"</div></li>");
   $('#taxisummary').append("<li class='total'>Taxi Total<div>"+formatCurrency(taxicost)+"</div></li>");
+  
+  //Uber
+  $('#ubersummary').html("");
+  ubercost+= uberfares.flag*2 + (uberfares.mileage*tripdist) + uberfares.idleminute*(tripdist*2);
+  if(ubercost<30){
+    //Minimum fare is $15 each way
+    ubercost = 30;
+    $('#ubersummary').append("<li>Minimum Fare $15 x 2<div>$30.00</div></li>");
+    $('#ubersummary').append("<li class='total'>Uber Total<div>$30.00</div></li>");
+  } else {
+    $('#ubersummary').append("<li>Flag Drop x 2<div>"+formatCurrency(uberfares.flag*2)+"</div></li>");
+    $('#ubersummary').append("<li>"+tripdist+" mi x " + formatCurrency(uberfares.mileage) + " per mi<div>"+formatCurrency(uberfares.mileage*tripdist)+"</div></li>");
+    $('#ubersummary').append("<li>Waiting in Traffic (~"+(tripdist*2)+" min)<div>"+formatCurrency(uberfares.idleminute*(tripdist*2))+"</div></li>");
+    $('#ubersummary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
+  }
+  $('#ubertotal').html(formatCurrency(ubercost));
+  
 }
 
 function getStartGeoLocator(position) {
