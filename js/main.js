@@ -296,10 +296,6 @@ function launchMap() {
   });
 }
 
-function recalc(result){
-  console.log('test');
-}
-
 function computeTotalDistance(result) {
   $('#warnings_panel').html('');
   var onewaydistance = 0;
@@ -638,20 +634,32 @@ function estimateCosts(){
     $('#ubersummary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
   }
   $('#ubertotal').html(formatCurrency(ubercost));
-  
 }
 
 function getStartGeoLocator(position) {
-  sCoords = new GLatLng(position.coords.latitude,position.coords.longitude);
-  geoCoder = new GClientGeocoder();
-  geoCoder.getLocations(sCoords, function(response) {place = response.Placemark[0]; $('#startlocation').val(place.address);});
+  var geocoder = new google.maps.Geocoder();
+  if (geocoder) {
+    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        if (results[0]) {
+          $('#startlocation').val(results[0].formatted_address);
+          $('#startlocation').effect("highlight", {color:"red"}, 3000);
+        }
+      } else {
+        console.log('No results found: ' + status);
+        $('#warnings_panel').append("<li>No results found: " + status + ".</li>");
+      }
+    });
+  }
 }
 
 function showGeoLocatorError(error){
   if(error.code==1){
-    alert("To determine your current location you must click \"Share Location\" in the top bar in your browser.");
+     $('#warnings_panel').append("<li>To determine your current location you must click \"Share Location\" in the top bar in your browser.</li>");
+    alert();
   } else if (error.code==2 || error.code==3 || error.code==0){
-      alert("Your current location couldn't be determined.  Please enter the start and end locations manually.");
+     $('#warnings_panel').append("<li>Your current location couldn't be determined.  Please enter the start and end locations manually.</li>");
   }
 }
     
