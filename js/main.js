@@ -248,6 +248,7 @@ function launchMap() {
     
     google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
       computeTotalDistance(directionsDisplay.directions);
+		console.log(directionsDisplay);
       
       //Highlight results box on change
       $('#resultsBox').effect("highlight", {color:"#d1d1d1"}, 3000);
@@ -669,7 +670,7 @@ function resizeWindow( e ) {
   $("#sidebar").css("height", (newWindowHeight));
   $("#sidebar").css("max-height", (newWindowHeight));
   $("#resultsBox").css("max-height", (newWindowHeight-sidebarTopHeight));
-  $("#map_canvas").css("height", (newWindowHeight) );
+  $("#map_canvas").css("height", (sidebarTopHeight) );
   $("#loading_image").css("top", ((newWindowHeight)/3) );
 }
     
