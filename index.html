@@ -42,7 +42,7 @@
                   <option value="sharelocal" selected="selected">ShareLocal</option>
                   <option value="shareplus">SharePlus</option>
                 </select>
-                <a href="http://www.citycarshare.org/individualshome.do" title="More Info"><img src="images/link.png" alt="Return Time" class="smallicon" /></a>
+                <a href="http://www.citycarshare.org/individualshome.do" title="More Info" target="_blank"><img src="images/link.png" alt="Return Time" class="smallicon" /></a>
               </li>
               <li id="zipcar">
                 <label>Zipcar Plan:</label>
@@ -53,7 +53,7 @@
                   <option value="evp125">Extra Value Plan $125</option>
                   <option value="evp250">Extra Value Plan $250</option>
                 </select>
-                <a href="http://www.zipcar.com/sf/compare-plans" title="More Info"><img src="images/link.png" alt="Return Time" class="smallicon" /></a>
+                <a href="http://www.zipcar.com/sf/compare-plans" title="More Info" target="_blank"><img src="images/link.png" alt="Return Time" class="smallicon" /></a>
               </li>
             </ul>
           </fieldset>
@@ -91,35 +91,7 @@
               </fieldset>
             <div style="text-align:right;"><input id="submit" type="submit" value="Calculate Trip" title="Calculate Trip"/></div>
         </form>
-      </div>
-      <div id="resultsBox">
-        <div id="results">
-          <div id="tripresults">
-            <h2>Trip Results</h2>
-            <div id="onewaytime"></div>
-            <div id="reservationtime"></div>
-            <div id="totaldistance"></div>
-          </div>
-          <div id="ccsresult" class="mode">
-            <h2><a href="http://citycarshare.com" title="More Info">City Carshare</a>: <span id="ccstotal"></span></h2>
-            <ul id="ccssummary" class="summary"></ul>
-          </div>
-          <div id="zipcarresult" class="mode">
-            <h2><a href="http://zipcar.com" title="More Info">Zipcar</a>: <span id="zipcartotal"></span></h2>
-            <ul id="zipcarsummary" class="summary"></ul>
-          </div>
-          <div id="taxiresult" class="mode">
-            <h2>Roundtrip Taxi: <span id="taxitotal"></span></h2>
-            <ul id="taxisummary" class="summary"></ul>
-          </div>
-          <div id="uberresult" class="mode">
-            <h2>Roundtrip <a href="http://uberapp.com" title="More Info">Uber</a>: <span id="ubertotal"></span></h2>
-            <ul id="ubersummary" class="summary"></ul>
-          </div>
-        </div>
-        <ul id="warnings_panel"></ul>
-      </div>
-      
+      </div>      
     </div>
     <div id="map_wrapper">
       <div id="map_canvas">
@@ -134,7 +106,36 @@
     </div>
     <div id="bottomCredits">Developed by <a href='http://blinktag.com' title='BlinkTag Inc'>BlinkTag Inc</a> &nbsp;|&nbsp; <a href='http://github.com/brendannee/modepick' title='Source on GitHub'>Source</a> &nbsp;|&nbsp; <a href="mailto:info@blinktag.com" title="Email Us">Contact Us</a></div> 
   </div>
-
+  
+  <div id="resultsBox">
+    <div id="results">
+      <div id="tripresults">
+        <h2>Trip Results</h2>
+        <div id="onewaytime"></div>
+        <div id="reservationtime"></div>
+        <div id="totaldistance"></div>
+      </div>
+    </div><!-- #results -->
+    <div id="tripcomparisons">
+    <li id="ccsresult" class="mode">
+      <h2><a href="http://citycarshare.com" title="More Info" target="_blank">City Carshare</a>: <span id="ccstotal"></span></h2>
+      <ul id="ccssummary" class="summary"></ul>
+    </li>
+    <li id="zipcarresult" class="mode">
+      <h2><a href="http://zipcar.com" title="More Info" target="_blank">Zipcar</a>: <span id="zipcartotal"></span></h2>
+      <ul id="zipcarsummary" class="summary"></ul>
+    </li>
+    <li id="taxiresult" class="mode">
+      <h2>Roundtrip Taxi: <span id="taxitotal"></span></h2>
+      <ul id="taxisummary" class="summary"></ul>
+    </li>
+    <li id="uberresult" class="mode">
+      <h2>Roundtrip <a href="http://uberapp.com" title="More Info">Uber</a>: <span id="ubertotal"></span></h2>
+      <ul id="ubersummary" class="summary"></ul>
+    </li>
+    </div><!--#tripcomparisons-->
+    <ul id="warnings_panel"></ul>
+  </div><!-- #resultsBox -->
   
   
   <div id="ie6msg"><h1>Upgrade Needed</h1>Zipcar vs City Carshare doesn't work in your browser.  You should upgrade your browser. Using an outdated and unsecure browser is bad for you, bad for business and bad for the Web! <br><br><a href="http://www.browserupgrade.info/how-to-upgrade/">Upgrade now</a>: its easy and a matter of minutes.</div>

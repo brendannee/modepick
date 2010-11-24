@@ -133,22 +133,30 @@ ul.input_boxes li .textbox{
 	font-size:14px;
 	clear:both;
 	border: 1px #999 solid;
-    -moz-box-shadow:3px 3px 8px #999; 
-    -webkit-box-shadow:3px 3px 8px #999;
 	display:none;
 	overflow:auto;
 }
 
 #results{
   display:none;
+  padding: 10px;
+background: #d9f2d8;	
+-moz-box-shadow:0px 3px 5px #999; 
+-webkit-box-shadow:0px 3px 5px #999;
 }
 
 #tripresults{
   padding:3px 5px 0 5px;
 }
 
-.mode{
-  padding:7px 5px;
+#tripcomparisons {
+	padding:10px;
+	min-height: 160px;
+}
+
+.mode {
+  float: left;
+  padding: 0 15px 15px 15px;
 }
 
 .mode:hover{
@@ -159,13 +167,13 @@ ul.input_boxes li .textbox{
   margin:0;
 }
 
-#results h2 span{
+#tripcomparisons h2 span{
   float:right;
   display:block;
 }
 
 .summary{
-  margin:0 0 0 15px;
+  margin:0;
   list-style-type:none;
   padding:0;
 }
@@ -181,6 +189,7 @@ ul.input_boxes li .textbox{
 
 .summary li div{
   float:right;
+margin-left: 20px;
 }
 
 #warnings_panel{
@@ -250,7 +259,7 @@ ul.input_boxes li .textbox{
 }
 
 #map_canvas{
-min-height:500px;
+	min-height:500px;
 }
 
 #map_canvas .message {
@@ -359,4 +368,24 @@ div.tooltip {
 }
 #ie6msg a{
 	text-decoration:underline;
+}
+
+/* google maps info window popup styling */
+ul.ccs {
+	list-style: none;
+	font-size: 12px;
+	padding: 0px;
+}
+ul.ccs li#ccsName {
+	font-weight: bold;
+	margin-bottom: 10px;
+}
+li#ccsName a {
+	text-decoration: none;
+}
+ul.ccs li#ccsAddy {
+	margin-bottom: 5px;
+}
+ul.ccs li#ccsCars {
+
 }
