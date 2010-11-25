@@ -2897,9 +2897,11 @@ function estimateCosts(){
   $('#zipcarsummary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcarcost) + "</div></li>");
   $('#zipcartotal').html(formatCurrency(zipcarcost));
   
-  //Taxi (assume 1 minute of waiting per mile)
+  //Taxi (assume 1.5 minute of waiting per mile)
+  var taxitrafficpermile = 1.5;
+  
   $('#taxisummary').html("");
-  taxicost+= cabfares.firstfifth*2 + (cabfares.additionalfifth*((tripdist-0.2)*5)) + cabfares.waitingminute*(tripdist);
+  taxicost+= cabfares.firstfifth*2 + (cabfares.additionalfifth*((tripdist-0.2)*5)) + cabfares.waitingminute*(tripdist*taxitrafficpermile);
   //add tip
   var tipamount = taxicost*(cabfares.tippercent/100);
   taxicost = taxicost*(1+(cabfares.tippercent/100));
@@ -2907,13 +2909,13 @@ function estimateCosts(){
   $('#taxitotal').html(formatCurrency(taxicost));
   $('#taxisummary').append("<li>Flag Drop x 2<div>"+formatCurrency(cabfares.firstfifth*2)+"</div></li>");
   $('#taxisummary').append("<li>"+tripdist+" mi x $2.25 per mi<div>"+formatCurrency((cabfares.additionalfifth*((tripdist-0.2)*5)))+"</div></li>");
-  $('#taxisummary').append("<li>Waiting in Traffic (~"+(tripdist)+" min)<div>"+formatCurrency(cabfares.waitingminute*(tripdist))+"</div></li>");
+  $('#taxisummary').append("<li>Waiting in Traffic (~"+(tripdist*taxitrafficpermile)+" min)<div>"+formatCurrency(cabfares.waitingminute*(tripdist*taxitrafficpermile))+"</div></li>");
   $('#taxisummary').append("<li>10% Tip<div>"+formatCurrency(tipamount)+"</div></li>");
   $('#taxisummary').append("<li class='total'>Taxi Total<div>"+formatCurrency(taxicost)+"</div></li>");
   
-  //Uber (assume 1 minute of waiting per mile)
+  //Uber (assume 1.5 minute of waiting per mile)
   $('#ubersummary').html("");
-  ubercost+= uberfares.flag*2 + (uberfares.mileage*tripdist) + uberfares.idleminute*(tripdist);
+  ubercost+= uberfares.flag*2 + (uberfares.mileage*tripdist) + uberfares.idleminute*(tripdist*taxitrafficpermile);
   if(ubercost<30){
     //Minimum fare is $15 each way
     ubercost = 30;
@@ -2922,7 +2924,7 @@ function estimateCosts(){
   } else {
     $('#ubersummary').append("<li>Flag Drop x 2<div>"+formatCurrency(uberfares.flag*2)+"</div></li>");
     $('#ubersummary').append("<li>"+tripdist+" mi x " + formatCurrency(uberfares.mileage) + " per mi<div>"+formatCurrency(uberfares.mileage*tripdist)+"</div></li>");
-    $('#ubersummary').append("<li>Waiting in Traffic (~"+(tripdist)+" min)<div>"+formatCurrency(uberfares.idleminute*(tripdist))+"</div></li>");
+    $('#ubersummary').append("<li>Waiting in Traffic (~"+(tripdist*taxitrafficpermile)+" min)<div>"+formatCurrency(uberfares.idleminute*(tripdist*taxitrafficpermile))+"</div></li>");
     $('#ubersummary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
   }
   $('#ubertotal').html(formatCurrency(ubercost));
