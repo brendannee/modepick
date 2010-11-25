@@ -3068,6 +3068,9 @@ google.setOnLoadCallback(function(){
   }
  
   //Resize window after geolocation section loads
-  resizeWindow();
+  var newWindowHeight = $(window).height();
+  $("#map_canvas").css("min-height", (newWindowHeight-1));
+  $("#map_canvas").css("height", (newWindowHeight-1));
+  $("#loading_image").css("top", ((newWindowHeight)/3) );
 });
 
