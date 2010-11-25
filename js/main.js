@@ -2988,6 +2988,10 @@ google.setOnLoadCallback(function(){
   var month = currentTime.getMonth() + 1;
   var day = currentTime.getDate();
   var year = currentTime.getFullYear();
+  
+  $("#departuredate").val(month + "/" + day + "/" + year);
+  $("#returndate").val(month + "/" + day + "/" + year);
+  
   minutes = Math.round((minutes/15+1))*15;
   if(minutes>59){
     hours=hours+1;
@@ -3007,7 +3011,9 @@ google.setOnLoadCallback(function(){
   }
 
   if(hours+1>23){
+    //use tomorrow
     $('#returntime').val("0" + (hours+1-24) + ":" + minutes);
+    $("#returndate").val(month + "/" + (day+1) + "/" + year);
   } else{
     if (hours+1 < 10){
       $('#returntime').val("0" + (hours+1) + ":" + minutes);
@@ -3016,8 +3022,7 @@ google.setOnLoadCallback(function(){
     }
   }
 
-  $("#departuredate").val(month + "/" + day + "/" + year);
-  $("#returndate").val(month + "/" + day + "/" + year);
+  
 
   //clear welcome screen
   $('#inputs input').focus(function(){
