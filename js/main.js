@@ -2263,6 +2263,8 @@ var pod_225 = {
    }
 pod_array.push(pod_225);
 
+var map;
+var markerArray = [];
 var triptime = 0;
 var tripweekendzipcartime = 0;
 var tripweekendccstime = 0;
@@ -2487,22 +2489,52 @@ var dates = {
     }
 }
 
-function addCCSlocations(map){
+function clearOverlays() {
+  if (markerArray) {
+    for (i in markerArray) {
+      markerArray[i].setMap(null);
+    }
+  }
+}
+
+function addCCSlocations(map, lat, lon){
   //Add city carshare pods to map
+  
+  //clear CCS markers
+  clearOverlays()
+  
+  //Create 1 mile bounding box
+  var NBound = lat+0.0075;
+  var SBound = lat-0.0075; 
+  var EBound = lon+0.0095;
+  var WBound = lon-0.0095;
+  
   var popup = new google.maps.InfoWindow({maxWidth:200});
   
-  for (pod in pod_array)
-    {
+  var image = new google.maps.MarkerImage('images/ccs.png',
+        // This marker is 20 pixels wide by 32 pixels tall.
+        new google.maps.Size(24, 24),
+        // The origin for this image is 0,0.
+        new google.maps.Point(0,0),
+        // The anchor for this image is the base of the flagpole at 0,32.
+        new google.maps.Point(12, 12));
+  
+  for (pod in pod_array) {
+    //check to see if within bounds
+    if(pod_array[pod].lat>SBound && pod_array[pod].lat<NBound && pod_array[pod].lon>WBound && pod_array[pod].lon<EBound){
+      var marker = new google.maps.Marker({
+        position: new google.maps.LatLng(pod_array[pod].lat,pod_array[pod].lon),
+        title: pod_array[pod].name,
+        map:map,
+        icon: image,
+        zIndex:1
+      });
+      
+      //Add to marker array
+      markerArray.push(marker);
 
-    var marker = new google.maps.Marker({
-      position: new google.maps.LatLng(pod_array[pod].lat,pod_array[pod].lon),
-      title: pod_array[pod].name,
-      map:map,
-    });
-
-    google.maps.event.addListener(marker,'click', (function(marker,pod) {
-
-      return function() {
+      google.maps.event.addListener(marker,'click', (function(marker,pod) {
+        return function() {
           popup.setContent(
             "<ul class=\"ccs\">" +
             "<li id=\"ccsName\"><a href=\"" + pod_array[pod].url + "\" target=\"_new\" title='Click to view CityCarShare Pod info'>" + pod_array[pod].name + "</a></li>" + 
@@ -2510,24 +2542,24 @@ function addCCSlocations(map){
             "<li id=\"ccsCars\">" + "Cars:&nbsp;" + pod_array[pod].vstring + "</li>" + "</ul>"
           );
           popup.open(map,marker);
-      }
-
+        }
       }) (marker,pod));
-
     }
+  }
 }
 
 function computeTotalDistance(result) {
+  //Add CCS locations
+  addCCSlocations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa)
+
   $('#warnings_panel').html('');
   var onewaydistance = 0;
   var onewaytime = 0;
-  var myroute = result.routes[0];
-  for (i = 0; i < myroute.legs.length; i++) {
-    onewaydistance += myroute.legs[i].distance.value;
-    onewaytime += myroute.legs[i].duration.value;
+  for (i = 0; i < result.routes[0].legs.length; i++) {
+    //Convert to miles
+    onewaydistance += (result.routes[0].legs[i].distance.value/ 1609.);
+    onewaytime += result.routes[0].legs[i].duration.value;
   }
-  //Convert to miles
-  onewaydistance = onewaydistance / 1609.
   //Convert to hours minutes
   timetext = formatTime(onewaytime*2/60);
   
@@ -2960,16 +2992,11 @@ google.setOnLoadCallback(function(){
   // Launch Map
   var directionDisplay;
   var directionsService;
-  var stepDisplay;
-  var markerArray = [];
-  var map = new google.maps.Map(document.getElementById("map_canvas"), {
+  map = new google.maps.Map(document.getElementById("map_canvas"), {
     zoom: 12,
     center: new google.maps.LatLng(37.7601, -122.4478),
     mapTypeId: google.maps.MapTypeId.ROADMAP
   });
-  
-  //Add CCS locations
-  addCCSlocations(map);
 
   // Instantiate a directions service.
   directionsService = new google.maps.DirectionsService();
@@ -2977,7 +3004,10 @@ google.setOnLoadCallback(function(){
   // Create a renderer for directions and bind it to the map.
   directionsDisplay = new google.maps.DirectionsRenderer({
     map: map,
-    draggable: true
+    draggable: true,
+    markerOptions: {
+      zIndex: 100
+    }
   })
   
   google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
