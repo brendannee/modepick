@@ -102,6 +102,7 @@ ul.input_boxes li .textbox{
 #content{
 	position:relative;
 	overflow:hidden;
+	min-width:1024px;
 }
 
 #sidebar{
@@ -128,25 +129,21 @@ ul.input_boxes li .textbox{
 }
 
 #resultsBox{
-
+	min-width:1024px;
 	margin:10px;
 	font-size:14px;
 	clear:both;
 	border: 1px #999 solid;
 	display:none;
 	overflow:auto;
+	-moz-box-shadow:0px 3px 5px #999; 
+  -webkit-box-shadow:0px 3px 5px #999;
 }
 
 #results{
   display:none;
   padding: 10px;
-background: #d9f2d8;	
--moz-box-shadow:0px 3px 5px #999; 
--webkit-box-shadow:0px 3px 5px #999;
-}
-
-#tripresults{
-  padding:3px 5px 0 5px;
+  background: #d9f2d8;	
 }
 
 #tripcomparisons {
@@ -156,7 +153,7 @@ background: #d9f2d8;
 
 .mode {
   float: left;
-  padding: 0 15px 15px 15px;
+  padding: 0 8px 10px 8px;
 }
 
 .mode:hover{
@@ -214,6 +211,7 @@ margin-left: 20px;
 #map_wrapper{
 	clear:both;
 	border-left: solid 1px #999999;
+	border-bottom: solid 1px #999999;
 	margin-left:300px;
 	color:#000;
 	font-size:11px;
@@ -333,6 +331,7 @@ margin-left: 20px;
 	background:#eee;
 	border-top:1px solid #999;
 	border-left:1px solid #999;
+	border-bottom:1px solid #999;
 	-webkit-border-top-left-radius: 5px;
 	-moz-border-radius-topleft: 5px;
 	border-top-left-radius: 5px;

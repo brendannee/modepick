@@ -2539,7 +2539,6 @@ function launchMap() {
     
     google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
       computeTotalDistance(directionsDisplay.directions);
-		console.log(directionsDisplay);
       
       //Highlight results box on change
       $('#resultsBox').effect("highlight", {color:"#d1d1d1"}, 3000);
@@ -2928,6 +2927,9 @@ function estimateCosts(){
     $('#ubersummary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
   }
   $('#ubertotal').html(formatCurrency(ubercost));
+  
+  //Resize window
+  resizeWindow();
 }
 
 function getStartGeoLocator(position) {
@@ -2959,11 +2961,9 @@ function showGeoLocatorError(error){
 
 function resizeWindow( e ) {
   var newWindowHeight = $(window).height();
-  var sidebarTopHeight = parseInt($("#sidebar-top").height()) +parseInt($("#resultsBox").css("margin-top")) +parseInt($("#resultsBox").css("margin-bottom") +parseInt($("#resultsBox").css("padding-top")) +parseInt($("#resultsBox").css("padding-bottom")) +parseInt($("#resultsBox").css("border-width-top")) +parseInt($("#resultsBox").css("border-width-bottom")));
-  $("#sidebar").css("height", (newWindowHeight));
-  $("#sidebar").css("max-height", (newWindowHeight));
-  $("#resultsBox").css("max-height", (newWindowHeight-sidebarTopHeight));
-  $("#map_canvas").css("height", (sidebarTopHeight) );
+  var resultsBoxHeight = 2 +parseInt($("#resultsBox").height()) +parseInt($("#resultsBox").css("margin-top")) +parseInt($("#resultsBox").css("margin-bottom") +parseInt($("#resultsBox").css("padding-top")) +parseInt($("#resultsBox").css("padding-bottom")) +parseInt($("#resultsBox").css("border-top-width")) +parseInt($("#resultsBox").css("border-bottom-width")));
+  $("#map_canvas").css("min-height", (newWindowHeight-(resultsBoxHeight + parseInt($("#map_wrapper").css("border-bottom-width")))));
+  $("#map_canvas").css("height", (newWindowHeight - (resultsBoxHeight +parseInt($("#map_wrapper").css("border-bottom-width")))));
   $("#loading_image").css("top", ((newWindowHeight)/3) );
 }
     
@@ -3022,15 +3022,10 @@ google.setOnLoadCallback(function(){
     }
   }
 
-  
-
   //clear welcome screen
   $('#inputs input').focus(function(){
     $('#welcome_screen').fadeOut();
   })
-
-
-
 
   // Launch Map
   launchMap();
