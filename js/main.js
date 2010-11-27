@@ -1,4 +1,6 @@
- var pod_array = new Array();
+var zipcar_arr = [ [124726516,'101+2nd+Street+Building+%28Mission+St%2f2nd+Street%29',37.787805,-122.399534],[54838623,'10th+St%2fClay+St+%28Convention+Center+Garage%29',37.80257872902474,-122.27444171905518],[174220253,'1200+Lakeshore',37.798997,-122.258655],[41733300,'14th+St%2fStevenson+St',37.768228,-122.420944],[17482733,'15th+St+btwn+Noe+%26+Market',37.76580292109152,-122.43178774042373],[161049746,'1650+Jackson+%28Between+Polk+and+Van+Ness%29',37.794037,-122.42222],[13639610,'16th+St%2fGuerrero+St',37.76496575122868,-122.42442479649846],[301473471,'175+S%2e+San+Antonio+Rd',37.379308,-122.114203],[162643174,'17th+Ave%2fLincoln+Way',37.764833,-122.475065],[284167607,'199+Fremont',37.789912784665255,-122.39471197128296],[33579048,'19th+Av%2fGeary+Blvd',37.780978,-122.478359],[56955311,'19th+Av%2fIrving+St',37.76445564061638,-122.47695922851562],[111050114,'19th+St%2fAlice+St+%28Lake+Park%29',37.805441,-122.264563],[166314594,'1st+St%2fMission+St+%28100+First%29',37.789645,-122.397398],[188226430,'200+Ortega+St',37.752847,-122.465841],[40338674,'20th+St%2fChurch+St',37.75787368720645,-122.42904424667358],[188474993,'20th+St%2fMinnesota+St',37.760158,-122.390433],[141382679,'20th+St%2fTelegraph+Ave%2e',37.809594,-122.269563],[15144106,'20th+St%2fValencia+St',37.7587234300168,-122.42099709818203],[265072991,'21+Buckingham+Way+%28SFSU+Park+North+Rental+Office%29+',37.725674,-122.475517],[124731526,'2144+Market+St+btwn+14th+%26+15th',37.766848,-122.42979],[24943160,'2164+15th+St',37.765815,-122.432486],[181250212,'22nd+St%2fChurch+St',37.755198,-122.427777],[29160159,'24th+St%2fCapp+St',37.75251399999999,-122.417068],[314793935,'2533+Hillegass+St+%28Btwn+Dwight+%26+Parker%29',37.864174,-122.256372],[170225371,'25th+Ave%2fCalifornia+St',37.783636,-122.484985],[307230386,'2918+Adeline+btwn+Ashby+and+Russell',37.855771,-122.268891],[68890207,'2nd+%26+King',37.778659,-122.391295],[29779017,'2nd+St%2fHoward+St+%28Big+Lot%29',37.78641951842062,-122.39827394485474],[16481304,'2nd+St%2fTownsend+St+',37.78094792219699,-122.39043536010688],[301474224,'300+Second+Street',37.37723,-122.115831],[291831024,'303+2nd+St+%28Btwn+Folsom+%26+Harrison%29',37.78552,-122.396678],[338003658,'3250+Lakeshore+Blvd+%28Trader+Joe%27s%29',37.810444,-122.244965],[136539545,'355+Berry+%28Edgewater%29',37.77336070185175,-122.39685773849487],[111231036,'360+2nd+St+%28Btwn+Folsom+and+Harrison%29',37.784568,-122.39548],[16144319,'3rd+St%2fHarrison+St',37.781937,-122.39792999999997],[364369435,'4127+Martin+Luther+King+Jr%2e+Way+%28Btwn+41st+%26+42nd%29',37.831097,-122.268086],[164927486,'457+8th+Ave+%28Between+Anza+and+Geary%29',37.779758,-122.466338],[68892693,'45th+%26+Doyle',37.833262,-122.285304],[384799543,'480+37th+St+%28Btwn+Telegraph+%26+Webster%29',37.825059,-122.264191],[68892176,'53rd+%26+Hollis',37.836063,-122.287571],[166309345,'555+Mission',37.787973,-122.398794],[164927114,'5635+Anza+St+%28Between+47th+and+48th%29',37.777047,-122.508744],[248340383,'5815+Shellmound+Way+%28BRE+Properties%29',37.839339,-122.293678],[68891315,'59th+%26+Horton',37.841402,-122.291455],[288289875,'59th+St%2fDoyle+St',37.84165,-122.28799],[175303334,'5th+St%2fKing+St+%28Avalon%29',37.775732,-122.394531],[99424397,'5th+St%2fMission+St',37.78397,-122.404924],[248338574,'6399+Christie+Ave%28Avenue+64%29',37.8436,-122.295719],[177869203,'644+Geary+between+Jones+and+Leavenworth',37.78665,-122.413954],[48605487,'6th+St%2fBryant+St',37.77573520373185,-122.40267276763916],[279382883,'750+Bush+Street+%28BTWN+Mason+and+Powell%29',37.790054,-122.409701],[285577381,'795+Folsom+%28Btwn+4th+St+and+3rd+St%29',37.782233,-122.400917],[26390625,'7th+Av%2fIrving+St',37.76325799999999,-122.46439100000002],[175296790,'7th+St%2fMission+St+%28Good+Hotel%29',37.778996,-122.410636],[124725097,'8th+St%2fMarket+St+%28Trinity%29',37.778652344496926,-122.41408824920654],[164922098,'9th+Ave%2fGeary+Blvd+%28Trinity%29',37.78005,-122.467438],[25673617,'Allston+Way%2fShattuck+Av+%28Downtown+Berkeley%29',37.86942499999999,-122.269007],[98536768,'Anza+St%2fStanyan+St',37.779989,-122.455705],[20291831,'Anzavista+Av%2fBarcelona+Av',37.77956628059259,-122.44455536400847],[122112803,'Arterra',37.774897,-122.394446],[24863631,'Ashby+BART',37.851882304378066,-122.27051496505737],[179689164,'Avalon+at+Diamond+Heights+',37.743965,-122.438135],[48609235,'Avalon+at+Mission+Bay+North',37.77544687542867,-122.3941969871521],[68894112,'Bancroft+%26+College',37.8694161940754,-122.25547313690186],[68891745,'BART+Station%3a+Daly+City',37.70514,-122.469565],[68894353,'BART+Station%3a+Lake+Merritt',37.797764,-122.266406],[68891503,'BART+Station%3a+MacArthur',37.829375,-122.265935],[265237390,'Brannan+St%2f+5th+St',37.776908,-122.398333],[309327363,'Brannan+St%2f+6th+St',37.774485,-122.401401],[289674724,'Brannan+St%2f+Ritch+St+%28Btwn+3rd+%26+4th%29',37.779534,-122.395042],[48605690,'Brannan+St%2f2nd+St',37.782519074590496,-122.3915147781372],[14556765,'Broadway+Ave%2fRomolo+Pl+',37.797973,-122.4059],[166312707,'Bush+St%2fBattery+St+%28One+Bush%29',37.79132,-122.399831],[116882691,'Bush+St%2fMontgomery+St+%28Russ+Building%29',37.791446,-122.402392],[28880767,'California+St%2f4th+Ave',37.78518400000001,-122.461632],[33089341,'California+St%2fMason+St+%28Crocker+Garage%29',37.791745,-122.411447],[91599961,'California+St%2fPolk+St',37.790641,-122.420151],[191907258,'California+St%2fPresidio+Ave',37.787555,-122.446841],[16874086,'California+St%2fSteiner+St',37.788819715215425,-122.43583121241238],[251411121,'California+St%2fTaylor+St+%28Masonic+Garage%29',37.791607,-122.412476],[68892326,'California+St%2fVan+Ness+Ave',37.790282,-122.422978],[154279383,'Cambon+Dr%2fFelix+Ave',37.716779,-122.474244],[48488955,'Capp+St%2f20th+St',37.759519230466275,-122.41846561431885],[30489223,'Castro+St%2fJersey+St++%28Jersey+Garage+Door%29',37.75026000000001,-122.43453900000004],[373920147,'Cesar+Chavez+St%2fValencia+St',37.748132,-122.419849],[96590656,'Cesar+Chavez%2fSouth+Van+Ness+Ave',37.748218,-122.416068],[124690857,'China+Basin+%28185+Berry+St%29',37.77573520373185,-122.39381074905396],[159991739,'Chumasero+Dr%2fGalindo+St',37.714411,-122.473256],[23905795,'Church+St%2f24th+St',37.751369372940694,-122.4276735514618],[225143498,'Church+St%2fCumberland+St',37.758857,-122.42898],[155232013,'City+Hall+%28Stall+62-63%29',37.779084,-122.418348],[155175400,'City+Hall+%28Stall+64%29',37.779084,-122.418348],[149899060,'Claremont+Ave%2fUlloa+St',37.740451,-122.46511],[324575544,'Clay+St%2f+Sansome+St+',37.794781,-122.401383],[164925844,'Clayton+St%2fDeming+St',37.760119,-122.446403],[50194549,'Clement+St%2f24th+Ave',37.7821,-122.482976],[363801564,'College+Ave%2fStuart+St',37.86021777498129,-122.25330591201782],[93765700,'Columbus+Ave%2fBay+St+%28SF+Green+Clean%29',37.804935338466066,-122.41734981536865],[15784012,'Columbus+Ave%2fLombard+St',37.802839678499886,-122.41287694663795],[129287630,'Courtyard+at+65th+Street',37.84657,-122.292504],[27803181,'Diamond+St%2fBosworth+St',37.733678,-122.434072],[45038194,'Dolores+St%2f15th+St',37.765880522477005,-122.42698431015015],[24151674,'Dolores+St%2f27th+St',37.747002882035034,-122.42482977768547],[68892430,'Durant+%26+Fulton',37.86693,-122.265779],[34368965,'Durant+Ave%2fBowditch+St',37.867840855714086,-122.25714683532715],[90663949,'Eddy+St%2fHyde+St',37.783578,-122.415378],[101075070,'Ellis+St%2fLarkin+St+%28Cova+Hotel%29',37.784345,-122.416931],[363910962,'Ellis+St%2fPolk+St',37.783976,-122.41985],[68892797,'Embarcadero%2fWashington+%28Jack+London+Sq%29',37.795653,-122.278127],[377144014,'Fairmont+Parking+Garage',37.792196,-122.409197],[13965742,'Fell+St%2fDivisadero+St',37.77345278959591,-122.43738366537994],[31475136,'Fillmore+St%2fEllis+St+%28Fillmore+Center%29',37.782422000000025,-122.43337000000005],[68893102,'Folsom+%26+5th',37.779928,-122.403838],[30127829,'Folsom+St%2f5th+St+%28Shell+Station%29',37.78018,-122.40303899999996],[34488259,'Folsom+St%2fSpear+St',37.7901,-122.390999],[119130124,'Folsom+St%2fSpear+St+%28Infinity%29',37.789387,-122.391843],[277218660,'Geary+Blvd%2fStanyan+St+%2876+Station%29',37.78109451335266,-122.45651006698608],[96532380,'Geary+St%2fLarkin+St',37.786204,-122.417361],[24863992,'Glen+Park+BART',37.733768999999995,-122.43386299999997],[68892000,'Grand+%26+Euclid',37.808573,-122.251685],[48606490,'Grand+Ave%2fMandana+Blvd',37.813389,-122.246747],[32163004,'Grand+Ave%2fPerkins+St',37.808991,-122.256009],[272323124,'Green+St%2fPowell+St+%28across+from+Beach+Blanket+Babylon%29',37.799353,-122.410321],[17115832,'Greenwich+St%2fBuchanan+St',37.79891920655027,-122.43286743863605],[45036933,'Grove+St%2fGough+St',37.777566910217686,-122.4236798286438],[36931290,'Harrison+St%2f15th+St',37.803731612103356,-122.26712465286255],[98003118,'Hayes+St%2fOctavia+St',37.776721,-122.424144],[154275190,'Higuera+Ave%2fArballo+Dr',37.718249,-122.48344],[78219231,'Hills+Plaza',37.789453,-122.390198],[279372666,'Howard+Street+and+1st+Street',37.788461,-122.396152],[68891116,'Kearny+St%2fWashington+St+%28Hilton+Hotel+Garage%29',37.79507,-122.40491],[16210663,'La+Luna+Inn+%28Lombard%2fBroderick%29',37.79879279141665,-122.44421385454997],[287722035,'Lake+Merritt+Plaza',37.807451,-122.264776],[68891415,'Lakeshore+%26+Mandana',37.811544,-122.242186],[172070597,'Locksley+Ave%2f6th+Ave+%28Avalon+Sunset+Towers%29',37.759887,-122.46283],[192242497,'Lombard+St%2fScott+St+%28Presidio+Inn%29',37.799287,-122.44039],[225143087,'Lombard+St%2fVan+Ness+Ave',37.801406,-122.423907],[19054087,'Lombard+St%2fVan+Ness+Ave%28Travelodge%29',37.80121750857201,-122.42532155130571],[155763669,'Lombard+St%2fWebster+St',37.800126,-122.433855],[177445058,'Lower+Hearst+Structure',37.875042,-122.260356],[368146365,'Lyon+St%2fBush+St',37.785553,-122.44502],[141381475,'Madison+St%2f15th+St',37.802452,-122.263472],[132203138,'Main+St%2fHoward+St+%28ACE+Parking%29',37.79062,-122.3934],[164898642,'Marina+Blvd%2fLaguna+St+%28Fort+Mason%29',37.805139,-122.432054],[371387906,'Market+St%2f12th+St',37.774071,-122.42065],[14118192,'Market+St%2f15th+St+%2876+Gas+Station%29',37.766385958886524,-122.42991249507486],[17330593,'Market+St%2f17th+St++%28Chevron%29',37.762742353460354,-122.43449449539185],[21162354,'Market+St%2fCastro+St+%28ARCO%29',37.762827170589915,-122.4354600906372],[17583475,'Market+St%2fDuboce+Ave',37.76992441193213,-122.42625928724799],[19028045,'Market+St%2fHattie+St',37.76127992079241,-122.44112902412671],[32245244,'Market+St%2fHayes+St+%28Fox+Plaza+1st+Floor%29',37.776944999999984,-122.417399],[318774123,'Market+St%2fSanchez+St',37.765531,-122.431442],[285416008,'Mason%2fO%27Farrell+Garage',37.786535,-122.409723],[41638993,'Masonic+Ave%2fOak+St+%28Center+Door%29',37.772020770704266,-122.44535207748413],[24218834,'Masonic+Ave%2fOak+St+%28Left+Door%29',37.7721,-122.445799],[32240716,'Masonic+Ave%2fOak+St+%28Right+Door%29',37.77222,-122.44543899999996],[298882429,'Mission+St%2f+6th+St',37.78073,-122.409003],[367723566,'Mission+St%2f14th+St',37.768126,-122.419955],[298838069,'Mission+St%2f15th+St',37.767243,-122.419873],[60553907,'Mission+St%2f30th+St+',37.74214587587896,-122.42243528366089],[42562169,'Mission+St%2f5th+St+%28Pickwick+Hotel%29',37.78307871613631,-122.40638494491577],[30110322,'Mission+St%2fAnthony+St+%28560+Mission%29',37.788709,-122.398939],[45031733,'Mission+St%2fCesar+Chavez+St',37.74764335498357,-122.41831541061401],[98547675,'Mission+St%2fNey+St',37.730273,-122.42975],[27803276,'Mission+St%2fPrecita+Ave',37.74723614831276,-122.41855144500732],[281897985,'Mission+Walk+%28330+Berry%29',37.773327,-122.396454],[50187462,'Noe+St%2fDuboce+Ave+%2845+Noe+St%29',37.768438,-122.433509],[77799827,'North+Beach+Garage+',37.798662182986945,-122.4093246459961],[24863960,'North+Berkeley+BART',37.87435999999999,-122.28395900000012],[194166161,'North+Point+St%2fStockton+St',37.806974,-122.410501],[16481415,'Oak+St%2fSteiner+St',37.773657,-122.433188],[160459224,'Oak+St%2fVan+Ness+Ave',37.775395,-122.419595],[188230742,'Oakland+City+Center',37.805015093750534,-122.27302199319277],[181259995,'One+California+%28Shorenstein%29',37.79364,-122.396521],[287113034,'One+Front',37.79161,-122.399643],[38613491,'Oxford+St%2fCenter+St+%28Big+Lot%29',37.870153,-122.265899],[284018663,'Pacific+Ave%2fFront+St',37.797733,-122.400428],[182727288,'Parker+Ave%2fTurk+St+%28USF%29',37.777329,-122.453266],[185922020,'Pine+St%2fPolk+St',37.789714,-122.419862],[68891690,'Pine%2fFront',37.792354,-122.398945],[24218639,'Polk+St%2fJackson+St+%28Lombardi+Sports%29',37.79440533825396,-122.42170932461384],[20900909,'Potrero+Ave%2f17th+St',37.76473499649943,-122.40769083303192],[24863874,'Rockridge+BART',37.844084999999986,-122.25205900000003],[29835689,'SF+General+Hospital',37.755479999999956,-122.40510800000006],[26684232,'SFSU+-+S%2e+State+Dr%2e+Parking+Garage',37.72520399999999,-122.481],[68892905,'Shattuck+%26+Lincoln',37.87828,-122.269096],[128552329,'Shattuck+Ave%2fAddison+St',37.87127,-122.26737],[69118373,'Shellmound+%26+Marketplace',37.842475,-122.293245],[373920176,'South+Van+Ness+Ave%2f15th+St',37.766619,-122.417624],[16241627,'St%2e+Luke%27s+Hospital+Garage',37.74640524048266,-122.42155128688387],[291836876,'Stanford+Court+%28875+California+St%29',37.79209,-122.40881],[96527586,'Stanford+St%2fTownsend+St',37.780796,-122.391843],[22321890,'Stanyan+St%2fBeulah+St+%28Kezar+Lot%29',37.767291,-122.453197],[29335450,'Stanyan+St%2fHaight+St+%28McDonald%27s%29',37.76859,-122.45325699999998],[194162594,'Strata+at+Mission+Bay',37.77384,-122.390887],[42562547,'Sutter+St%2fJones+St',37.78867489852755,-122.41423845291138],[19324831,'Sutter+St%2fLarkin+St',37.78819475290637,-122.41802690927214],[29834978,'Sutter+Stockton+Garage',37.79002599999999,-122.40680699999999],[182732678,'Tamlapais+Terrace%2fTurk+St+%28USF%29',37.778199,-122.450331],[298896750,'Taraval+St%2f+17th+Ave',37.743177,-122.472839],[276493040,'Telegraph+Ave%2fParker+St+',37.863317922945136,-122.25791931152344],[76205293,'The+Mills+Building+%28Petrarch+Place%29',37.7916084854395,-122.40200757980347],[20900858,'The+Orrick+Building+%28405+Howard+St%29',37.78855539449779,-122.39563113403928],[20152863,'The+Paramount+%283rd+and+Mission%29',37.7868774697756,-122.40205687034573],[53088439,'Three+Embarcadero+Center',37.79520324238053,-122.39730834960938],[368141693,'Twin+Peaks+Auto',37.74559,-122.451779],[16481348,'Two+Embarcadero+Center',37.79460835717098,-122.39849490781553],[19502854,'UCSF+%28350+Parnassus+Ave%29',37.76445564061638,-122.45642423629761],[330030330,'Underhill+Parking+UC+Berkeley',37.867457,-122.254434],[280463310,'Union+Square+Marriott+Garage',37.789266,-122.408288],[68893035,'University+%26+Martin+Luther+King+Jr',37.871531,-122.2731],[63262602,'Valencia+St%2f24th+St',37.75232607065163,-122.42097616195679],[48603832,'Valencia+St%2fDuboce+Ave',37.770371,-122.421629],[189325727,'Van+Ness+Ave%2fChestnut+St+%28Best+Inn%29',37.802058,-122.424605],[24898142,'Van+Ness+Ave%2fPine+St+%28Holiday+Inn%29',37.789763999999984,-122.42185799999999],[18383833,'Van+Ness+Ave%2fUnion+St',37.79819856495887,-122.42426087195838],[13905295,'Van+Ness+Ave%2fWashington+St',37.79291347024381,-122.42248072093443],[68892434,'Washington+%26+Embarcadero',37.796644696922684,-122.39561022841616],[13396605,'Washington+Sq%2fColumbus+Ave',37.80149507461244,-122.41164162577723],[159528122,'Whole+Foods+%28Bay+Pl%2fHarrison+St%29',37.81255,-122.261112]];
+
+var ccs_arr = new Array();
 
 // Data table made in the USA, by unionized robotic workers
 var pod_1 = {
@@ -9,10 +11,9 @@ var pod_1 = {
    addr   :   "833 Mission St",
    url    :   "http://www.citycarshare.org/pod_1.do",
    vtype  :   ",9,,9,,17,",
-   vstring:   "Scion xB,Scion xB,Honda Fit",
-   gmark  :   null
+   vstring:   "Scion xB,Scion xB,Honda Fit"
    }
-pod_array.push(pod_1);
+ccs_arr.push(pod_1);
 
 var pod_2 = {
    id     :   2,
@@ -22,10 +23,9 @@ var pod_2 = {
    addr   :   "250 Clay St",
    url    :   "http://www.citycarshare.org/pod_2.do",
    vtype  :   ",15,,15,",
-   vstring:   "Toyota Corolla,Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla,Toyota Corolla"
    }
-pod_array.push(pod_2);
+ccs_arr.push(pod_2);
 
 var pod_3 = {
    id     :   3,
@@ -35,10 +35,9 @@ var pod_3 = {
    addr   :   "536 Gough Street",
    url    :   "http://www.citycarshare.org/pod_3.do",
    vtype  :   ",9,,12,,8,,22,,10,",
-   vstring:   "Scion xB,Honda Element,Toyota Tacoma,Toyota Sienna Minivan,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Scion xB,Honda Element,Toyota Tacoma,Toyota Sienna Minivan,Toyota Prius Hybrid"
    }
-pod_array.push(pod_3);
+ccs_arr.push(pod_3);
 
 var pod_4 = {
    id     :   4,
@@ -48,10 +47,9 @@ var pod_4 = {
    addr   :   "735 Vallejo St",
    url    :   "http://www.citycarshare.org/pod_4.do",
    vtype  :   ",9,,10,,10,",
-   vstring:   "Scion xB,Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Scion xB,Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_4);
+ccs_arr.push(pod_4);
 
 var pod_5 = {
    id     :   5,
@@ -61,10 +59,9 @@ var pod_5 = {
    addr   :   "433 Kearny St",
    url    :   "http://www.citycarshare.org/pod_5.do",
    vtype  :   ",9,,10,",
-   vstring:   "Scion xB,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Scion xB,Toyota Prius Hybrid"
    }
-pod_array.push(pod_5);
+ccs_arr.push(pod_5);
 
 var pod_6 = {
    id     :   6,
@@ -74,10 +71,9 @@ var pod_6 = {
    addr   :   "90 Bartlett St",
    url    :   "http://www.citycarshare.org/pod_6.do",
    vtype  :   ",16,,16,,8,,6,,11,",
-   vstring:   "Scion xD,Scion xD,Toyota Tacoma,Honda Civic Hybrid,Mini Cooper Convertible",
-   gmark  :   null
+   vstring:   "Scion xD,Scion xD,Toyota Tacoma,Honda Civic Hybrid,Mini Cooper Convertible"
    }
-pod_array.push(pod_6);
+ccs_arr.push(pod_6);
 
 var pod_7 = {
    id     :   7,
@@ -87,10 +83,9 @@ var pod_7 = {
    addr   :   "45 Castro St",
    url    :   "http://www.citycarshare.org/pod_7.do",
    vtype  :   ",9,,9,,10,,10,",
-   vstring:   "Scion xB,Scion xB,Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Scion xB,Scion xB,Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_7);
+ccs_arr.push(pod_7);
 
 var pod_8 = {
    id     :   8,
@@ -100,10 +95,9 @@ var pod_8 = {
    addr   :   "42 Hoff St",
    url    :   "http://www.citycarshare.org/pod_8.do",
    vtype  :   ",9,,10,,10,,9,",
-   vstring:   "Scion xB,Toyota Prius Hybrid,Toyota Prius Hybrid,Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB,Toyota Prius Hybrid,Toyota Prius Hybrid,Scion xB"
    }
-pod_array.push(pod_8);
+ccs_arr.push(pod_8);
 
 var pod_9 = {
    id     :   9,
@@ -113,10 +107,9 @@ var pod_9 = {
    addr   :   "1001 Potrero Ave",
    url    :   "http://www.citycarshare.org/pod_9.do",
    vtype  :   ",16,,16,",
-   vstring:   "Scion xD,Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD,Scion xD"
    }
-pod_array.push(pod_9);
+ccs_arr.push(pod_9);
 
 var pod_10 = {
    id     :   10,
@@ -126,10 +119,9 @@ var pod_10 = {
    addr   :   "801 Stanyan St",
    url    :   "http://www.citycarshare.org/pod_10.do",
    vtype  :   ",10,,10,,8,,21,,28,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Tacoma,Toyota Matrix,Toyota Highlander Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Tacoma,Toyota Matrix,Toyota Highlander Hybrid"
    }
-pod_array.push(pod_10);
+ccs_arr.push(pod_10);
 
 var pod_11 = {
    id     :   11,
@@ -139,10 +131,9 @@ var pod_11 = {
    addr   :   "2450 California St",
    url    :   "http://www.citycarshare.org/pod_11.do",
    vtype  :   ",10,,17,,10,",
-   vstring:   "Toyota Prius Hybrid,Honda Fit,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Honda Fit,Toyota Prius Hybrid"
    }
-pod_array.push(pod_11);
+ccs_arr.push(pod_11);
 
 var pod_12 = {
    id     :   12,
@@ -152,10 +143,9 @@ var pod_12 = {
    addr   :   "1450 Clay St",
    url    :   "http://www.citycarshare.org/pod_12.do",
    vtype  :   ",9,,9,",
-   vstring:   "Scion xB,Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB,Scion xB"
    }
-pod_array.push(pod_12);
+ccs_arr.push(pod_12);
 
 var pod_13 = {
    id     :   13,
@@ -165,10 +155,9 @@ var pod_13 = {
    addr   :   "4150 18th St",
    url    :   "http://www.citycarshare.org/pod_13.do",
    vtype  :   ",10,,9,",
-   vstring:   "Toyota Prius Hybrid,Scion xB",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Scion xB"
    }
-pod_array.push(pod_13);
+ccs_arr.push(pod_13);
 
 var pod_14 = {
    id     :   14,
@@ -178,10 +167,9 @@ var pod_14 = {
    addr   :   "2116 Allston Way",
    url    :   "http://www.citycarshare.org/pod_14.do",
    vtype  :   ",5,",
-   vstring:   "Scion xA",
-   gmark  :   null
+   vstring:   "Scion xA"
    }
-pod_array.push(pod_14);
+ccs_arr.push(pod_14);
 
 var pod_15 = {
    id     :   15,
@@ -191,10 +179,9 @@ var pod_15 = {
    addr   :   "720 Walker Ave",
    url    :   "http://www.citycarshare.org/pod_15.do",
    vtype  :   ",15,",
-   vstring:   "Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla"
    }
-pod_array.push(pod_15);
+ccs_arr.push(pod_15);
 
 var pod_16 = {
    id     :   16,
@@ -204,10 +191,9 @@ var pod_16 = {
    addr   :   "324 8th Avenue",
    url    :   "http://www.citycarshare.org/pod_16.do",
    vtype  :   ",8,,10,",
-   vstring:   "Toyota Tacoma,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Tacoma,Toyota Prius Hybrid"
    }
-pod_array.push(pod_16);
+ccs_arr.push(pod_16);
 
 var pod_17 = {
    id     :   17,
@@ -217,10 +203,9 @@ var pod_17 = {
    addr   :   "2050 Berkeley Way",
    url    :   "http://www.citycarshare.org/pod_17.do",
    vtype  :   ",14,,8,",
-   vstring:   "Toyota Yaris,Toyota Tacoma",
-   gmark  :   null
+   vstring:   "Toyota Yaris,Toyota Tacoma"
    }
-pod_array.push(pod_17);
+ccs_arr.push(pod_17);
 
 var pod_18 = {
    id     :   18,
@@ -230,10 +215,9 @@ var pod_18 = {
    addr   :   "5790 Oak Grove Ave",
    url    :   "http://www.citycarshare.org/pod_18.do",
    vtype  :   ",8,",
-   vstring:   "Toyota Tacoma",
-   gmark  :   null
+   vstring:   "Toyota Tacoma"
    }
-pod_array.push(pod_18);
+ccs_arr.push(pod_18);
 
 var pod_23 = {
    id     :   23,
@@ -243,10 +227,9 @@ var pod_23 = {
    addr   :   "101 8th St",
    url    :   "http://www.citycarshare.org/pod_23.do",
    vtype  :   ",14,,21,",
-   vstring:   "Toyota Yaris,Toyota Matrix",
-   gmark  :   null
+   vstring:   "Toyota Yaris,Toyota Matrix"
    }
-pod_array.push(pod_23);
+ccs_arr.push(pod_23);
 
 var pod_24 = {
    id     :   24,
@@ -256,10 +239,9 @@ var pod_24 = {
    addr   :   "5660 College Ave",
    url    :   "http://www.citycarshare.org/pod_24.do",
    vtype  :   ",13,,9,,10,",
-   vstring:   "Mini Cooper,Scion xB,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Mini Cooper,Scion xB,Toyota Prius Hybrid"
    }
-pod_array.push(pod_24);
+ccs_arr.push(pod_24);
 
 var pod_25 = {
    id     :   25,
@@ -269,10 +251,9 @@ var pod_25 = {
    addr   :   "560 Bosworth Street",
    url    :   "http://www.citycarshare.org/pod_25.do",
    vtype  :   ",10,,17,",
-   vstring:   "Toyota Prius Hybrid,Honda Fit",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Honda Fit"
    }
-pod_array.push(pod_25);
+ccs_arr.push(pod_25);
 
 var pod_26 = {
    id     :   26,
@@ -282,10 +263,9 @@ var pod_26 = {
    addr   :   "1 Shrader Street",
    url    :   "http://www.citycarshare.org/pod_26.do",
    vtype  :   ",16,,16,",
-   vstring:   "Scion xD,Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD,Scion xD"
    }
-pod_array.push(pod_26);
+ccs_arr.push(pod_26);
 
 var pod_29 = {
    id     :   29,
@@ -295,10 +275,9 @@ var pod_29 = {
    addr   :   "950 Clay St",
    url    :   "http://www.citycarshare.org/pod_29.do",
    vtype  :   ",9,",
-   vstring:   "Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB"
    }
-pod_array.push(pod_29);
+ccs_arr.push(pod_29);
 
 var pod_32 = {
    id     :   32,
@@ -308,10 +287,9 @@ var pod_32 = {
    addr   :   "1399 Castro Street",
    url    :   "http://www.citycarshare.org/pod_32.do",
    vtype  :   ",13,",
-   vstring:   "Mini Cooper",
-   gmark  :   null
+   vstring:   "Mini Cooper"
    }
-pod_array.push(pod_32);
+ccs_arr.push(pod_32);
 
 var pod_33 = {
    id     :   33,
@@ -321,10 +299,9 @@ var pod_33 = {
    addr   :   "2331 Dana Street",
    url    :   "http://www.citycarshare.org/pod_33.do",
    vtype  :   ",15,,10,",
-   vstring:   "Toyota Corolla,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Corolla,Toyota Prius Hybrid"
    }
-pod_array.push(pod_33);
+ccs_arr.push(pod_33);
 
 var pod_35 = {
    id     :   35,
@@ -334,10 +311,9 @@ var pod_35 = {
    addr   :   "400 Grand Ave",
    url    :   "http://www.citycarshare.org/pod_35.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_35);
+ccs_arr.push(pod_35);
 
 var pod_37 = {
    id     :   37,
@@ -347,10 +323,9 @@ var pod_37 = {
    addr   :   "1045 California Street",
    url    :   "http://www.citycarshare.org/pod_37.do",
    vtype  :   ",10,,10,,17,,13,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Honda Fit,Mini Cooper",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Honda Fit,Mini Cooper"
    }
-pod_array.push(pod_37);
+ccs_arr.push(pod_37);
 
 var pod_38 = {
    id     :   38,
@@ -360,10 +335,9 @@ var pod_38 = {
    addr   :   "500 Parnassus Avenue",
    url    :   "http://www.citycarshare.org/pod_38.do",
    vtype  :   ",16,,16,,16,,16,",
-   vstring:   "Scion xD,Scion xD,Scion xD,Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD,Scion xD,Scion xD,Scion xD"
    }
-pod_array.push(pod_38);
+ccs_arr.push(pod_38);
 
 var pod_40 = {
    id     :   40,
@@ -373,10 +347,9 @@ var pod_40 = {
    addr   :   "2055 Lombard Street",
    url    :   "http://www.citycarshare.org/pod_40.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_40);
+ccs_arr.push(pod_40);
 
 var pod_42 = {
    id     :   42,
@@ -386,10 +359,9 @@ var pod_42 = {
    addr   :   "175 41st St",
    url    :   "http://www.citycarshare.org/pod_42.do",
    vtype  :   ",21,",
-   vstring:   "Toyota Matrix",
-   gmark  :   null
+   vstring:   "Toyota Matrix"
    }
-pod_array.push(pod_42);
+ccs_arr.push(pod_42);
 
 var pod_43 = {
    id     :   43,
@@ -399,10 +371,9 @@ var pod_43 = {
    addr   :   "690 Page Street",
    url    :   "http://www.citycarshare.org/pod_43.do",
    vtype  :   ",16,,16,,16,,16,,16,,16,",
-   vstring:   "Scion xD,Scion xD,Scion xD,Scion xD,Scion xD,Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD,Scion xD,Scion xD,Scion xD,Scion xD,Scion xD"
    }
-pod_array.push(pod_43);
+ccs_arr.push(pod_43);
 
 var pod_46 = {
    id     :   46,
@@ -412,10 +383,9 @@ var pod_46 = {
    addr   :   "1601 Ellis Street",
    url    :   "http://www.citycarshare.org/pod_46.do",
    vtype  :   ",10,,17,",
-   vstring:   "Toyota Prius Hybrid,Honda Fit",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Honda Fit"
    }
-pod_array.push(pod_46);
+ccs_arr.push(pod_46);
 
 var pod_47 = {
    id     :   47,
@@ -425,10 +395,9 @@ var pod_47 = {
    addr   :   "3100 Adeline Street",
    url    :   "http://www.citycarshare.org/pod_47.do",
    vtype  :   ",10,,10,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_47);
+ccs_arr.push(pod_47);
 
 var pod_48 = {
    id     :   48,
@@ -438,10 +407,9 @@ var pod_48 = {
    addr   :   "675 Natoma Street",
    url    :   "http://www.citycarshare.org/pod_48.do",
    vtype  :   ",15,",
-   vstring:   "Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla"
    }
-pod_array.push(pod_48);
+ccs_arr.push(pod_48);
 
 var pod_50 = {
    id     :   50,
@@ -451,10 +419,9 @@ var pod_50 = {
    addr   :   "50 Dr Carlton B Goodlett Place",
    url    :   "http://www.citycarshare.org/pod_50.do",
    vtype  :   ",10,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_50);
+ccs_arr.push(pod_50);
 
 var pod_51 = {
    id     :   51,
@@ -464,10 +431,9 @@ var pod_51 = {
    addr   :   "80 Fern Street",
    url    :   "http://www.citycarshare.org/pod_51.do",
    vtype  :   ",9,,9,",
-   vstring:   "Scion xB,Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB,Scion xB"
    }
-pod_array.push(pod_51);
+ccs_arr.push(pod_51);
 
 var pod_54 = {
    id     :   54,
@@ -477,10 +443,9 @@ var pod_54 = {
    addr   :   "899 Valencia Street",
    url    :   "http://www.citycarshare.org/pod_54.do",
    vtype  :   ",9,,17,,10,",
-   vstring:   "Scion xB,Honda Fit,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Scion xB,Honda Fit,Toyota Prius Hybrid"
    }
-pod_array.push(pod_54);
+ccs_arr.push(pod_54);
 
 var pod_55 = {
    id     :   55,
@@ -490,10 +455,9 @@ var pod_55 = {
    addr   :   "3275 24th St",
    url    :   "http://www.citycarshare.org/pod_55.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_55);
+ccs_arr.push(pod_55);
 
 var pod_56 = {
    id     :   56,
@@ -503,10 +467,9 @@ var pod_56 = {
    addr   :   "1450 Virginia Street",
    url    :   "http://www.citycarshare.org/pod_56.do",
    vtype  :   ",12,,10,,10,",
-   vstring:   "Honda Element,Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Honda Element,Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_56);
+ccs_arr.push(pod_56);
 
 var pod_57 = {
    id     :   57,
@@ -516,10 +479,9 @@ var pod_57 = {
    addr   :   "555 40th Street",
    url    :   "http://www.citycarshare.org/pod_57.do",
    vtype  :   ",10,,22,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Sienna Minivan,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Sienna Minivan,Toyota Prius Hybrid"
    }
-pod_array.push(pod_57);
+ccs_arr.push(pod_57);
 
 var pod_59 = {
    id     :   59,
@@ -529,10 +491,9 @@ var pod_59 = {
    addr   :   "3865 24th St",
    url    :   "http://www.citycarshare.org/pod_59.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_59);
+ccs_arr.push(pod_59);
 
 var pod_61 = {
    id     :   61,
@@ -542,10 +503,9 @@ var pod_61 = {
    addr   :   "3333 California St",
    url    :   "http://www.citycarshare.org/pod_61.do",
    vtype  :   ",5,,10,",
-   vstring:   "Scion xA,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Scion xA,Toyota Prius Hybrid"
    }
-pod_array.push(pod_61);
+ccs_arr.push(pod_61);
 
 var pod_62 = {
    id     :   62,
@@ -555,10 +515,9 @@ var pod_62 = {
    addr   :   "1045 Mission St",
    url    :   "http://www.citycarshare.org/pod_62.do",
    vtype  :   ",14,,10,",
-   vstring:   "Toyota Yaris,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Yaris,Toyota Prius Hybrid"
    }
-pod_array.push(pod_62);
+ccs_arr.push(pod_62);
 
 var pod_63 = {
    id     :   63,
@@ -568,10 +527,9 @@ var pod_63 = {
    addr   :   "1720 Fulton St",
    url    :   "http://www.citycarshare.org/pod_63.do",
    vtype  :   ",9,,14,,17,",
-   vstring:   "Scion xB,Toyota Yaris,Honda Fit",
-   gmark  :   null
+   vstring:   "Scion xB,Toyota Yaris,Honda Fit"
    }
-pod_array.push(pod_63);
+ccs_arr.push(pod_63);
 
 var pod_64 = {
    id     :   64,
@@ -581,10 +539,9 @@ var pod_64 = {
    addr   :   "1633 Valencia St",
    url    :   "http://www.citycarshare.org/pod_64.do",
    vtype  :   ",15,,17,",
-   vstring:   "Toyota Corolla,Honda Fit",
-   gmark  :   null
+   vstring:   "Toyota Corolla,Honda Fit"
    }
-pod_array.push(pod_64);
+ccs_arr.push(pod_64);
 
 var pod_65 = {
    id     :   65,
@@ -594,10 +551,9 @@ var pod_65 = {
    addr   :   "255 3rd St",
    url    :   "http://www.citycarshare.org/pod_65.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_65);
+ccs_arr.push(pod_65);
 
 var pod_67 = {
    id     :   67,
@@ -607,10 +563,9 @@ var pod_67 = {
    addr   :   "2351 Taylor St",
    url    :   "http://www.citycarshare.org/pod_67.do",
    vtype  :   ",9,",
-   vstring:   "Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB"
    }
-pod_array.push(pod_67);
+ccs_arr.push(pod_67);
 
 var pod_68 = {
    id     :   68,
@@ -620,10 +575,9 @@ var pod_68 = {
    addr   :   "444 Stockton St",
    url    :   "http://www.citycarshare.org/pod_68.do",
    vtype  :   ",10,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_68);
+ccs_arr.push(pod_68);
 
 var pod_69 = {
    id     :   69,
@@ -633,10 +587,9 @@ var pod_69 = {
    addr   :   "1500 Van Ness Ave",
    url    :   "http://www.citycarshare.org/pod_69.do",
    vtype  :   ",15,,15,",
-   vstring:   "Toyota Corolla,Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla,Toyota Corolla"
    }
-pod_array.push(pod_69);
+ccs_arr.push(pod_69);
 
 var pod_70 = {
    id     :   70,
@@ -646,10 +599,9 @@ var pod_70 = {
    addr   :   "675 Columbus Ave",
    url    :   "http://www.citycarshare.org/pod_70.do",
    vtype  :   ",17,,17,",
-   vstring:   "Honda Fit,Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit,Honda Fit"
    }
-pod_array.push(pod_70);
+ccs_arr.push(pod_70);
 
 var pod_71 = {
    id     :   71,
@@ -659,10 +611,9 @@ var pod_71 = {
    addr   :   "1924 Polk Street",
    url    :   "http://www.citycarshare.org/pod_71.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_71);
+ccs_arr.push(pod_71);
 
 var pod_72 = {
    id     :   72,
@@ -672,10 +623,9 @@ var pod_72 = {
    addr   :   "1320 Valencia Street",
    url    :   "http://www.citycarshare.org/pod_72.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_72);
+ccs_arr.push(pod_72);
 
 var pod_73 = {
    id     :   73,
@@ -685,10 +635,9 @@ var pod_73 = {
    addr   :   "569 Taylor Street",
    url    :   "http://www.citycarshare.org/pod_73.do",
    vtype  :   ",5,,5,,14,,17,",
-   vstring:   "Scion xA,Scion xA,Toyota Yaris,Honda Fit",
-   gmark  :   null
+   vstring:   "Scion xA,Scion xA,Toyota Yaris,Honda Fit"
    }
-pod_array.push(pod_73);
+ccs_arr.push(pod_73);
 
 var pod_74 = {
    id     :   74,
@@ -698,10 +647,9 @@ var pod_74 = {
    addr   :   "75 Dore Street",
    url    :   "http://www.citycarshare.org/pod_74.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_74);
+ccs_arr.push(pod_74);
 
 var pod_76 = {
    id     :   76,
@@ -711,10 +659,9 @@ var pod_76 = {
    addr   :   "223 Stevenson Street",
    url    :   "http://www.citycarshare.org/pod_76.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_76);
+ccs_arr.push(pod_76);
 
 var pod_77 = {
    id     :   77,
@@ -724,10 +671,9 @@ var pod_77 = {
    addr   :   "1451 7th Street",
    url    :   "http://www.citycarshare.org/pod_77.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_77);
+ccs_arr.push(pod_77);
 
 var pod_79 = {
    id     :   79,
@@ -737,10 +683,9 @@ var pod_79 = {
    addr   :   "2300 16th Street",
    url    :   "http://www.citycarshare.org/pod_79.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_79);
+ccs_arr.push(pod_79);
 
 var pod_80 = {
    id     :   80,
@@ -750,10 +695,9 @@ var pod_80 = {
    addr   :   "401 Geneva Ave",
    url    :   "http://www.citycarshare.org/pod_80.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_80);
+ccs_arr.push(pod_80);
 
 var pod_81 = {
    id     :   81,
@@ -763,10 +707,9 @@ var pod_81 = {
    addr   :   "6690 Central Ave",
    url    :   "http://www.citycarshare.org/pod_81.do",
    vtype  :   ",10,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_81);
+ccs_arr.push(pod_81);
 
 var pod_82 = {
    id     :   82,
@@ -776,10 +719,9 @@ var pod_82 = {
    addr   :   "1855 Folsom St",
    url    :   "http://www.citycarshare.org/pod_82.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_82);
+ccs_arr.push(pod_82);
 
 var pod_83 = {
    id     :   83,
@@ -789,10 +731,9 @@ var pod_83 = {
    addr   :   "2240 Clement Avenue",
    url    :   "http://www.citycarshare.org/pod_83.do",
    vtype  :   ",10,,14,,27,",
-   vstring:   "Toyota Prius Hybrid,Toyota Yaris,Mazda 5",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Yaris,Mazda 5"
    }
-pod_array.push(pod_83);
+ccs_arr.push(pod_83);
 
 var pod_85 = {
    id     :   85,
@@ -802,10 +743,9 @@ var pod_85 = {
    addr   :   "40 Emerson St",
    url    :   "http://www.citycarshare.org/pod_85.do",
    vtype  :   ",15,",
-   vstring:   "Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla"
    }
-pod_array.push(pod_85);
+ccs_arr.push(pod_85);
 
 var pod_86 = {
    id     :   86,
@@ -815,10 +755,9 @@ var pod_86 = {
    addr   :   "101 Polk Street",
    url    :   "http://www.citycarshare.org/pod_86.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_86);
+ccs_arr.push(pod_86);
 
 var pod_87 = {
    id     :   87,
@@ -828,10 +767,9 @@ var pod_87 = {
    addr   :   "62 Hattie St",
    url    :   "http://www.citycarshare.org/pod_87.do",
    vtype  :   ",5,",
-   vstring:   "Scion xA",
-   gmark  :   null
+   vstring:   "Scion xA"
    }
-pod_array.push(pod_87);
+ccs_arr.push(pod_87);
 
 var pod_88 = {
    id     :   88,
@@ -841,10 +779,9 @@ var pod_88 = {
    addr   :   "1998 Market St",
    url    :   "http://www.citycarshare.org/pod_88.do",
    vtype  :   ",10,,8,,13,,26,",
-   vstring:   "Toyota Prius Hybrid,Toyota Tacoma,Mini Cooper,Subaru Outback",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Tacoma,Mini Cooper,Subaru Outback"
    }
-pod_array.push(pod_88);
+ccs_arr.push(pod_88);
 
 var pod_89 = {
    id     :   89,
@@ -854,10 +791,9 @@ var pod_89 = {
    addr   :   "524 Howard Street",
    url    :   "http://www.citycarshare.org/pod_89.do",
    vtype  :   ",21,",
-   vstring:   "Toyota Matrix",
-   gmark  :   null
+   vstring:   "Toyota Matrix"
    }
-pod_array.push(pod_89);
+ccs_arr.push(pod_89);
 
 var pod_90 = {
    id     :   90,
@@ -867,10 +803,9 @@ var pod_90 = {
    addr   :   "2110 Haste Street",
    url    :   "http://www.citycarshare.org/pod_90.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_90);
+ccs_arr.push(pod_90);
 
 var pod_91 = {
    id     :   91,
@@ -880,10 +815,9 @@ var pod_91 = {
    addr   :   "1733 Scott St",
    url    :   "http://www.citycarshare.org/pod_91.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_91);
+ccs_arr.push(pod_91);
 
 var pod_93 = {
    id     :   93,
@@ -893,10 +827,9 @@ var pod_93 = {
    addr   :   "2721 Shattuck Ave",
    url    :   "http://www.citycarshare.org/pod_93.do",
    vtype  :   ",8,",
-   vstring:   "Toyota Tacoma",
-   gmark  :   null
+   vstring:   "Toyota Tacoma"
    }
-pod_array.push(pod_93);
+ccs_arr.push(pod_93);
 
 var pod_94 = {
    id     :   94,
@@ -906,10 +839,9 @@ var pod_94 = {
    addr   :   "1650 3rd Street",
    url    :   "http://www.citycarshare.org/pod_94.do",
    vtype  :   ",10,,8,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Tacoma,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Tacoma,Toyota Prius Hybrid"
    }
-pod_array.push(pod_94);
+ccs_arr.push(pod_94);
 
 var pod_96 = {
    id     :   96,
@@ -919,10 +851,9 @@ var pod_96 = {
    addr   :   "2020 Kittredge St",
    url    :   "http://www.citycarshare.org/pod_96.do",
    vtype  :   ",27,",
-   vstring:   "Mazda 5",
-   gmark  :   null
+   vstring:   "Mazda 5"
    }
-pod_array.push(pod_96);
+ccs_arr.push(pod_96);
 
 var pod_99 = {
    id     :   99,
@@ -932,10 +863,9 @@ var pod_99 = {
    addr   :   "5200 Geary Blvd",
    url    :   "http://www.citycarshare.org/pod_99.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_99);
+ccs_arr.push(pod_99);
 
 var pod_100 = {
    id     :   100,
@@ -945,10 +875,9 @@ var pod_100 = {
    addr   :   "31 Phelan Ave",
    url    :   "http://www.citycarshare.org/pod_100.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_100);
+ccs_arr.push(pod_100);
 
 var pod_101 = {
    id     :   101,
@@ -958,10 +887,9 @@ var pod_101 = {
    addr   :   "33 Gough Street",
    url    :   "http://www.citycarshare.org/pod_101.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_101);
+ccs_arr.push(pod_101);
 
 var pod_102 = {
    id     :   102,
@@ -971,10 +899,9 @@ var pod_102 = {
    addr   :   "340 14th St",
    url    :   "http://www.citycarshare.org/pod_102.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_102);
+ccs_arr.push(pod_102);
 
 var pod_103 = {
    id     :   103,
@@ -984,10 +911,9 @@ var pod_103 = {
    addr   :   "85 5th Street",
    url    :   "http://www.citycarshare.org/pod_103.do",
    vtype  :   ",10,,11,",
-   vstring:   "Toyota Prius Hybrid,Mini Cooper Convertible",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Mini Cooper Convertible"
    }
-pod_array.push(pod_103);
+ccs_arr.push(pod_103);
 
 var pod_104 = {
    id     :   104,
@@ -997,10 +923,9 @@ var pod_104 = {
    addr   :   "4119 26th St",
    url    :   "http://www.citycarshare.org/pod_104.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_104);
+ccs_arr.push(pod_104);
 
 var pod_106 = {
    id     :   106,
@@ -1010,10 +935,9 @@ var pod_106 = {
    addr   :   "1250 19th Avenue",
    url    :   "http://www.citycarshare.org/pod_106.do",
    vtype  :   ",9,",
-   vstring:   "Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB"
    }
-pod_array.push(pod_106);
+ccs_arr.push(pod_106);
 
 var pod_107 = {
    id     :   107,
@@ -1023,10 +947,9 @@ var pod_107 = {
    addr   :   "3322 Buchanan St",
    url    :   "http://www.citycarshare.org/pod_107.do",
    vtype  :   ",5,",
-   vstring:   "Scion xA",
-   gmark  :   null
+   vstring:   "Scion xA"
    }
-pod_array.push(pod_107);
+ccs_arr.push(pod_107);
 
 var pod_108 = {
    id     :   108,
@@ -1036,10 +959,9 @@ var pod_108 = {
    addr   :   "2599 Lombard Street",
    url    :   "http://www.citycarshare.org/pod_108.do",
    vtype  :   ",15,",
-   vstring:   "Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla"
    }
-pod_array.push(pod_108);
+ccs_arr.push(pod_108);
 
 var pod_109 = {
    id     :   109,
@@ -1049,10 +971,9 @@ var pod_109 = {
    addr   :   "2601 Parker St",
    url    :   "http://www.citycarshare.org/pod_109.do",
    vtype  :   ",17,,17,",
-   vstring:   "Honda Fit,Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit,Honda Fit"
    }
-pod_array.push(pod_109);
+ccs_arr.push(pod_109);
 
 var pod_110 = {
    id     :   110,
@@ -1062,10 +983,9 @@ var pod_110 = {
    addr   :   "295 Shotwell St.",
    url    :   "http://www.citycarshare.org/pod_110.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_110);
+ccs_arr.push(pod_110);
 
 var pod_112 = {
    id     :   112,
@@ -1075,10 +995,9 @@ var pod_112 = {
    addr   :   "2465 Van Ness Ave",
    url    :   "http://www.citycarshare.org/pod_112.do",
    vtype  :   ",10,,10,,15,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Corolla"
    }
-pod_array.push(pod_112);
+ccs_arr.push(pod_112);
 
 var pod_113 = {
    id     :   113,
@@ -1088,10 +1007,9 @@ var pod_113 = {
    addr   :   "8 Cypress St",
    url    :   "http://www.citycarshare.org/pod_113.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_113);
+ccs_arr.push(pod_113);
 
 var pod_116 = {
    id     :   116,
@@ -1101,10 +1019,9 @@ var pod_116 = {
    addr   :   "201 2nd Street",
    url    :   "http://www.citycarshare.org/pod_116.do",
    vtype  :   ",10,,10,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_116);
+ccs_arr.push(pod_116);
 
 var pod_117 = {
    id     :   117,
@@ -1114,10 +1031,9 @@ var pod_117 = {
    addr   :   "295 12th Avenue",
    url    :   "http://www.citycarshare.org/pod_117.do",
    vtype  :   ",15,,15,",
-   vstring:   "Toyota Corolla,Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla,Toyota Corolla"
    }
-pod_array.push(pod_117);
+ccs_arr.push(pod_117);
 
 var pod_118 = {
    id     :   118,
@@ -1127,10 +1043,9 @@ var pod_118 = {
    addr   :   "230 Dolores Street",
    url    :   "http://www.citycarshare.org/pod_118.do",
    vtype  :   ",9,,13,,9,,14,",
-   vstring:   "Scion xB,Mini Cooper,Scion xB,Toyota Yaris",
-   gmark  :   null
+   vstring:   "Scion xB,Mini Cooper,Scion xB,Toyota Yaris"
    }
-pod_array.push(pod_118);
+ccs_arr.push(pod_118);
 
 var pod_119 = {
    id     :   119,
@@ -1140,10 +1055,9 @@ var pod_119 = {
    addr   :   "2500 24th Street",
    url    :   "http://www.citycarshare.org/pod_119.do",
    vtype  :   ",14,,9,",
-   vstring:   "Toyota Yaris,Scion xB",
-   gmark  :   null
+   vstring:   "Toyota Yaris,Scion xB"
    }
-pod_array.push(pod_119);
+ccs_arr.push(pod_119);
 
 var pod_121 = {
    id     :   121,
@@ -1153,10 +1067,9 @@ var pod_121 = {
    addr   :   "1215 11th Avenue",
    url    :   "http://www.citycarshare.org/pod_121.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_121);
+ccs_arr.push(pod_121);
 
 var pod_122 = {
    id     :   122,
@@ -1166,10 +1079,9 @@ var pod_122 = {
    addr   :   "440 9th Ave",
    url    :   "http://www.citycarshare.org/pod_122.do",
    vtype  :   ",5,",
-   vstring:   "Scion xA",
-   gmark  :   null
+   vstring:   "Scion xA"
    }
-pod_array.push(pod_122);
+ccs_arr.push(pod_122);
 
 var pod_123 = {
    id     :   123,
@@ -1179,10 +1091,9 @@ var pod_123 = {
    addr   :   "221 14th Street",
    url    :   "http://www.citycarshare.org/pod_123.do",
    vtype  :   ",10,,8,",
-   vstring:   "Toyota Prius Hybrid,Toyota Tacoma",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Tacoma"
    }
-pod_array.push(pod_123);
+ccs_arr.push(pod_123);
 
 var pod_124 = {
    id     :   124,
@@ -1192,10 +1103,9 @@ var pod_124 = {
    addr   :   "1765 Post",
    url    :   "http://www.citycarshare.org/pod_124.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_124);
+ccs_arr.push(pod_124);
 
 var pod_125 = {
    id     :   125,
@@ -1205,10 +1115,9 @@ var pod_125 = {
    addr   :   "2190 OFarrell Street",
    url    :   "http://www.citycarshare.org/pod_125.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_125);
+ccs_arr.push(pod_125);
 
 var pod_126 = {
    id     :   126,
@@ -1218,10 +1127,9 @@ var pod_126 = {
    addr   :   "450 6th Ave",
    url    :   "http://www.citycarshare.org/pod_126.do",
    vtype  :   ",16,,6,",
-   vstring:   "Scion xD,Honda Civic Hybrid",
-   gmark  :   null
+   vstring:   "Scion xD,Honda Civic Hybrid"
    }
-pod_array.push(pod_126);
+ccs_arr.push(pod_126);
 
 var pod_129 = {
    id     :   129,
@@ -1231,10 +1139,9 @@ var pod_129 = {
    addr   :   "1569 Jackson St",
    url    :   "http://www.citycarshare.org/pod_129.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_129);
+ccs_arr.push(pod_129);
 
 var pod_130 = {
    id     :   130,
@@ -1244,10 +1151,9 @@ var pod_130 = {
    addr   :   "2400 Dowling Place",
    url    :   "http://www.citycarshare.org/pod_130.do",
    vtype  :   ",9,",
-   vstring:   "Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB"
    }
-pod_array.push(pod_130);
+ccs_arr.push(pod_130);
 
 var pod_131 = {
    id     :   131,
@@ -1257,10 +1163,9 @@ var pod_131 = {
    addr   :   "20 Duboce Ave",
    url    :   "http://www.citycarshare.org/pod_131.do",
    vtype  :   ",15,",
-   vstring:   "Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla"
    }
-pod_array.push(pod_131);
+ccs_arr.push(pod_131);
 
 var pod_132 = {
    id     :   132,
@@ -1270,10 +1175,9 @@ var pod_132 = {
    addr   :   "3620 26th Street",
    url    :   "http://www.citycarshare.org/pod_132.do",
    vtype  :   ",5,,5,",
-   vstring:   "Scion xA,Scion xA",
-   gmark  :   null
+   vstring:   "Scion xA,Scion xA"
    }
-pod_array.push(pod_132);
+ccs_arr.push(pod_132);
 
 var pod_133 = {
    id     :   133,
@@ -1283,10 +1187,9 @@ var pod_133 = {
    addr   :   "23 Prospect Ave",
    url    :   "http://www.citycarshare.org/pod_133.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_133);
+ccs_arr.push(pod_133);
 
 var pod_134 = {
    id     :   134,
@@ -1296,10 +1199,9 @@ var pod_134 = {
    addr   :   "2351 Mission St",
    url    :   "http://www.citycarshare.org/pod_134.do",
    vtype  :   ",10,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_134);
+ccs_arr.push(pod_134);
 
 var pod_135 = {
    id     :   135,
@@ -1309,10 +1211,9 @@ var pod_135 = {
    addr   :   "3115 Mission St",
    url    :   "http://www.citycarshare.org/pod_135.do",
    vtype  :   ",5,,8,",
-   vstring:   "Scion xA,Toyota Tacoma",
-   gmark  :   null
+   vstring:   "Scion xA,Toyota Tacoma"
    }
-pod_array.push(pod_135);
+ccs_arr.push(pod_135);
 
 var pod_136 = {
    id     :   136,
@@ -1322,10 +1223,9 @@ var pod_136 = {
    addr   :   "2500 College Ave",
    url    :   "http://www.citycarshare.org/pod_136.do",
    vtype  :   ",10,,10,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid"
    }
-pod_array.push(pod_136);
+ccs_arr.push(pod_136);
 
 var pod_137 = {
    id     :   137,
@@ -1335,10 +1235,9 @@ var pod_137 = {
    addr   :   "312 Broderick",
    url    :   "http://www.citycarshare.org/pod_137.do",
    vtype  :   ",16,,16,,13,",
-   vstring:   "Scion xD,Scion xD,Mini Cooper",
-   gmark  :   null
+   vstring:   "Scion xD,Scion xD,Mini Cooper"
    }
-pod_array.push(pod_137);
+ccs_arr.push(pod_137);
 
 var pod_138 = {
    id     :   138,
@@ -1348,10 +1247,9 @@ var pod_138 = {
    addr   :   "875 Fulton",
    url    :   "http://www.citycarshare.org/pod_138.do",
    vtype  :   ",16,,16,",
-   vstring:   "Scion xD,Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD,Scion xD"
    }
-pod_array.push(pod_138);
+ccs_arr.push(pod_138);
 
 var pod_139 = {
    id     :   139,
@@ -1361,10 +1259,9 @@ var pod_139 = {
    addr   :   "1281 9th Avenue",
    url    :   "http://www.citycarshare.org/pod_139.do",
    vtype  :   ",13,,10,",
-   vstring:   "Mini Cooper,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Mini Cooper,Toyota Prius Hybrid"
    }
-pod_array.push(pod_139);
+ccs_arr.push(pod_139);
 
 var pod_140 = {
    id     :   140,
@@ -1374,10 +1271,9 @@ var pod_140 = {
    addr   :   "1128 Ashbury Street",
    url    :   "http://www.citycarshare.org/pod_140.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_140);
+ccs_arr.push(pod_140);
 
 var pod_141 = {
    id     :   141,
@@ -1387,10 +1283,9 @@ var pod_141 = {
    addr   :   "2175 Market Street",
    url    :   "http://www.citycarshare.org/pod_141.do",
    vtype  :   ",19,,17,,10,,10,,27,",
-   vstring:   "smart fortwo,Honda Fit,Toyota Prius Hybrid,Toyota Prius Hybrid,Mazda 5",
-   gmark  :   null
+   vstring:   "smart fortwo,Honda Fit,Toyota Prius Hybrid,Toyota Prius Hybrid,Mazda 5"
    }
-pod_array.push(pod_141);
+ccs_arr.push(pod_141);
 
 var pod_143 = {
    id     :   143,
@@ -1400,10 +1295,9 @@ var pod_143 = {
    addr   :   "1525 Waller Street",
    url    :   "http://www.citycarshare.org/pod_143.do",
    vtype  :   ",10,,10,,13,,17,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Mini Cooper,Honda Fit",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Mini Cooper,Honda Fit"
    }
-pod_array.push(pod_143);
+ccs_arr.push(pod_143);
 
 var pod_144 = {
    id     :   144,
@@ -1413,10 +1307,9 @@ var pod_144 = {
    addr   :   "1100 33rd Ave",
    url    :   "http://www.citycarshare.org/pod_144.do",
    vtype  :   ",10,,8,",
-   vstring:   "Toyota Prius Hybrid,Toyota Tacoma",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Tacoma"
    }
-pod_array.push(pod_144);
+ccs_arr.push(pod_144);
 
 var pod_145 = {
    id     :   145,
@@ -1426,10 +1319,9 @@ var pod_145 = {
    addr   :   "490 Hayes Street",
    url    :   "http://www.citycarshare.org/pod_145.do",
    vtype  :   ",9,,13,,10,,17,,9,,10,",
-   vstring:   "Scion xB,Mini Cooper,Toyota Prius Hybrid,Honda Fit,Scion xB,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Scion xB,Mini Cooper,Toyota Prius Hybrid,Honda Fit,Scion xB,Toyota Prius Hybrid"
    }
-pod_array.push(pod_145);
+ccs_arr.push(pod_145);
 
 var pod_146 = {
    id     :   146,
@@ -1439,10 +1331,9 @@ var pod_146 = {
    addr   :   "330 2nd Street",
    url    :   "http://www.citycarshare.org/pod_146.do",
    vtype  :   ",5,,15,",
-   vstring:   "Scion xA,Toyota Corolla",
-   gmark  :   null
+   vstring:   "Scion xA,Toyota Corolla"
    }
-pod_array.push(pod_146);
+ccs_arr.push(pod_146);
 
 var pod_147 = {
    id     :   147,
@@ -1452,10 +1343,9 @@ var pod_147 = {
    addr   :   "1601 Allston Way",
    url    :   "http://www.citycarshare.org/pod_147.do",
    vtype  :   ",10,,21,",
-   vstring:   "Toyota Prius Hybrid,Toyota Matrix",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Matrix"
    }
-pod_array.push(pod_147);
+ccs_arr.push(pod_147);
 
 var pod_148 = {
    id     :   148,
@@ -1465,10 +1355,9 @@ var pod_148 = {
    addr   :   "275 East 15th Street",
    url    :   "http://www.citycarshare.org/pod_148.do",
    vtype  :   ",9,",
-   vstring:   "Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB"
    }
-pod_array.push(pod_148);
+ccs_arr.push(pod_148);
 
 var pod_149 = {
    id     :   149,
@@ -1478,10 +1367,9 @@ var pod_149 = {
    addr   :   "1160 Mission Street",
    url    :   "http://www.citycarshare.org/pod_149.do",
    vtype  :   ",19,,15,",
-   vstring:   "smart fortwo,Toyota Corolla",
-   gmark  :   null
+   vstring:   "smart fortwo,Toyota Corolla"
    }
-pod_array.push(pod_149);
+ccs_arr.push(pod_149);
 
 var pod_151 = {
    id     :   151,
@@ -1491,10 +1379,9 @@ var pod_151 = {
    addr   :   "450 Euclid Ave",
    url    :   "http://www.citycarshare.org/pod_151.do",
    vtype  :   ",16,,21,",
-   vstring:   "Scion xD,Toyota Matrix",
-   gmark  :   null
+   vstring:   "Scion xD,Toyota Matrix"
    }
-pod_array.push(pod_151);
+ccs_arr.push(pod_151);
 
 var pod_152 = {
    id     :   152,
@@ -1504,10 +1391,9 @@ var pod_152 = {
    addr   :   "1298 Valencia",
    url    :   "http://www.citycarshare.org/pod_152.do",
    vtype  :   ",10,,10,,10,,10,,13,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Prius Hybrid,Mini Cooper",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Prius Hybrid,Mini Cooper"
    }
-pod_array.push(pod_152);
+ccs_arr.push(pod_152);
 
 var pod_154 = {
    id     :   154,
@@ -1517,10 +1403,9 @@ var pod_154 = {
    addr   :   "1601 Mariposa",
    url    :   "http://www.citycarshare.org/pod_154.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_154);
+ccs_arr.push(pod_154);
 
 var pod_156 = {
    id     :   156,
@@ -1530,10 +1415,9 @@ var pod_156 = {
    addr   :   "2929 Otis Street",
    url    :   "http://www.citycarshare.org/pod_156.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_156);
+ccs_arr.push(pod_156);
 
 var pod_157 = {
    id     :   157,
@@ -1543,10 +1427,9 @@ var pod_157 = {
    addr   :   "650 Turk",
    url    :   "http://www.citycarshare.org/pod_157.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_157);
+ccs_arr.push(pod_157);
 
 var pod_158 = {
    id     :   158,
@@ -1556,10 +1439,9 @@ var pod_158 = {
    addr   :   "1320 Addison St",
    url    :   "http://www.citycarshare.org/pod_158.do",
    vtype  :   ",15,",
-   vstring:   "Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla"
    }
-pod_array.push(pod_158);
+ccs_arr.push(pod_158);
 
 var pod_159 = {
    id     :   159,
@@ -1569,10 +1451,9 @@ var pod_159 = {
    addr   :   "1400 19th Avenue",
    url    :   "http://www.citycarshare.org/pod_159.do",
    vtype  :   ",10,,15,",
-   vstring:   "Toyota Prius Hybrid,Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Corolla"
    }
-pod_array.push(pod_159);
+ccs_arr.push(pod_159);
 
 var pod_160 = {
    id     :   160,
@@ -1582,10 +1463,9 @@ var pod_160 = {
    addr   :   "2562 Le Conte Avenue",
    url    :   "http://www.citycarshare.org/pod_160.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_160);
+ccs_arr.push(pod_160);
 
 var pod_161 = {
    id     :   161,
@@ -1595,10 +1475,9 @@ var pod_161 = {
    addr   :   "442 Vicksburg Street",
    url    :   "http://www.citycarshare.org/pod_161.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_161);
+ccs_arr.push(pod_161);
 
 var pod_162 = {
    id     :   162,
@@ -1608,10 +1487,9 @@ var pod_162 = {
    addr   :   "3510 19th Street",
    url    :   "http://www.citycarshare.org/pod_162.do",
    vtype  :   ",15,,21,",
-   vstring:   "Toyota Corolla,Toyota Matrix",
-   gmark  :   null
+   vstring:   "Toyota Corolla,Toyota Matrix"
    }
-pod_array.push(pod_162);
+ccs_arr.push(pod_162);
 
 var pod_163 = {
    id     :   163,
@@ -1621,10 +1499,9 @@ var pod_163 = {
    addr   :   "330 Sanchez Street",
    url    :   "http://www.citycarshare.org/pod_163.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_163);
+ccs_arr.push(pod_163);
 
 var pod_164 = {
    id     :   164,
@@ -1634,10 +1511,9 @@ var pod_164 = {
    addr   :   "1600 Pacific",
    url    :   "http://www.citycarshare.org/pod_164.do",
    vtype  :   ",17,,21,,13,,26,,10,",
-   vstring:   "Honda Fit,Toyota Matrix,Mini Cooper,Subaru Outback,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Honda Fit,Toyota Matrix,Mini Cooper,Subaru Outback,Toyota Prius Hybrid"
    }
-pod_array.push(pod_164);
+ccs_arr.push(pod_164);
 
 var pod_165 = {
    id     :   165,
@@ -1647,10 +1523,9 @@ var pod_165 = {
    addr   :   "186 Wool Street",
    url    :   "http://www.citycarshare.org/pod_165.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_165);
+ccs_arr.push(pod_165);
 
 var pod_166 = {
    id     :   166,
@@ -1660,10 +1535,9 @@ var pod_166 = {
    addr   :   "821 Cortland",
    url    :   "http://www.citycarshare.org/pod_166.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_166);
+ccs_arr.push(pod_166);
 
 var pod_167 = {
    id     :   167,
@@ -1673,10 +1547,9 @@ var pod_167 = {
    addr   :   "3420 Mission Street",
    url    :   "http://www.citycarshare.org/pod_167.do",
    vtype  :   ",10,,9,",
-   vstring:   "Toyota Prius Hybrid,Scion xB",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Scion xB"
    }
-pod_array.push(pod_167);
+ccs_arr.push(pod_167);
 
 var pod_168 = {
    id     :   168,
@@ -1686,10 +1559,9 @@ var pod_168 = {
    addr   :   "10 Yosemite Avenue",
    url    :   "http://www.citycarshare.org/pod_168.do",
    vtype  :   ",15,,17,,10,",
-   vstring:   "Toyota Corolla,Honda Fit,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Corolla,Honda Fit,Toyota Prius Hybrid"
    }
-pod_array.push(pod_168);
+ccs_arr.push(pod_168);
 
 var pod_169 = {
    id     :   169,
@@ -1699,10 +1571,9 @@ var pod_169 = {
    addr   :   "380 Castro",
    url    :   "http://www.citycarshare.org/pod_169.do",
    vtype  :   ",13,,17,",
-   vstring:   "Mini Cooper,Honda Fit",
-   gmark  :   null
+   vstring:   "Mini Cooper,Honda Fit"
    }
-pod_array.push(pod_169);
+ccs_arr.push(pod_169);
 
 var pod_170 = {
    id     :   170,
@@ -1712,10 +1583,9 @@ var pod_170 = {
    addr   :   "825 Front Street",
    url    :   "http://www.citycarshare.org/pod_170.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_170);
+ccs_arr.push(pod_170);
 
 var pod_172 = {
    id     :   172,
@@ -1725,10 +1595,9 @@ var pod_172 = {
    addr   :   "1110 Jackson Street",
    url    :   "http://www.citycarshare.org/pod_172.do",
    vtype  :   ",9,,10,",
-   vstring:   "Scion xB,Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Scion xB,Toyota Prius Hybrid"
    }
-pod_array.push(pod_172);
+ccs_arr.push(pod_172);
 
 var pod_173 = {
    id     :   173,
@@ -1738,10 +1607,9 @@ var pod_173 = {
    addr   :   "2091 Rose Street",
    url    :   "http://www.citycarshare.org/pod_173.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_173);
+ccs_arr.push(pod_173);
 
 var pod_175 = {
    id     :   175,
@@ -1751,10 +1619,9 @@ var pod_175 = {
    addr   :   "3300 Cesar Chavez",
    url    :   "http://www.citycarshare.org/pod_175.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_175);
+ccs_arr.push(pod_175);
 
 var pod_176 = {
    id     :   176,
@@ -1764,10 +1631,9 @@ var pod_176 = {
    addr   :   "425 1st Street",
    url    :   "http://www.citycarshare.org/pod_176.do",
    vtype  :   ",13,,9,",
-   vstring:   "Mini Cooper,Scion xB",
-   gmark  :   null
+   vstring:   "Mini Cooper,Scion xB"
    }
-pod_array.push(pod_176);
+ccs_arr.push(pod_176);
 
 var pod_177 = {
    id     :   177,
@@ -1777,10 +1643,9 @@ var pod_177 = {
    addr   :   "500 John Daly Blvd",
    url    :   "http://www.citycarshare.org/pod_177.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_177);
+ccs_arr.push(pod_177);
 
 var pod_178 = {
    id     :   178,
@@ -1790,10 +1655,9 @@ var pod_178 = {
    addr   :   "4881 Telegraph Avenue",
    url    :   "http://www.citycarshare.org/pod_178.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_178);
+ccs_arr.push(pod_178);
 
 var pod_179 = {
    id     :   179,
@@ -1803,10 +1667,9 @@ var pod_179 = {
    addr   :   "1414 Walnut Street",
    url    :   "http://www.citycarshare.org/pod_179.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_179);
+ccs_arr.push(pod_179);
 
 var pod_180 = {
    id     :   180,
@@ -1816,10 +1679,9 @@ var pod_180 = {
    addr   :   "2110 Addison Street",
    url    :   "http://www.citycarshare.org/pod_180.do",
    vtype  :   ",15,",
-   vstring:   "Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla"
    }
-pod_array.push(pod_180);
+ccs_arr.push(pod_180);
 
 var pod_182 = {
    id     :   182,
@@ -1829,10 +1691,9 @@ var pod_182 = {
    addr   :   "1239 17th Avenue",
    url    :   "http://www.citycarshare.org/pod_182.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_182);
+ccs_arr.push(pod_182);
 
 var pod_184 = {
    id     :   184,
@@ -1842,10 +1703,9 @@ var pod_184 = {
    addr   :   "2144 Market Street",
    url    :   "http://www.citycarshare.org/pod_184.do",
    vtype  :   ",9,",
-   vstring:   "Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB"
    }
-pod_array.push(pod_184);
+ccs_arr.push(pod_184);
 
 var pod_185 = {
    id     :   185,
@@ -1855,10 +1715,9 @@ var pod_185 = {
    addr   :   "698 Indiana Street",
    url    :   "http://www.citycarshare.org/pod_185.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_185);
+ccs_arr.push(pod_185);
 
 var pod_186 = {
    id     :   186,
@@ -1868,10 +1727,9 @@ var pod_186 = {
    addr   :   "207 Claremont Blvd",
    url    :   "http://www.citycarshare.org/pod_186.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_186);
+ccs_arr.push(pod_186);
 
 var pod_187 = {
    id     :   187,
@@ -1881,10 +1739,9 @@ var pod_187 = {
    addr   :   "2314 Valdez Street",
    url    :   "http://www.citycarshare.org/pod_187.do",
    vtype  :   ",15,",
-   vstring:   "Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Corolla"
    }
-pod_array.push(pod_187);
+ccs_arr.push(pod_187);
 
 var pod_188 = {
    id     :   188,
@@ -1894,10 +1751,9 @@ var pod_188 = {
    addr   :   "64 Willow Street",
    url    :   "http://www.citycarshare.org/pod_188.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_188);
+ccs_arr.push(pod_188);
 
 var pod_189 = {
    id     :   189,
@@ -1907,10 +1763,9 @@ var pod_189 = {
    addr   :   "123 OFarrell Street",
    url    :   "http://www.citycarshare.org/pod_189.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_189);
+ccs_arr.push(pod_189);
 
 var pod_191 = {
    id     :   191,
@@ -1920,10 +1775,9 @@ var pod_191 = {
    addr   :   "88 Myrtle Street",
    url    :   "http://www.citycarshare.org/pod_191.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_191);
+ccs_arr.push(pod_191);
 
 var pod_192 = {
    id     :   192,
@@ -1933,10 +1787,9 @@ var pod_192 = {
    addr   :   "56 Dr Carlton B Goodlett Place",
    url    :   "http://www.citycarshare.org/pod_192.do",
    vtype  :   ",25,",
-   vstring:   "Toyota Prius Plugin Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Plugin Hybrid"
    }
-pod_array.push(pod_192);
+ccs_arr.push(pod_192);
 
 var pod_193 = {
    id     :   193,
@@ -1946,10 +1799,9 @@ var pod_193 = {
    addr   :   "1894 University Avenue",
    url    :   "http://www.citycarshare.org/pod_193.do",
    vtype  :   ",26,",
-   vstring:   "Subaru Outback",
-   gmark  :   null
+   vstring:   "Subaru Outback"
    }
-pod_array.push(pod_193);
+ccs_arr.push(pod_193);
 
 var pod_194 = {
    id     :   194,
@@ -1959,10 +1811,9 @@ var pod_194 = {
    addr   :   "2175 Kittredge Street",
    url    :   "http://www.citycarshare.org/pod_194.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_194);
+ccs_arr.push(pod_194);
 
 var pod_196 = {
    id     :   196,
@@ -1972,10 +1823,9 @@ var pod_196 = {
    addr   :   "2220 Oxford Street",
    url    :   "http://www.citycarshare.org/pod_196.do",
    vtype  :   ",6,",
-   vstring:   "Honda Civic Hybrid",
-   gmark  :   null
+   vstring:   "Honda Civic Hybrid"
    }
-pod_array.push(pod_196);
+ccs_arr.push(pod_196);
 
 var pod_198 = {
    id     :   198,
@@ -1985,10 +1835,9 @@ var pod_198 = {
    addr   :   "1643 Shattuck Avenue",
    url    :   "http://www.citycarshare.org/pod_198.do",
    vtype  :   ",10,,10,,15,",
-   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Corolla",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid,Toyota Prius Hybrid,Toyota Corolla"
    }
-pod_array.push(pod_198);
+ccs_arr.push(pod_198);
 
 var pod_199 = {
    id     :   199,
@@ -1998,10 +1847,9 @@ var pod_199 = {
    addr   :   "671 Alabama Street",
    url    :   "http://www.citycarshare.org/pod_199.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_199);
+ccs_arr.push(pod_199);
 
 var pod_200 = {
    id     :   200,
@@ -2011,10 +1859,9 @@ var pod_200 = {
    addr   :   "1080 Torney Avenue",
    url    :   "http://www.citycarshare.org/pod_200.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_200);
+ccs_arr.push(pod_200);
 
 var pod_201 = {
    id     :   201,
@@ -2024,10 +1871,9 @@ var pod_201 = {
    addr   :   "2312 Central Avenue",
    url    :   "http://www.citycarshare.org/pod_201.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_201);
+ccs_arr.push(pod_201);
 
 var pod_202 = {
    id     :   202,
@@ -2037,10 +1883,9 @@ var pod_202 = {
    addr   :   "2410 Santa Clara Ave",
    url    :   "http://www.citycarshare.org/pod_202.do",
    vtype  :   ",9,",
-   vstring:   "Scion xB",
-   gmark  :   null
+   vstring:   "Scion xB"
    }
-pod_array.push(pod_202);
+ccs_arr.push(pod_202);
 
 var pod_203 = {
    id     :   203,
@@ -2050,10 +1895,9 @@ var pod_203 = {
    addr   :   "18 8th Street",
    url    :   "http://www.citycarshare.org/pod_203.do",
    vtype  :   ",8,,21,",
-   vstring:   "Toyota Tacoma,Toyota Matrix",
-   gmark  :   null
+   vstring:   "Toyota Tacoma,Toyota Matrix"
    }
-pod_array.push(pod_203);
+ccs_arr.push(pod_203);
 
 var pod_205 = {
    id     :   205,
@@ -2063,10 +1907,9 @@ var pod_205 = {
    addr   :   "102 Diamond Street",
    url    :   "http://www.citycarshare.org/pod_205.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_205);
+ccs_arr.push(pod_205);
 
 var pod_207 = {
    id     :   207,
@@ -2076,10 +1919,9 @@ var pod_207 = {
    addr   :   "376 Larkin Street",
    url    :   "http://www.citycarshare.org/pod_207.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_207);
+ccs_arr.push(pod_207);
 
 var pod_208 = {
    id     :   208,
@@ -2089,10 +1931,9 @@ var pod_208 = {
    addr   :   "702 Lombard Street",
    url    :   "http://www.citycarshare.org/pod_208.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_208);
+ccs_arr.push(pod_208);
 
 var pod_209 = {
    id     :   209,
@@ -2102,10 +1943,9 @@ var pod_209 = {
    addr   :   "131 Fremont Street",
    url    :   "http://www.citycarshare.org/pod_209.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_209);
+ccs_arr.push(pod_209);
 
 var pod_210 = {
    id     :   210,
@@ -2115,10 +1955,9 @@ var pod_210 = {
    addr   :   "1221 Jones Street",
    url    :   "http://www.citycarshare.org/pod_210.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_210);
+ccs_arr.push(pod_210);
 
 var pod_211 = {
    id     :   211,
@@ -2128,10 +1967,9 @@ var pod_211 = {
    addr   :   "3800 Howe Street",
    url    :   "http://www.citycarshare.org/pod_211.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_211);
+ccs_arr.push(pod_211);
 
 var pod_212 = {
    id     :   212,
@@ -2141,10 +1979,9 @@ var pod_212 = {
    addr   :   "2410 Warring Street",
    url    :   "http://www.citycarshare.org/pod_212.do",
    vtype  :   ",21,",
-   vstring:   "Toyota Matrix",
-   gmark  :   null
+   vstring:   "Toyota Matrix"
    }
-pod_array.push(pod_212);
+ccs_arr.push(pod_212);
 
 var pod_215 = {
    id     :   215,
@@ -2154,10 +1991,9 @@ var pod_215 = {
    addr   :   "2210 Bancroft Way",
    url    :   "http://www.citycarshare.org/pod_215.do",
    vtype  :   ",5,",
-   vstring:   "Scion xA",
-   gmark  :   null
+   vstring:   "Scion xA"
    }
-pod_array.push(pod_215);
+ccs_arr.push(pod_215);
 
 var pod_217 = {
    id     :   217,
@@ -2167,10 +2003,9 @@ var pod_217 = {
    addr   :   "10 Kirkham Street",
    url    :   "http://www.citycarshare.org/pod_217.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_217);
+ccs_arr.push(pod_217);
 
 var pod_218 = {
    id     :   218,
@@ -2180,10 +2015,9 @@ var pod_218 = {
    addr   :   "1568 4th Street",
    url    :   "http://www.citycarshare.org/pod_218.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_218);
+ccs_arr.push(pod_218);
 
 var pod_219 = {
    id     :   219,
@@ -2193,10 +2027,9 @@ var pod_219 = {
    addr   :   "301 Claremont Blvd",
    url    :   "http://www.citycarshare.org/pod_219.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_219);
+ccs_arr.push(pod_219);
 
 var pod_220 = {
    id     :   220,
@@ -2206,10 +2039,9 @@ var pod_220 = {
    addr   :   "1340 Jessie St",
    url    :   "http://www.citycarshare.org/pod_220.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_220);
+ccs_arr.push(pod_220);
 
 var pod_221 = {
    id     :   221,
@@ -2219,10 +2051,9 @@ var pod_221 = {
    addr   :   "200 Linden Street",
    url    :   "http://www.citycarshare.org/pod_221.do",
    vtype  :   ",16,",
-   vstring:   "Scion xD",
-   gmark  :   null
+   vstring:   "Scion xD"
    }
-pod_array.push(pod_221);
+ccs_arr.push(pod_221);
 
 var pod_222 = {
    id     :   222,
@@ -2232,10 +2063,9 @@ var pod_222 = {
    addr   :   "1800 Van Ness Avenue",
    url    :   "http://www.citycarshare.org/pod_222.do",
    vtype  :   ",14,",
-   vstring:   "Toyota Yaris",
-   gmark  :   null
+   vstring:   "Toyota Yaris"
    }
-pod_array.push(pod_222);
+ccs_arr.push(pod_222);
 
 var pod_223 = {
    id     :   223,
@@ -2245,10 +2075,9 @@ var pod_223 = {
    addr   :   "268 Quane St",
    url    :   "http://www.citycarshare.org/pod_223.do",
    vtype  :   ",17,",
-   vstring:   "Honda Fit",
-   gmark  :   null
+   vstring:   "Honda Fit"
    }
-pod_array.push(pod_223);
+ccs_arr.push(pod_223);
 
 var pod_225 = {
    id     :   225,
@@ -2258,10 +2087,9 @@ var pod_225 = {
    addr   :   "626 14th Street",
    url    :   "http://www.citycarshare.org/pod_225.do",
    vtype  :   ",10,",
-   vstring:   "Toyota Prius Hybrid",
-   gmark  :   null
+   vstring:   "Toyota Prius Hybrid"
    }
-pod_array.push(pod_225);
+ccs_arr.push(pod_225);
 
 var map;
 var markerArray = [];
@@ -2387,6 +2215,25 @@ var uberfares = {
   flag:8,
   mileage:4.9,
   idleminute:1.25
+}
+
+function calculate_distance(lat1, lon1, lat2, lon2) {
+    var radius = 3959.0; //Earth Radius in mi
+    var radianLat1 = ToRadians(lat1);
+    var radianLon1 = ToRadians(lon1);
+    var radianLat2 = ToRadians(lat2);
+    var radianLon2 = ToRadians(lon2);
+    var radianDistanceLat = radianLat1 - radianLat2;
+    var radianDistanceLon = radianLon1 - radianLon2;
+    var sinLat = Math.sin(radianDistanceLat / 2.0);
+    var sinLon = Math.sin(radianDistanceLon / 2.0);
+    var a = Math.pow(sinLat, 2.0) + Math.cos(radianLat1) * Math.cos(radianLat2) * Math.pow(sinLon, 2.0);
+    var d = radius * 2 * Math.asin(Math.min(1, Math.sqrt(a)));
+    return d;
+}
+
+function ToRadians(degree) {
+  return (degree * (Math.PI / 180));
 }
 
 function tooltips(){
@@ -2519,31 +2366,34 @@ function addCCSlocations(map, lat, lon){
         // The anchor for this image is the base of the flagpole at 0,32.
         new google.maps.Point(12, 12));
   
-  for (pod in pod_array) {
-    //check to see if within bounds
-    if(pod_array[pod].lat>SBound && pod_array[pod].lat<NBound && pod_array[pod].lon>WBound && pod_array[pod].lon<EBound){
-      var marker = new google.maps.Marker({
-        position: new google.maps.LatLng(pod_array[pod].lat,pod_array[pod].lon),
-        title: pod_array[pod].name,
-        map:map,
-        icon: image,
-        zIndex:1
-      });
+  for (pod in ccs_arr) {
+    //check to see if within bounding box
+    if(ccs_arr[pod].lat>SBound && ccs_arr[pod].lat<NBound && ccs_arr[pod].lon>WBound && ccs_arr[pod].lon<EBound){
+      //Check to see if within 1 mile radius
+      if(calculate_distance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon)<=1){
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng(ccs_arr[pod].lat,ccs_arr[pod].lon),
+          title: ccs_arr[pod].name,
+          map:map,
+          icon: image,
+          zIndex:1
+        });
       
-      //Add to marker array
-      markerArray.push(marker);
+        //Add to marker array
+        markerArray.push(marker);
 
-      google.maps.event.addListener(marker,'click', (function(marker,pod) {
-        return function() {
-          popup.setContent(
-            "<ul class=\"ccs\">" +
-            "<li id=\"ccsName\"><a href=\"" + pod_array[pod].url + "\" target=\"_new\" title='Click to view CityCarShare Pod info'>" + pod_array[pod].name + "</a></li>" + 
-            "<li id=\"ccsAddy\">" + pod_array[pod].addr + "</li>" + 
-            "<li id=\"ccsCars\">" + "Cars:&nbsp;" + pod_array[pod].vstring + "</li>" + "</ul>"
-          );
-          popup.open(map,marker);
-        }
-      }) (marker,pod));
+        google.maps.event.addListener(marker,'click', (function(marker,pod) {
+          return function() {
+            popup.setContent(
+              "<ul class=\"ccs\">" +
+              "<li id=\"ccsName\"><a href=\"" + ccs_arr[pod].url + "\" target=\"_new\" title='Click to view CityCarShare Pod info'>" + ccs_arr[pod].name + "</a></li>" + 
+              "<li id=\"ccsAddy\">" + ccs_arr[pod].addr + "</li>" + 
+              "<li id=\"ccsCars\">" + "Cars:&nbsp;" + ccs_arr[pod].vstring + "</li>" + "</ul>"
+            );
+            popup.open(map,marker);
+          }
+        }) (marker,pod));
+      }
     }
   }
 }
@@ -3068,9 +2918,6 @@ google.setOnLoadCallback(function(){
   }
  
   //Resize window after geolocation section loads
-  var newWindowHeight = $(window).height();
-  $("#map_canvas").css("min-height", (newWindowHeight-1));
-  $("#map_canvas").css("height", (newWindowHeight-1));
-  $("#loading_image").css("top", ((newWindowHeight)/3) );
+  resizeWindow();
 });
 
