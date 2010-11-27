@@ -370,21 +370,19 @@ div.tooltip {
 }
 
 /* google maps info window popup styling */
-ul.ccs {
+ul.pod {
 	list-style: none;
 	font-size: 12px;
 	padding: 0px;
 }
-ul.ccs li#ccsName {
+ul.pod li#podName {
 	font-weight: bold;
 	margin-bottom: 10px;
+	color: #666;
 }
-li#ccsName a {
+li#podName a {
 	text-decoration: none;
 }
-ul.ccs li#ccsAddy {
+ul.ccs li#podAddy {
 	margin-bottom: 5px;
-}
-ul.ccs li#ccsCars {
-
 }

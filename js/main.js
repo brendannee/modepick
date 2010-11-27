@@ -1,5 +1,6 @@
 var map;
 var markerArray = [];
+var popup;
 var triptime = 0;
 var tripweekendzipcartime = 0;
 var tripweekendccstime = 0;
@@ -143,6 +144,78 @@ function ToRadians(degree) {
   return (degree * (Math.PI / 180));
 }
 
+var Url = {
+ 
+  // public method for url encoding
+  encode : function (string) {
+    return escape(this._utf8_encode(string));
+  },
+ 
+  // public method for url decoding
+  decode : function (string) {
+    return this._utf8_decode(unescape(string));
+  },
+ 
+  // private method for UTF-8 encoding
+  _utf8_encode : function (string) {
+    string = string.replace(/\r\n/g,"\n");
+    var utftext = "";
+ 
+    for (var n = 0; n < string.length; n++) {
+ 
+      var c = string.charCodeAt(n);
+ 
+      if (c < 128) {
+        utftext += String.fromCharCode(c);
+      }
+      else if((c > 127) && (c < 2048)) {
+        utftext += String.fromCharCode((c >> 6) | 192);
+        utftext += String.fromCharCode((c & 63) | 128);
+      }
+      else {
+        utftext += String.fromCharCode((c >> 12) | 224);
+        utftext += String.fromCharCode(((c >> 6) & 63) | 128);
+        utftext += String.fromCharCode((c & 63) | 128);
+      }
+ 
+    }
+ 
+    return utftext;
+  },
+ 
+  // private method for UTF-8 decoding
+  _utf8_decode : function (utftext) {
+    var string = "";
+    var i = 0;
+    var c = c1 = c2 = 0;
+ 
+    while ( i < utftext.length ) {
+ 
+      c = utftext.charCodeAt(i);
+ 
+      if (c < 128) {
+        string += String.fromCharCode(c);
+        i++;
+      }
+      else if((c > 191) && (c < 224)) {
+        c2 = utftext.charCodeAt(i+1);
+        string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+        i += 2;
+      }
+      else {
+        c2 = utftext.charCodeAt(i+1);
+        c3 = utftext.charCodeAt(i+2);
+        string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
+        i += 3;
+      }
+ 
+    }
+ 
+    return string;
+  }
+ 
+}
+
 function tooltips(){
     // select all desired input fields and attach tooltips to them 
     $("#startlocation,#destinationlocation,#zipcarrate,#extramiles").tooltip({ 
@@ -251,63 +324,106 @@ function clearOverlays() {
   }
 }
 
-function addCCSlocations(map, lat, lon){
-  //Add city carshare pods to map
-  
-  //clear CCS markers
-  clearOverlays()
+function add_carshare_locations(map, lat, lon, type){
+  //Add carshare locations to map
   
   //Create 1 mile bounding box
-  var NBound = lat+0.0075;
-  var SBound = lat-0.0075; 
-  var EBound = lon+0.0095;
-  var WBound = lon-0.0095;
+  var NBound = lat+0.01;
+  var SBound = lat-0.01; 
+  var EBound = lon+0.01;
+  var WBound = lon-0.01;
   
-  var popup = new google.maps.InfoWindow({maxWidth:200});
+  if(type=='ccs'){
+    var image = new google.maps.MarkerImage(
+      'images/ccs.png',
+      // This marker is 20 pixels wide by 32 pixels tall.
+      new google.maps.Size(24, 24),
+      // The origin for this image is 0,0.
+      new google.maps.Point(0,0),
+      // The anchor for this image is the base of the flagpole at 0,32.
+      new google.maps.Point(12, 12));
   
-  var image = new google.maps.MarkerImage('images/ccs.png',
-        // This marker is 20 pixels wide by 32 pixels tall.
-        new google.maps.Size(24, 24),
-        // The origin for this image is 0,0.
-        new google.maps.Point(0,0),
-        // The anchor for this image is the base of the flagpole at 0,32.
-        new google.maps.Point(12, 12));
-  
-  for (pod in ccs_arr) {
-    //check to see if within bounding box
-    if(ccs_arr[pod].lat>SBound && ccs_arr[pod].lat<NBound && ccs_arr[pod].lon>WBound && ccs_arr[pod].lon<EBound){
-      //Check to see if within 1 mile radius
-      if(calculate_distance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon)<=1){
-        var marker = new google.maps.Marker({
-          position: new google.maps.LatLng(ccs_arr[pod].lat,ccs_arr[pod].lon),
-          title: ccs_arr[pod].name,
-          map:map,
-          icon: image,
-          zIndex:1
-        });
+    for (pod in ccs_arr) {
+      //check to see if within bounding box
+      if(ccs_arr[pod].lat>SBound && ccs_arr[pod].lat<NBound && ccs_arr[pod].lon>WBound && ccs_arr[pod].lon<EBound){
+        //Check to see if within 1 mile radius
+        if(calculate_distance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon)<=1){
+          var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(ccs_arr[pod].lat,ccs_arr[pod].lon),
+            title: ccs_arr[pod].name.replace(/&amp;/g,'&'),
+            map:map,
+            icon: image,
+            zIndex:1
+          });
       
-        //Add to marker array
-        markerArray.push(marker);
+          //Add to marker array
+          markerArray.push(marker);
 
-        google.maps.event.addListener(marker,'click', (function(marker,pod) {
-          return function() {
-            popup.setContent(
-              "<ul class=\"ccs\">" +
-              "<li id=\"ccsName\"><a href=\"" + ccs_arr[pod].url + "\" target=\"_new\" title='Click to view CityCarShare Pod info'>" + ccs_arr[pod].name + "</a></li>" + 
-              "<li id=\"ccsAddy\">" + ccs_arr[pod].addr + "</li>" + 
-              "<li id=\"ccsCars\">" + "Cars:&nbsp;" + ccs_arr[pod].vstring + "</li>" + "</ul>"
-            );
-            popup.open(map,marker);
-          }
-        }) (marker,pod));
+          google.maps.event.addListener(marker,'click', (function(marker,pod) {
+            return function() {
+              popup.setContent(
+                "<ul class=\"pod\">" +
+                "<li id=\"podName\"><a href=\"" + ccs_arr[pod].url + "\" target=\"_new\" title='Click to view CityCarShare Pod info'>" + ccs_arr[pod].name + "</a></li>" + 
+                "<li id=\"podAddy\">" + ccs_arr[pod].addr + "</li>" + 
+                "<li id=\"podCars\">" + "Cars:&nbsp;" + ccs_arr[pod].vstring + "</li>" + "</ul>"
+              );
+              popup.open(map,marker);
+            }
+          }) (marker,pod));
+        }
+      }
+    }
+  } else if(type == 'zipcar'){
+    var image = new google.maps.MarkerImage(
+      'images/zipcar.png',
+      // This marker is 20 pixels wide by 32 pixels tall.
+      new google.maps.Size(24, 24),
+      // The origin for this image is 0,0.
+      new google.maps.Point(0,0),
+      // The anchor for this image is the base of the flagpole at 0,32.
+      new google.maps.Point(12, 12));
+  
+    for (pod in zipcar_arr) {
+      //check to see if within bounding box
+      if(zipcar_arr[pod][2]>SBound && zipcar_arr[pod][2]<NBound && zipcar_arr[pod][3]>WBound && zipcar_arr[pod][3]<EBound){
+        //Check to see if within 1 mile radius
+        if(calculate_distance(zipcar_arr[pod][2],zipcar_arr[pod][3],lat,lon)<=1){
+          
+          var marker = new google.maps.Marker({
+            position: new google.maps.LatLng(zipcar_arr[pod][2],zipcar_arr[pod][3]),
+            title: Url.decode(zipcar_arr[pod][1]).replace(/\+/g,' '),
+            map:map,
+            icon: image,
+            zIndex:1
+          });
+      
+          //Add to marker array
+          markerArray.push(marker);
+
+          google.maps.event.addListener(marker,'click', (function(marker,pod) {
+            return function() {
+              popup.setContent(
+                "<ul class=\"pod\">" + "<li id=\"podName\">" + Url.decode(zipcar_arr[pod][1]).replace(/\+/g,' ') + "</li>" + "</ul>"
+              );
+              popup.open(map,marker);
+            }
+          }) (marker,pod));
+        }
       }
     }
   }
 }
 
 function computeTotalDistance(result) {
-  //Add CCS locations
-  addCCSlocations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa)
+  //clear markers
+  clearOverlays()
+  
+  //Create popup window
+  popup = new google.maps.InfoWindow({maxWidth:200});
+  
+  //Add CCS and zipcar locations
+  add_carshare_locations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa, 'ccs');
+  add_carshare_locations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa, 'zipcar');
 
   $('#warnings_panel').html('');
   var onewaydistance = 0;
