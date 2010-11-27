@@ -125,7 +125,7 @@ var uberfares = {
   idleminute:1.25
 }
 
-function calculate_distance(lat1, lon1, lat2, lon2) {
+function calculateDistance(lat1, lon1, lat2, lon2) {
     var radius = 3959.0; //Earth Radius in mi
     var radianLat1 = ToRadians(lat1);
     var radianLon1 = ToRadians(lon1);
@@ -216,7 +216,7 @@ var Url = {
  
 }
 
-function tooltips(){
+function enableTooltips(){
     // select all desired input fields and attach tooltips to them 
     $("#startlocation,#destinationlocation,#zipcarrate,#extramiles").tooltip({ 
         // place tooltip on the right edge 
@@ -324,7 +324,7 @@ function clearOverlays() {
   }
 }
 
-function add_carshare_locations(map, lat, lon, type){
+function addCarshareLocations(map, lat, lon, type){
   //Add carshare locations to map
   
   //Create 1 mile bounding box
@@ -347,7 +347,7 @@ function add_carshare_locations(map, lat, lon, type){
       //check to see if within bounding box
       if(ccs_arr[pod].lat>SBound && ccs_arr[pod].lat<NBound && ccs_arr[pod].lon>WBound && ccs_arr[pod].lon<EBound){
         //Check to see if within 1 mile radius
-        if(calculate_distance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon)<=1){
+        if(calculateDistance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon)<=1){
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(ccs_arr[pod].lat,ccs_arr[pod].lon),
             title: ccs_arr[pod].name.replace(/&amp;/g,'&'),
@@ -387,7 +387,7 @@ function add_carshare_locations(map, lat, lon, type){
       //check to see if within bounding box
       if(zipcar_arr[pod][2]>SBound && zipcar_arr[pod][2]<NBound && zipcar_arr[pod][3]>WBound && zipcar_arr[pod][3]<EBound){
         //Check to see if within 1 mile radius
-        if(calculate_distance(zipcar_arr[pod][2],zipcar_arr[pod][3],lat,lon)<=1){
+        if(calculateDistance(zipcar_arr[pod][2],zipcar_arr[pod][3],lat,lon)<=1){
           
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(zipcar_arr[pod][2],zipcar_arr[pod][3]),
@@ -414,7 +414,7 @@ function add_carshare_locations(map, lat, lon, type){
   }
 }
 
-function computeTotalDistance(result) {
+function calculateTrip(result) {
   //clear markers
   clearOverlays()
   
@@ -422,8 +422,8 @@ function computeTotalDistance(result) {
   popup = new google.maps.InfoWindow({maxWidth:200});
   
   //Add CCS and zipcar locations
-  add_carshare_locations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa, 'ccs');
-  add_carshare_locations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa, 'zipcar');
+  addCarshareLocations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa, 'ccs');
+  addCarshareLocations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa, 'zipcar');
 
   $('#warnings_panel').html('');
   var onewaydistance = 0;
@@ -884,7 +884,7 @@ google.setOnLoadCallback(function(){
   })
   
   google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-    computeTotalDistance(directionsDisplay.directions);
+    calculateTrip(directionsDisplay.directions);
     
     //Highlight results box on change
     $('#resultsBox').effect("highlight", {color:"#d1d1d1"}, 3000);
@@ -922,7 +922,7 @@ google.setOnLoadCallback(function(){
              $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
            }
            directionsDisplay.setDirections(response);
-           computeTotalDistance(response);
+           calculateTrip(response);
          }
        });
        
@@ -933,7 +933,7 @@ google.setOnLoadCallback(function(){
   });
 
   //Enable Tooltips
-  tooltips();
+  enableTooltips();
 
   //Show geolocation if browser supports it
   if (navigator.geolocation) {  
