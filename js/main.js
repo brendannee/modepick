@@ -474,7 +474,6 @@ function calculateTrip(response) {
    });
    
    //Do Biking Directions
-
    var request = {
        origin: response.routes[0].legs[0].start_address,
        destination: response.routes[0].legs[leg_count-1].end_address,
@@ -489,12 +488,16 @@ function calculateTrip(response) {
         calculateBikeTrip(response);
       }
     });
+    
+    //Do Transit Directions 
+    //Use lat lon coordinates to avoid issues with start/end names
+    calculateTransitTrip(response.routes[0].legs[0].start_location.va+","+response.routes[0].legs[0].start_location.wa,
+      response.routes[0].legs[leg_count-1].end_location.va+","+response.routes[0].legs[leg_count-1].end_location.wa);
   
   $("#results").show(); 
 }
 
 function calculateWalkTrip(response){
-  console.log(response);
   var onewaydistance = 0;
   var onewaytime = 0;
   for (i = 0; i < response.routes[0].legs.length; i++) {
@@ -516,7 +519,6 @@ function calculateWalkTrip(response){
 }
 
 function calculateBikeTrip(response){
-  console.log(response);
   var onewaydistance = 0;
   var onewaytime = 0;
   for (i = 0; i < response.routes[0].legs.length; i++) {
@@ -535,6 +537,43 @@ function calculateBikeTrip(response){
     $("#bikingdistance").html("Biking Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
   $("#bikingtime").html("Est. biking time: <strong>" + timetext + "</strong>");
+}
+
+
+function calculateTransitTrip(start,end,date,time){
+  //Use YQL to scrape google maps for screenreader to get transit directions
+  
+  //Clear existing directions
+  $("#transitroutes").html('');
+  $("#transitfare").html('');
+  $("#transittime").html('');
+  
+  //Get departure date and time
+  var d=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
+  var date = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+  var time = d.getHours() + ':' + d.getMinutes();
+  
+  //Get URL ready
+  var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
+  var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'') + '&format=json';  
+  
+   // Request that YSQL string, and run a callback function.  
+  $.getJSON( yql, cbfunc );  
+  function cbfunc(data) {  
+    console.log(data)
+    // If we have something to work with...  
+    if(data.query.count > 0){
+      //Maybe we scraped a result
+      $("#transitroutes").html(data.query.results.p[0]);
+      $("#transittime").html("Est. roundtrip transit time: <strong>" + data.query.results.p[1].a.content + "</strong>");
+      if(typeof data.query.results.p[2] == 'string' && data.query.results.p[2].substr(0,1)=='$'){
+        //Fare info is provided
+        $("#transitfare").html("Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong>");
+      }
+    } else{
+      $("#transitroutes").html("No transit information available");
+    }
+  }
 }
 
 function computeTotalTime(){
@@ -962,6 +1001,7 @@ google.setOnLoadCallback(function(){
     }
   })
   
+  //Bind recalc function to 'directions_changed' event
   google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
     calculateTrip(directionsDisplay.directions);
     
@@ -972,8 +1012,6 @@ google.setOnLoadCallback(function(){
     $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
     $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
   });
-
-  $('#welcome_screen').fadeIn();
   
   $("#inputs").submit(function(){
 
@@ -999,7 +1037,6 @@ google.setOnLoadCallback(function(){
              $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
            }
            directionsDisplay.setDirections(response);
-           calculateTrip(response);
          }
        });
      }
@@ -1008,6 +1045,9 @@ google.setOnLoadCallback(function(){
      $('#welcome_screen').fadeOut();   
      return false;
   });
+  
+  //Show welcome screen
+  $('#welcome_screen').fadeIn();
 
   //Enable Tooltips
   enableTooltips();
