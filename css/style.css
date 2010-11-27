@@ -128,7 +128,7 @@ ul.input_boxes li .textbox{
 	margin-bottom:5px;
 }
 
-#resultsBox{
+#resultsWrapper{
 	min-width:1024px;
 	margin:10px;
 	font-size:14px;
@@ -144,11 +144,17 @@ ul.input_boxes li .textbox{
   display:none;
   padding: 10px;
   background: #d9f2d8;	
+  overflow:hidden;
 }
 
 #tripcomparisons {
 	padding:10px;
 	min-height: 160px;
+}
+
+#tripcomparisons h2 span{
+  float:right;
+  display:block;
 }
 
 .mode {
@@ -164,9 +170,9 @@ ul.input_boxes li .textbox{
   margin:0;
 }
 
-#tripcomparisons h2 span{
-  float:right;
-  display:block;
+.moderesult{
+  float:left;
+  width:238px;
 }
 
 .summary{

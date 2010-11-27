@@ -414,7 +414,7 @@ function addCarshareLocations(map, lat, lon, type){
   }
 }
 
-function calculateTrip(result) {
+function calculateTrip(response) {
   //clear markers
   clearOverlays()
   
@@ -422,16 +422,17 @@ function calculateTrip(result) {
   popup = new google.maps.InfoWindow({maxWidth:200});
   
   //Add CCS and zipcar locations
-  addCarshareLocations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa, 'ccs');
-  addCarshareLocations(map, result.routes[0].legs[0].start_location.va, result.routes[0].legs[0].start_location.wa, 'zipcar');
+  addCarshareLocations(map, response.routes[0].legs[0].start_location.va, response.routes[0].legs[0].start_location.wa, 'ccs');
+  addCarshareLocations(map, response.routes[0].legs[0].start_location.va, response.routes[0].legs[0].start_location.wa, 'zipcar');
 
   $('#warnings_panel').html('');
   var onewaydistance = 0;
   var onewaytime = 0;
-  for (i = 0; i < result.routes[0].legs.length; i++) {
+  var leg_count = response.routes[0].legs.length;
+  for (i = 0; i < leg_count; i++) {
     //Convert to miles
-    onewaydistance += (result.routes[0].legs[i].distance.value/ 1609.);
-    onewaytime += result.routes[0].legs[i].duration.value;
+    onewaydistance += (response.routes[0].legs[i].distance.value/ 1609.);
+    onewaytime += response.routes[0].legs[i].duration.value;
   }
   //Convert to hours minutes
   timetext = formatTime(onewaytime*2/60);
@@ -442,17 +443,98 @@ function calculateTrip(result) {
   estimateCosts();
   
   if($('#extramiles').val()!=''){
-    $("#totaldistance").html("Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
+    $("#drivingdistance").html("Driving Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
   } else {
-    $("#totaldistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
+    $("#drivingdistance").html("Driving Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
-  $("#onewaytime").html("Est. driving time: <strong>" + timetext + "</strong>");
+  $("#drivingtime").html("Est. driving time: <strong>" + timetext + "</strong>");
   
   //Check if estimated driving time exceeds trip time
   if(triptime<(onewaytime*2/60)){
     $('#warnings_panel').append("<li>Your estimated driving time exceeds your reservation time.</li>");
   }
+  
+  //Do Walking Directions
+  // Instantiate a directions service for walking.
+  DirectionsService = new google.maps.DirectionsService();
+  
+  var request = {
+      origin: response.routes[0].legs[0].start_address,
+      destination: response.routes[0].legs[leg_count-1].end_address,
+      travelMode: google.maps.DirectionsTravelMode.WALKING
+  };
+  DirectionsService.route(request, function(response, status) {
+     if (status == google.maps.DirectionsStatus.OK) {
+       if(response.routes[0].warnings!=''){
+         $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
+       }
+       //directionsDisplay.setDirections(response);
+       calculateWalkTrip(response);
+     }
+   });
+   
+   //Do Biking Directions
+
+   var request = {
+       origin: response.routes[0].legs[0].start_address,
+       destination: response.routes[0].legs[leg_count-1].end_address,
+       travelMode: google.maps.DirectionsTravelMode.BICYCLING
+   };
+   DirectionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        if(response.routes[0].warnings!=''){
+          $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
+        }
+        //directionsDisplay.setDirections(response);
+        calculateBikeTrip(response);
+      }
+    });
+  
   $("#results").show(); 
+}
+
+function calculateWalkTrip(response){
+  console.log(response);
+  var onewaydistance = 0;
+  var onewaytime = 0;
+  for (i = 0; i < response.routes[0].legs.length; i++) {
+    //Convert to miles
+    onewaydistance += (response.routes[0].legs[i].distance.value/ 1609.);
+    onewaytime += response.routes[0].legs[i].duration.value;
+  }
+  //Convert to hours minutes
+  timetext = formatTime(onewaytime*2/60);
+  
+  tripdist = Math.round(onewaydistance*2);
+  
+  if($('#extramiles').val()!=''){
+    $("#walkingdistance").html("Walking Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
+  } else {
+    $("#walkingdistance").html("Walking Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
+  }
+  $("#walkingtime").html("Est. walking time: <strong>" + timetext + "</strong>");
+}
+
+function calculateBikeTrip(response){
+  console.log(response);
+  var onewaydistance = 0;
+  var onewaytime = 0;
+  for (i = 0; i < response.routes[0].legs.length; i++) {
+    //Convert to miles
+    onewaydistance += (response.routes[0].legs[i].distance.value/ 1609.);
+    onewaytime += response.routes[0].legs[i].duration.value;
+  }
+  //Convert to hours minutes
+  timetext = formatTime(onewaytime*2/60);
+  
+  tripdist = Math.round(onewaydistance*2);
+  
+  if($('#extramiles').val()!=''){
+    $("#bikingdistance").html("Biking Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
+  } else {
+    $("#bikingdistance").html("Biking Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
+  }
+  $("#bikingtime").html("Est. biking time: <strong>" + timetext + "</strong>");
 }
 
 function computeTotalTime(){
@@ -663,13 +745,10 @@ function computeTotalTime(){
     return false;
   }
   
-  $('#reservationtime').html("Reservation Time: <strong>" + formatTime(triptime) + "</strong>");
   return true;
-  
 }
 
 function estimateCosts(){
-  
   var ccscost = 0;
   var zipcarcost = 0;
   var taxicost = 0;
@@ -771,10 +850,10 @@ function getStartGeoLocator(position) {
   var geocoder = new google.maps.Geocoder();
   if (geocoder) {
     var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+    geocoder.geocode({ 'latLng': latlng }, function (response, status) {
       if (status == google.maps.GeocoderStatus.OK) {
-        if (results[0]) {
-          $('#startlocation').val(results[0].formatted_address);
+        if (response[0]) {
+          $('#startlocation').val(response[0].formatted_address);
           $('#startlocation').effect("highlight", {color:"red"}, 3000);
         }
       } else {
@@ -796,9 +875,9 @@ function showGeoLocatorError(error){
 
 function resizeWindow( e ) {
   var newWindowHeight = $(window).height();
-  var resultsBoxHeight = 2 +parseInt($("#resultsBox").height()) +parseInt($("#resultsBox").css("margin-top")) +parseInt($("#resultsBox").css("margin-bottom") +parseInt($("#resultsBox").css("padding-top")) +parseInt($("#resultsBox").css("padding-bottom")) +parseInt($("#resultsBox").css("border-top-width")) +parseInt($("#resultsBox").css("border-bottom-width")));
-  $("#map_canvas").css("min-height", (newWindowHeight-(resultsBoxHeight + parseInt($("#map_wrapper").css("border-bottom-width")))));
-  $("#map_canvas").css("height", (newWindowHeight - (resultsBoxHeight +parseInt($("#map_wrapper").css("border-bottom-width")))));
+  var resultsWrapperHeight = 2 +parseInt($("#resultsWrapper").height()) +parseInt($("#resultsWrapper").css("margin-top")) +parseInt($("#resultsWrapper").css("margin-bottom") +parseInt($("#resultsWrapper").css("padding-top")) +parseInt($("#resultsWrapper").css("padding-bottom")) +parseInt($("#resultsWrapper").css("border-top-width")) +parseInt($("#resultsWrapper").css("border-bottom-width")));
+  $("#map_canvas").css("min-height", (newWindowHeight-(resultsWrapperHeight + parseInt($("#map_wrapper").css("border-bottom-width")))));
+  $("#map_canvas").css("height", (newWindowHeight - (resultsWrapperHeight +parseInt($("#map_wrapper").css("border-bottom-width")))));
   $("#loading_image").css("top", ((newWindowHeight)/3) );
 }
     
@@ -879,7 +958,7 @@ google.setOnLoadCallback(function(){
     map: map,
     draggable: true,
     markerOptions: {
-      zIndex: 100
+    zIndex: 100
     }
   })
   
@@ -887,7 +966,7 @@ google.setOnLoadCallback(function(){
     calculateTrip(directionsDisplay.directions);
     
     //Highlight results box on change
-    $('#resultsBox').effect("highlight", {color:"#d1d1d1"}, 3000);
+    $('#resultsWrapper').effect("highlight", {color:"#d1d1d1"}, 3000);
     
     //Put new addresses in input box
     $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
@@ -914,8 +993,6 @@ google.setOnLoadCallback(function(){
      
      if(computeTotalTime()){
      
-       // Route the directions and pass the response to a
-       // function to create markers for each step.
        directionsService.route(request, function(response, status) {
          if (status == google.maps.DirectionsStatus.OK) {
            if(response.routes[0].warnings!=''){
@@ -925,9 +1002,9 @@ google.setOnLoadCallback(function(){
            calculateTrip(response);
          }
        });
-       
      }
-     $("#resultsBox").fadeIn();  
+     
+     $("#resultsWrapper").fadeIn();  
      $('#welcome_screen').fadeOut();   
      return false;
   });
