@@ -166,13 +166,18 @@ ul.input_boxes li .textbox{
   background:#E2ECE7;
 }
 
-#results h2{
+#resultsWrapper h2{
   margin:0;
+}
+
+#resultsWrapper h3{
+  margin:5px 0;
 }
 
 .moderesult{
   float:left;
   width:238px;
+  padding-right:5px;
 }
 
 .summary{
