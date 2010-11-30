@@ -453,7 +453,7 @@ function calculateTrip(response) {
     $("#drivingdistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
   $("#drivingtime").html("Est. time: <strong>" + timetext + "</strong>");
-  $("#drivinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=d'><img src='images/link.png' alt='Link' class='smallicon'><strong>See on Google Maps</strong></a>");
+  $("#drivinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=d' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
   
   //Check if estimated driving time exceeds trip time
   if(triptime<(onewaytime*2/60)){
@@ -525,7 +525,7 @@ function calculateWalkTrip(response){
     $("#walkingdistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
   $("#walkingtime").html("Est. time: <strong>" + timetext + "</strong>");
-  $("#walkinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=w'><img src='images/link.png' alt='Link' class='smallicon'><strong>See on Google Maps</strong></a>");
+  $("#walkinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=w' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
 }
 
 function calculateBikeTrip(response){
@@ -547,7 +547,7 @@ function calculateBikeTrip(response){
     $("#bikingdistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
   $("#bikingtime").html("Est. time: <strong>" + timetext + "</strong>");
-  $("#bikinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=b'><img src='images/link.png' alt='Link' class='smallicon'><strong>See on Google Maps</strong></a>");
+  $("#bikinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=b' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
 }
 
 
@@ -598,7 +598,7 @@ function calculateTransitTrip(start,end,date,time){
         //Fare info is provided
         $("#transitfare").html("Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong>");
       }
-      $("#transitlink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "'><img src='images/link.png' alt='Link' class='smallicon'><strong>See on Google Transit</a></strong>");
+      $("#transitlink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
     } else{
       $("#transitroutes").html("No transit information available");
     }
@@ -941,8 +941,8 @@ function showGeoLocatorError(error){
 function resizeWindow( e ) {
   var newWindowHeight = $(window).height();
   var resultsWrapperHeight = 2 +parseInt($("#resultsWrapper").height()) +parseInt($("#resultsWrapper").css("margin-top")) +parseInt($("#resultsWrapper").css("margin-bottom") +parseInt($("#resultsWrapper").css("padding-top")) +parseInt($("#resultsWrapper").css("padding-bottom")) +parseInt($("#resultsWrapper").css("border-top-width")) +parseInt($("#resultsWrapper").css("border-bottom-width")));
-  $("#map_canvas").css("min-height", (newWindowHeight-(resultsWrapperHeight + parseInt($("#map_wrapper").css("border-bottom-width")))));
-  $("#map_canvas").css("height", (newWindowHeight - (resultsWrapperHeight +parseInt($("#map_wrapper").css("border-bottom-width")))));
+  $("#map_canvas").css("min-height", (parseInt($("#sidebar").css("height"))+50));
+  $("#map_canvas").css("height", (parseInt($("#sidebar").css("height"))+50));
   $("#loading_image").css("top", ((newWindowHeight)/3) );
 }
     
