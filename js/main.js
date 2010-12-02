@@ -1,6 +1,8 @@
 var map;
 var markerArray = [];
 var popup;
+var closestCCSMarker;
+var closestZipCarMarker;
 var triptime = 0;
 var tripweekendzipcartime = 0;
 var tripweekendccstime = 0;
@@ -333,10 +335,12 @@ function addCarshareLocations(map, lat, lon, type){
   //Add carshare locations to map
   
   //Create 1 mile bounding box
-  var NBound = lat+0.01;
-  var SBound = lat-0.01; 
-  var EBound = lon+0.01;
-  var WBound = lon-0.01;
+  var NBound = lat+0.02;
+  var SBound = lat-0.02; 
+  var EBound = lon+0.02;
+  var WBound = lon-0.02;
+  
+  closestCCSMarker = 1000;
   
   if(type=='ccs'){
     var image = new google.maps.MarkerImage(
@@ -347,18 +351,23 @@ function addCarshareLocations(map, lat, lon, type){
       new google.maps.Point(0,0),
       // The anchor for this image is the base of the flagpole at 0,32.
       new google.maps.Point(12, 12));
-  
     for (pod in ccs_arr) {
       //check to see if within bounding box
       if(ccs_arr[pod].lat>SBound && ccs_arr[pod].lat<NBound && ccs_arr[pod].lon>WBound && ccs_arr[pod].lon<EBound){
         //Check to see if within 1 mile radius
-        if(calculateDistance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon)<=1){
+        distanceAway = calculateDistance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon);
+        if(distanceAway<=1){
+          if(distanceAway<closestCCSMarker){
+            closestCCSMarker = distanceAway;
+          }
+          
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(ccs_arr[pod].lat,ccs_arr[pod].lon),
             title: ccs_arr[pod].name.replace(/&amp;/g,'&'),
             map:map,
             icon: image,
-            zIndex:1
+            zIndex:1,
+            distance: distanceAway
           });
       
           //Add to marker array
@@ -393,7 +402,6 @@ function addCarshareLocations(map, lat, lon, type){
       if(zipcar_arr[pod][2]>SBound && zipcar_arr[pod][2]<NBound && zipcar_arr[pod][3]>WBound && zipcar_arr[pod][3]<EBound){
         //Check to see if within 1 mile radius
         if(calculateDistance(zipcar_arr[pod][2],zipcar_arr[pod][3],lat,lon)<=1){
-          
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(zipcar_arr[pod][2],zipcar_arr[pod][3]),
             title: Url.decode(zipcar_arr[pod][1]).replace(/\+/g,' '),
@@ -427,8 +435,9 @@ function calculateTrip(response) {
   popup = new google.maps.InfoWindow({maxWidth:200});
   
   //Add CCS and zipcar locations
-  addCarshareLocations(map, response.routes[0].legs[0].start_location.va, response.routes[0].legs[0].start_location.wa, 'ccs');
-  addCarshareLocations(map, response.routes[0].legs[0].start_location.va, response.routes[0].legs[0].start_location.wa, 'zipcar');
+  
+  addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
+  addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
 
   $('#warnings_panel').html('');
   var onewaydistance = 0;
@@ -496,9 +505,9 @@ function calculateTrip(response) {
     });
     
     //Do Transit Directions 
-    //Use lat lon coordinates to avoid issues with start/end names
-    calculateTransitTrip(response.routes[0].legs[0].start_location.va+","+response.routes[0].legs[0].start_location.wa,
-      response.routes[0].legs[leg_count-1].end_location.va+","+response.routes[0].legs[leg_count-1].end_location.wa);
+    //Use lat lon coordinates to avoid issues with start/end names - need space between coordinates
+    calculateTransitTrip(response.routes[0].legs[0].start_location.lat()+", "+response.routes[0].legs[0].start_location.lng(),
+      response.routes[0].legs[leg_count-1].end_location.lat()+", "+response.routes[0].legs[leg_count-1].end_location.lng());
   
   $("#results").show(); 
   
@@ -551,21 +560,27 @@ function calculateBikeTrip(response){
 }
 
 
-function calculateTransitTrip(start,end,date,time){
+function calculateTransitTrip(start,end){
   //Use YQL to scrape google maps for screenreader to get transit directions
   
   //Clear existing directions
   $("#transit div").html('');
   
   //Get departure date and time
+  var day;
   var d=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
-  var date = d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate();
+  if (d.getDate()<10) {
+    day="0"+d.getDate();
+  } else {
+    day=d.getDate()
+  }
+  var date = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + day;
   var time = d.getHours() + ':' + d.getMinutes();
   
   //Get URL ready
   var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
   var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'') + '&format=json';  
-  
+
    // Request that YSQL string, and run a callback function.  
   $.getJSON( yql, cbfunc );  
   function cbfunc(data) {
