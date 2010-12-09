@@ -1,4 +1,6 @@
 var map;
+var directionDisplay;
+var directionsService;
 var markerArray = [];
 var popup;
 var closestCCSMarker;
@@ -926,6 +928,84 @@ function estimateCosts(){
   $('#ubertotal').html(formatCurrency(ubercost));
 }
 
+function initialSubmit(){
+  //Move all variables to sidebar form
+  $("#ccsplan").val($("#start_ccsplan").val());
+  $("#zipcarplan").val($("#start_zipcarplan").val());
+  $("#startlocation").val($("#start_startlocation").val());
+  $("#departuretime").val($("#start_departuretime").val());
+  $("#departuredate").val($("#start_departuredate").val());
+  $("#destinationlocation").val($("#start_destinationlocation").val());
+  $("#returntime").val($("#start_returntime").val());
+  $("#returndate").val($("#start_returndate").val());
+  $("#extramiles").val($("#start_extramiles").val());
+  $("#zipcarrate").val($("#start_zipcarrate").val());
+  
+  $("#start_form").fadeOut();
+  $("#wrapper").fadeIn();
+  
+  // Launch Map
+  map = new google.maps.Map(document.getElementById("map_canvas"), {
+    zoom: 12,
+    center: new google.maps.LatLng(37.7601, -122.4478),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+  // Instantiate a directions service.
+  directionsService = new google.maps.DirectionsService();
+
+  // Create a renderer for directions and bind it to the map.
+  directionsDisplay = new google.maps.DirectionsRenderer({
+    map: map,
+    draggable: true,
+    markerOptions: {
+    zIndex: 100
+    }
+  })
+
+  //Bind recalc function to 'directions_changed' event
+  google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+    calculateTrip(directionsDisplay.directions);
+
+    //Highlight results box on change
+    $('#resultsWrapper').effect("highlight", {color:"#d1d1d1"}, 3000);
+
+    //Put new addresses in input box
+    $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
+    $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
+  });
+  
+   // Retrieve the start and end locations and create
+   // a DirectionsRequest using DRIVING directions.
+   var start = $('#start_startlocation').val();
+   var end = $('#start_destinationlocation').val();
+   var request = {
+       origin: start,
+       destination: end,
+       travelMode: google.maps.DirectionsTravelMode.DRIVING
+   };
+   
+   //Clear old warnings and trip
+   $('#warnings_panel').html('');
+   $('#results').hide();
+   
+   if(computeTotalTime()){
+   
+     directionsService.route(request, function(response, status) {
+       if (status == google.maps.DirectionsStatus.OK) {
+         if(response.routes[0].warnings!=''){
+           $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
+         }
+         directionsDisplay.setDirections(response);
+       }
+     });
+   }
+   //Resize window after geolocation section loads
+   resizeWindow();
+   
+   $("#resultsWrapper").fadeIn();
+}
+
 function getStartGeoLocator(position) {
   var geocoder = new google.maps.Geocoder();
   if (geocoder) {
@@ -974,6 +1054,16 @@ google.setOnLoadCallback(function(){
     }
   });
   $("#returndate").datepicker();
+  
+  $("#start_departuredate").datepicker({
+    onSelect: function(dateText, inst){
+      //Make return date at least departure date
+      if(dates.compare($("#start_returndate").val(),dateText)<0){
+        $("#start_returndate").val(dateText);
+      }
+    }
+  });
+  $("#start_returndate").datepicker();
 
   //Set Todays Date and Time
   var currentTime = new Date()
@@ -983,8 +1073,8 @@ google.setOnLoadCallback(function(){
   var day = currentTime.getDate();
   var year = currentTime.getFullYear();
   
-  $("#departuredate").val(month + "/" + day + "/" + year);
-  $("#returndate").val(month + "/" + day + "/" + year);
+  $("#start_departuredate").val(month + "/" + day + "/" + year);
+  $("#start_returndate").val(month + "/" + day + "/" + year);
   
   minutes = Math.round((minutes/15+1))*15;
   if(minutes>59){
@@ -999,63 +1089,24 @@ google.setOnLoadCallback(function(){
   }
 
   if (hours < 10){
-    $('#departuretime').val("0" + hours + ":" + minutes);
+    $('#start_departuretime').val("0" + hours + ":" + minutes);
   } else {
-    $('#departuretime').val(hours + ":" + minutes);
+    $('#start_departuretime').val(hours + ":" + minutes);
   }
 
   if(hours+1>23){
     //use tomorrow
-    $('#returntime').val("0" + (hours+1-24) + ":" + minutes);
-    $("#returndate").val(month + "/" + (day+1) + "/" + year);
+    $('#start_returntime').val("0" + (hours+1-24) + ":" + minutes);
+    $("#start_returndate").val(month + "/" + (day+1) + "/" + year);
   } else{
     if (hours+1 < 10){
-      $('#returntime').val("0" + (hours+1) + ":" + minutes);
+      $('#start_returntime').val("0" + (hours+1) + ":" + minutes);
     }else{
-      $('#returntime').val((hours+1) + ":" + minutes);
+      $('#start_returntime').val((hours+1) + ":" + minutes);
     }
   }
-
-  //clear welcome screen
-  $('#inputs input').focus(function(){
-    $('#welcome_screen').fadeOut();
-  })
-
-  // Launch Map
-  var directionDisplay;
-  var directionsService;
-  map = new google.maps.Map(document.getElementById("map_canvas"), {
-    zoom: 12,
-    center: new google.maps.LatLng(37.7601, -122.4478),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  });
-
-  // Instantiate a directions service.
-  directionsService = new google.maps.DirectionsService();
-  
-  // Create a renderer for directions and bind it to the map.
-  directionsDisplay = new google.maps.DirectionsRenderer({
-    map: map,
-    draggable: true,
-    markerOptions: {
-    zIndex: 100
-    }
-  })
-  
-  //Bind recalc function to 'directions_changed' event
-  google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-    calculateTrip(directionsDisplay.directions);
-    
-    //Highlight results box on change
-    $('#resultsWrapper').effect("highlight", {color:"#d1d1d1"}, 3000);
-    
-    //Put new addresses in input box
-    $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
-    $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
-  });
   
   $("#inputs").submit(function(){
-
      // Retrieve the start and end locations and create
      // a DirectionsRequest using DRIVING directions.
      var start = $('#startlocation').val();
@@ -1082,13 +1133,22 @@ google.setOnLoadCallback(function(){
        });
      }
      
-     $("#resultsWrapper").fadeIn();  
-     $('#welcome_screen').fadeOut();   
+     $("#resultsWrapper").fadeIn();    
      return false;
   });
   
-  //Show welcome screen
-  $('#welcome_screen').fadeIn();
+  $("#start_submit").click(function(){
+    //Initial form submit
+    if($("#start_startlocation").val() == ''){
+      $("#start_startlocation").css('border','2px solid red');
+    }
+    if($("#start_destinationlocation").val() == ''){
+      $("#start_destinationlocation").css('border','2px solid red');
+    }
+    if($("#start_startlocation").val()!='' && $("#start_destinationlocation").val()!=''){
+      initialSubmit();
+    }
+  });
 
   //Enable Tooltips
   enableTooltips();
@@ -1096,9 +1156,8 @@ google.setOnLoadCallback(function(){
   //Show geolocation if browser supports it
   if (navigator.geolocation) {  
    $("#slocation").show();
+   $("#start_slocation").show();
   }
  
-  //Resize window after geolocation section loads
-  resizeWindow();
 });
 

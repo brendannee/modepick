@@ -49,7 +49,6 @@ ul.input_boxes li{
 	list-style-type:none;
 	padding:4px 0;
 	margin:0;
-	font-weight:bold;
 	clear:both;
 }
 
@@ -89,8 +88,13 @@ ul.input_boxes li .textbox{
 	width:12px;
 	vertical-align:middle;
 	padding:4px;
+	margin-top: -5px;
 }
 
+
+#wrapper{
+  display:none;
+}
 
 #swap{
 	cursor:pointer;
@@ -333,13 +337,6 @@ margin-left: 20px;
 	text-align:center;
 }
 
-#welcome_screen{
-	top:30%; 
-	right:50%;
-	background:#000;
-	text-align:center;
-}
-
 #tooltip {
 	background-color:#ffffff;
 	font-weight:bold;
@@ -364,6 +361,28 @@ margin-left: 20px;
 
 #bottomCredits a:hover{
 	text-decoration:underline;
+}
+
+.btn {
+-webkit-box-shadow: rgba(0, 0, 0, 0.148438) 0px 1px 3px;
+border: 1px solid #6E93B0;
+border-bottom-left-radius: 2px 2px;
+border-bottom-right-radius: 2px 2px;
+border-top-left-radius: 2px 2px;
+border-top-right-radius: 2px 2px;
+color: #234E70;
+display: inline;
+float: left;
+font-size: 1em;
+height: 27px;
+line-height: 26px;
+margin-right: 5px;
+padding: 0px 10px;
+text-shadow: rgba(255, 255, 255, 0.496094) 0px 1px 0px;
+}
+
+.btn:hover{
+  cursor:pointer;
 }
 
 /* simple css-based tooltip */ 
@@ -409,4 +428,72 @@ li#podName a {
 }
 ul.ccs li#podAddy {
 	margin-bottom: 5px;
+}
+
+/* Start Form Styles */
+#start_form{
+  -moz-box-shadow:0 0 10px #000; 
+  -webkit-box-shadow:0 0 10px #000;
+  border:#ccc;
+  width:550px;
+  padding:15px;
+  overflow:hidden;
+  position:absolute;
+  top:15px;
+  left:50%;
+  margin-left: -290px;
+}
+
+#start_form h1{
+  padding:0;
+  margin:0;
+}
+
+.smallLink{
+  font-size:10px;
+  margin-left:15px;
+}
+
+#start_inputs fieldset{
+  border:none;
+  margin-top:15px;
+}
+
+#start_inputs label{
+  font-size:14px;
+}
+
+#start_form .icon{
+  width:20px;
+  height:34px;
+  padding-right:5px;
+}
+
+#start_inputs .textbox{
+  font-size:20px;
+}
+
+#start_inputs .textbox option{
+   font-size:20px; 
+}
+
+#start_inputs .date{
+  width:140px;
+  margin-left:10px;
+}
+
+#start_inputs .time{
+  width:110px;
+}
+
+#start_inputs .timelabel{
+  width:125px;
+  display:inline-block;
+  font-size:16px;
+}
+
+#start_startlocation, #start_destinationlocation{
+  width:470px;
+  padding:10px;
+  margin-bottom:5px;
 }
