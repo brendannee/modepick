@@ -365,24 +365,26 @@ margin-left: 20px;
 
 .btn {
 -webkit-box-shadow: rgba(0, 0, 0, 0.148438) 0px 1px 3px;
-border: 1px solid #6E93B0;
-border-bottom-left-radius: 2px 2px;
-border-bottom-right-radius: 2px 2px;
-border-top-left-radius: 2px 2px;
-border-top-right-radius: 2px 2px;
-color: #234E70;
+border: 2px solid #333;
+border-bottom-left-radius: 4px 4px;
+border-bottom-right-radius: 4px 4px;
+border-top-left-radius: 4px 4px;
+border-top-right-radius: 4px 4px;
+background:#eee;
+color: #333;
 display: inline;
 float: left;
-font-size: 1em;
-height: 27px;
-line-height: 26px;
+font-size: 24px;
+height: 36px;
+line-height: 35px;
 margin-right: 5px;
 padding: 0px 10px;
-text-shadow: rgba(255, 255, 255, 0.496094) 0px 1px 0px;
+text-shadow: rgba(255, 255, 255, 0.496094) 0px 3px 0px;
 }
 
 .btn:hover{
   cursor:pointer;
+  background:#ddd;
 }
 
 /* simple css-based tooltip */ 
