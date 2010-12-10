@@ -84,8 +84,8 @@ ul.input_boxes li .textbox{
 }
 
 .smallicon{
-	height:12px;
-	width:12px;
+	height:16px;
+	width:16px;
 	vertical-align:middle;
 	padding:4px;
 	margin-top: -5px;
@@ -437,18 +437,48 @@ ul.ccs li#podAddy {
   -moz-box-shadow:0 0 10px #000; 
   -webkit-box-shadow:0 0 10px #000;
   border:#ccc;
-  width:550px;
-  padding:15px;
+  width:580px;
   overflow:hidden;
   position:absolute;
   top:15px;
   left:50%;
   margin-left: -290px;
+  margin-bottom:10px;
 }
 
-#start_form h1{
+.titlebar{
+  background:#333;
+  overflow:hidden;
+}
+
+.titlebar h1{
   padding:0;
   margin:0;
+  text-indent:-9999px;
+  background:url(../images/logo.png) 0 0 no-repeat;
+  width:176px;
+  height:100px;
+  display:inline-block;
+}
+
+.titlebar .topmenu{
+  width:350px;
+  float:right;
+  padding-top:5px;
+  padding-right:15px;
+  text-align:right;
+  font-size:11px;
+  color:#eee;
+}
+
+.titlebar .topmenu a{
+  color:#eee;
+}
+
+.subtitle{
+  color:#333;
+  font-weight:bold;
+  padding:8px 15px 2px 15px;
 }
 
 .smallLink{
@@ -456,8 +486,15 @@ ul.ccs li#podAddy {
   margin-left:15px;
 }
 
+#start_inputs{
+ padding:0 15px 15px;
+ overflow:hidden;
+ margin-bottom:0;
+}
+
 #start_inputs fieldset{
   border:none;
+  padding-top:0;
   margin-top:15px;
 }
 
@@ -492,6 +529,10 @@ ul.ccs li#podAddy {
   width:125px;
   display:inline-block;
   font-size:16px;
+}
+
+#start_inputs .details .textbox{
+  font-size:14px;
 }
 
 #start_startlocation, #start_destinationlocation{
