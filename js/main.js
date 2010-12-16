@@ -940,6 +940,7 @@ function initialSubmit(){
   $("#returndate").val($("#start_returndate").val());
   $("#extramiles").val($("#start_extramiles").val());
   $("#zipcarrate").val($("#start_zipcarrate").val());
+  $("#passengers").val($("#start_passengers").val());
   
   $("#start_form").fadeOut();
   $("#wrapper").fadeIn();

@@ -337,6 +337,54 @@ margin-left: 20px;
 	text-align:center;
 }
 
+#options_panel{
+  position:absolute;
+  top:50px;
+  left:50%;
+  margin-left:-152px;
+  width:300px;
+  border:5px solid #eee;
+  background:#333;
+  text-align:left;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  color:#eee;
+  padding:5px 15px 15px; 
+  font-size:14px; 
+  z-index:140;
+  overflow:hidden;
+}
+
+#options_panel h2{
+  margin:0;
+}
+
+#options_panel .btn {
+  -moz-box-shadow:0 0 5px #888; 
+  -webkit-box-shadow:0 0 5px #888;
+  border: 2px solid #aaa;
+  border-bottom-left-radius: 4px 4px;
+  border-bottom-right-radius: 4px 4px;
+  border-top-left-radius: 4px 4px;
+  border-top-right-radius: 4px 4px;
+  background:#fff;
+  color: #333;
+  display: inline;
+  float: left;
+  font-size: 16px;
+  height: 28px;
+  line-height: 27px;
+  margin-right: 5px;
+  margin-top:5px;
+  padding: 0px 5px;
+  text-shadow: rgba(255, 255, 255, 0.496094) 0px 3px 0px;
+}
+
+#options_panel .btn:hover{
+  -moz-box-shadow:0 0 5px #eee; 
+  -webkit-box-shadow:0 0 5px #eee;
+}
+
 #tooltip {
 	background-color:#ffffff;
 	font-weight:bold;
@@ -483,7 +531,7 @@ ul.ccs li#podAddy {
 
 .smallLink{
   font-size:10px;
-  margin-left:15px;
+  color:#666;
 }
 
 #start_inputs{
