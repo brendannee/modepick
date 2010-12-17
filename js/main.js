@@ -568,6 +568,9 @@ function calculateTransitTrip(start,end){
   //Clear existing directions
   $("#transit div").html('');
   
+  //get number of travelers
+  var passengers = $("#passengers").val();
+  
   //Get departure date and time
   var day;
   var d=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
@@ -613,7 +616,8 @@ function calculateTransitTrip(start,end){
       $("#transittime").html("Est. time: <strong>" + formatTime(transitTime) + "</strong>");
       if(typeof data.query.results.p[2] == 'string' && data.query.results.p[2].substr(0,1)=='$'){
         //Fare info is provided
-        $("#transitfare").html("Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong>");
+        $("#transitsinglefare").html("Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong>");
+        $("#transitfare").html("Roundtrip fare for "+passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*passengers) + "</strong>");
       }
       $("#transitlink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
     } else{
