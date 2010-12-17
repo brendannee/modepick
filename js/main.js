@@ -1144,7 +1144,7 @@ google.setOnLoadCallback(function(){
   });
   
   //Secondary form submit click handler
-  $("#inputs").submit(function(){
+  $("#trip_submit").click(function(){
     submitTrip();
     return false;
   });

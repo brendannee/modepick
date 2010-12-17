@@ -11,7 +11,6 @@ color: #666;
 
 a:hover{
 	text-decoration:none;
-	border-bottom:#999 dotted 1px;
 }
 
 a img{
@@ -140,9 +139,10 @@ ul.input_boxes li .textbox{
   border-bottom:none;
 }
 
-#submit{
+#trip_submit{
 	margin-right:5px;
 	margin-bottom:5px;
+	float:right;
 }
 
 #resultsWrapper{
@@ -390,7 +390,7 @@ margin-left: 20px;
   border-top-left-radius: 4px 4px;
   border-top-right-radius: 4px 4px;
   background:#fff;
-  color: #333;
+  color: #333 !important;
   display: inline;
   float: left;
   font-size: 16px;
@@ -435,13 +435,12 @@ margin-left: 20px;
 
 .btn {
   -webkit-box-shadow: rgba(0, 0, 0, 0.148438) 0px 1px 3px;
-  border: 2px solid #333;
+  border: 2px solid #FFF;
   border-bottom-left-radius: 4px 4px;
   border-bottom-right-radius: 4px 4px;
   border-top-left-radius: 4px 4px;
   border-top-right-radius: 4px 4px;
-  background:#eee;
-  color: #333;
+  color: #333 !important;
   display: inline;
   float: left;
   font-size: 24px;
@@ -449,12 +448,43 @@ margin-left: 20px;
   line-height: 35px;
   margin-right: 5px;
   padding: 0px 10px;
-  text-shadow: rgba(255, 255, 255, 0.496094) 0px 3px 0px;
+  text-shadow: rgba(255, 255, 255, 0.5) 1px 1px 1px;
+  -moz-box-shadow:0 0 5px #999; 
+  -webkit-box-shadow:0 0 5px #999;
+  background:#FA2;
+  background: -webkit-gradient(
+      linear,
+      left bottom,
+      left top,
+      color-stop(0.23, rgb(255,170,34)),
+      color-stop(0.82, rgb(250,215,163))
+  );
+  background: -moz-linear-gradient(
+      center bottom,
+      rgb(255,170,34) 23%,
+      rgb(250,215,163) 82%
+  );
+  
 }
 
 .btn:hover{
   cursor:pointer;
-  background:#ddd;
+  -moz-box-shadow:0 0 5px #666; 
+  -webkit-box-shadow:0 0 5px #666;
+  background:#facc8c;
+  background: -webkit-gradient(
+      linear,
+      left bottom,
+      left top,
+      color-stop(0.23, rgb(255,170,34)),
+      color-stop(1, rgb(250,204,140))
+  );
+  background: -moz-linear-gradient(
+      center bottom,
+      rgb(255,170,34) 23%,
+      rgb(250,204,140) 100%
+  );
+  
 }
 
 /* simple css-based tooltip */ 
