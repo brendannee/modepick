@@ -32,7 +32,7 @@
         <div class="titlebar">
           <h1>ModePick.com: Pick the best mode for your trip</h1>
         </div>
-        <a href="" id="show_options">Edit Trip Options</a>
+        <a href="" id="show_options">Change trip options &raquo;</a>
         <div class="tooltip"></div>
         <form id="inputs" method="post">
           <fieldset>
@@ -65,7 +65,8 @@
         </form>
       </div>      
     </div>
-    <div id="options_panel" style="display:none;">
+    <div id="options_panel">
+      <div id="options_panel_close">x</div>
       <h2>Trip Options</h2>
       <ul class="input_boxes">  
         <li>
@@ -109,7 +110,7 @@
           <a href="http://www.citycarshare.org/individualshome.do" title="More Info" target="_blank" class="smallLink">I don't know</a>
         </li>
       </ul>
-      <a id="options_submit" type="submit" class="btn" title="Update Options"/>Update Options</a>
+      <a id="options_panel_submit" type="submit" class="btn" title="Update Options"/>Update Options</a>
     </div>
     <div id="map_wrapper">
       <div id="map_canvas">

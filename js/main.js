@@ -928,83 +928,34 @@ function estimateCosts(){
   $('#ubertotal').html(formatCurrency(ubercost));
 }
 
-function initialSubmit(){
-  //Move all variables to sidebar form
-  $("#ccsplan").val($("#start_ccsplan").val());
-  $("#zipcarplan").val($("#start_zipcarplan").val());
-  $("#startlocation").val($("#start_startlocation").val());
-  $("#departuretime").val($("#start_departuretime").val());
-  $("#departuredate").val($("#start_departuredate").val());
-  $("#destinationlocation").val($("#start_destinationlocation").val());
-  $("#returntime").val($("#start_returntime").val());
-  $("#returndate").val($("#start_returndate").val());
-  $("#extramiles").val($("#start_extramiles").val());
-  $("#zipcarrate").val($("#start_zipcarrate").val());
-  $("#passengers").val($("#start_passengers").val());
+function submitTrip(){
+  // Retrieve the start and end locations and create
+  // a DirectionsRequest using DRIVING directions.
+  var start = $('#startlocation').val();
+  var end = $('#destinationlocation').val();
+  var request = {
+      origin: start,
+      destination: end,
+      travelMode: google.maps.DirectionsTravelMode.DRIVING
+  };
   
-  $("#start_form").fadeOut();
-  $("#wrapper").fadeIn();
+  //Clear old warnings and trip
+  $('#warnings_panel').html('');
+  $('#results').hide();
   
-  // Launch Map
-  map = new google.maps.Map(document.getElementById("map_canvas"), {
-    zoom: 12,
-    center: new google.maps.LatLng(37.7601, -122.4478),
-    mapTypeId: google.maps.MapTypeId.ROADMAP
-  });
-
-  // Instantiate a directions service.
-  directionsService = new google.maps.DirectionsService();
-
-  // Create a renderer for directions and bind it to the map.
-  directionsDisplay = new google.maps.DirectionsRenderer({
-    map: map,
-    draggable: true,
-    markerOptions: {
-    zIndex: 100
-    }
-  })
-
-  //Bind recalc function to 'directions_changed' event
-  google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-    calculateTrip(directionsDisplay.directions);
-
-    //Highlight results box on change
-    $('#resultsWrapper').effect("highlight", {color:"#d1d1d1"}, 3000);
-
-    //Put new addresses in input box
-    $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
-    $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
-  });
+  if(computeTotalTime()){
   
-   // Retrieve the start and end locations and create
-   // a DirectionsRequest using DRIVING directions.
-   var start = $('#start_startlocation').val();
-   var end = $('#start_destinationlocation').val();
-   var request = {
-       origin: start,
-       destination: end,
-       travelMode: google.maps.DirectionsTravelMode.DRIVING
-   };
-   
-   //Clear old warnings and trip
-   $('#warnings_panel').html('');
-   $('#results').hide();
-   
-   if(computeTotalTime()){
-   
-     directionsService.route(request, function(response, status) {
-       if (status == google.maps.DirectionsStatus.OK) {
-         if(response.routes[0].warnings!=''){
-           $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
-         }
-         directionsDisplay.setDirections(response);
-       }
-     });
-   }
-   //Resize window after geolocation section loads
-   resizeWindow();
-   
-   $("#resultsWrapper").fadeIn();
+    directionsService.route(request, function(response, status) {
+      if (status == google.maps.DirectionsStatus.OK) {
+        if(response.routes[0].warnings!=''){
+          $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
+        }
+        directionsDisplay.setDirections(response);
+      }
+    });
+  }
+  
+  $("#resultsWrapper").fadeIn();
 }
 
 function getStartGeoLocator(position) {
@@ -1129,39 +1080,8 @@ google.setOnLoadCallback(function(){
     }
   });
   
-  $("#inputs").submit(function(){
-     // Retrieve the start and end locations and create
-     // a DirectionsRequest using DRIVING directions.
-     var start = $('#startlocation').val();
-     var end = $('#destinationlocation').val();
-     var request = {
-         origin: start,
-         destination: end,
-         travelMode: google.maps.DirectionsTravelMode.DRIVING
-     };
-     
-     //Clear old warnings and trip
-     $('#warnings_panel').html('');
-     $('#results').hide();
-     
-     if(computeTotalTime()){
-     
-       directionsService.route(request, function(response, status) {
-         if (status == google.maps.DirectionsStatus.OK) {
-           if(response.routes[0].warnings!=''){
-             $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
-           }
-           directionsDisplay.setDirections(response);
-         }
-       });
-     }
-     
-     $("#resultsWrapper").fadeIn();    
-     return false;
-  });
-  
+  //Initial form submit click handler
   $("#start_submit").click(function(){
-    //Initial form submit
     if($("#start_startlocation").val() == ''){
       $("#start_startlocation").css('border','2px solid red');
     }
@@ -1169,8 +1089,64 @@ google.setOnLoadCallback(function(){
       $("#start_destinationlocation").css('border','2px solid red');
     }
     if($("#start_startlocation").val()!='' && $("#start_destinationlocation").val()!=''){
-      initialSubmit();
+      //Do initial setup
+      //Move all variables to sidebar form
+      $("#ccsplan").val($("#start_ccsplan").val());
+      $("#zipcarplan").val($("#start_zipcarplan").val());
+      $("#startlocation").val($("#start_startlocation").val());
+      $("#departuretime").val($("#start_departuretime").val());
+      $("#departuredate").val($("#start_departuredate").val());
+      $("#destinationlocation").val($("#start_destinationlocation").val());
+      $("#returntime").val($("#start_returntime").val());
+      $("#returndate").val($("#start_returndate").val());
+      $("#extramiles").val($("#start_extramiles").val());
+      $("#zipcarrate").val($("#start_zipcarrate").val());
+      $("#passengers").val($("#start_passengers").val());
+
+      //Fade out start form and fade in results
+      $("#start_form").fadeOut();
+      $("#wrapper").fadeIn();
+
+      // Launch Map
+      map = new google.maps.Map(document.getElementById("map_canvas"), {
+        zoom: 12,
+        center: new google.maps.LatLng(37.7601, -122.4478),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      });
+
+      // Instantiate a directions service.
+      directionsService = new google.maps.DirectionsService();
+
+      // Create a renderer for directions and bind it to the map.
+      directionsDisplay = new google.maps.DirectionsRenderer({
+        map: map,
+        draggable: true,
+        markerOptions: {
+        zIndex: 100
+        }
+      })
+
+      //Bind recalc function to 'directions_changed' event
+      google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+        calculateTrip(directionsDisplay.directions);
+
+        //Highlight results box on change
+        $('#resultsWrapper').effect("highlight", {color:"#d1d1d1"}, 3000);
+
+        //Put new addresses in input box
+        $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
+        $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
+      });
+
+      //Process trip
+      submitTrip();
     }
+  });
+  
+  //Secondary form submit click handler
+  $("#inputs").submit(function(){
+    submitTrip();
+    return false;
   });
 
   //Enable Tooltips
@@ -1181,6 +1157,21 @@ google.setOnLoadCallback(function(){
    $("#slocation").show();
    $("#start_slocation").show();
   }
+  
+  //Show/Hide Options Panel
+  $('#show_options').click(function(){
+    $('#options_panel').fadeIn();
+    return false;
+  });
+  
+  $('#options_panel_close').click(function(){
+    $('#options_panel').fadeOut();
+  });
+  
+  $('#options_panel_submit').click(function(){
+    $('#options_panel').fadeOut();
+    submitTrip();
+  });
  
 });
 

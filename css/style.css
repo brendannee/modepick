@@ -116,6 +116,18 @@ ul.input_boxes li .textbox{
 	width:300px;
 }
 
+#show_options{
+  float:right;
+  display:block;
+  color:#333;
+  padding:2px 5px;
+}
+
+#show_options:hover{
+  border:none;
+  color:#666;
+}
+
 #inputs{
 	padding:0 5px;
 	margin:0;
@@ -354,6 +366,15 @@ margin-left: 20px;
   font-size:14px; 
   z-index:140;
   overflow:hidden;
+  display:none;
+}
+
+#options_panel_close{
+  position:absolute;
+  top:0px;
+  right:9px;
+  font-size:19px;
+  cursor:pointer;
 }
 
 #options_panel h2{
