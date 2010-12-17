@@ -1008,13 +1008,13 @@ function initialSubmit(){
 }
 
 function getStartGeoLocator(position) {
-  $("#geolocationwaiting").fadeIn();
   var geocoder = new google.maps.Geocoder();
   if (geocoder) {
     var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
     geocoder.geocode({ 'latLng': latlng }, function (response, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (response[0]) {
+          //Hide waiting image
           $("#geolocationwaiting").hide();
           $('#startlocation').val(response[0].formatted_address);
           $('#startlocation').effect("highlight", {color:"#bb5555"}, 3000);
@@ -1030,6 +1030,8 @@ function getStartGeoLocator(position) {
 }
 
 function showGeoLocatorError(error){
+  //Hide waiting image
+  $("#geolocationwaiting").hide();
   if(error.code==1){
      $('#warnings_panel').append("<li>To determine your current location you must click \"Share Location\" in the top bar in your browser.</li>");
     alert();
