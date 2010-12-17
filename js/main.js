@@ -1016,6 +1016,8 @@ function getStartGeoLocator(position) {
         if (response[0]) {
           $('#startlocation').val(response[0].formatted_address);
           $('#startlocation').effect("highlight", {color:"red"}, 3000);
+          $('#start_startlocation').val(response[0].formatted_address);
+          $('#start_startlocation').effect("highlight", {color:"red"}, 3000);
         }
       } else {
         console.log('No results found: ' + status);
