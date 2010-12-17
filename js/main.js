@@ -1113,6 +1113,22 @@ google.setOnLoadCallback(function(){
     }
   }
   
+  //Set return time to at least departure time on change
+  $('#start_departuretime').change(function(){
+    var departuredate=dates.convert(""+$('#start_departuredate').val()+" "+$('#start_departuretime').val());
+    var returndate=dates.convert(""+$('#start_returndate').val()+" "+$('#start_returntime').val());
+    if(returndate-departuredate<0){
+      $('#start_returntime').val($('#start_departuretime').val());
+    }
+  });
+  $('#departuretime').change(function(){
+    var departuredate=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
+    var returndate=dates.convert(""+$('#returndate').val()+" "+$('#returntime').val());
+    if(returndate-departuredate<0){
+      $('#returntime').val($('#departuretime').val());
+    }
+  });
+  
   $("#inputs").submit(function(){
      // Retrieve the start and end locations and create
      // a DirectionsRequest using DRIVING directions.
