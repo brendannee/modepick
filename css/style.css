@@ -61,6 +61,7 @@ ul.input_boxes li.geolocation{
 	font-size:12px; 
 	font-weight:normal;
 	padding:0 0 0 29px;
+	position:relative;
 }
 
 ul.input_boxes li.geolocation img{
@@ -587,4 +588,14 @@ ul.ccs li#podAddy {
   width:470px;
   padding:10px;
   margin-bottom:5px;
+}
+
+#geolocationwaiting{
+  background: url(../images/loading.gif);
+  width:32px;
+  height:32px;
+  position:absolute;
+  left:30px;
+  top:-45px;
+  display:none;
 }

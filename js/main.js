@@ -1008,16 +1008,18 @@ function initialSubmit(){
 }
 
 function getStartGeoLocator(position) {
+  $("#geolocationwaiting").fadeIn();
   var geocoder = new google.maps.Geocoder();
   if (geocoder) {
     var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
     geocoder.geocode({ 'latLng': latlng }, function (response, status) {
       if (status == google.maps.GeocoderStatus.OK) {
         if (response[0]) {
+          $("#geolocationwaiting").hide();
           $('#startlocation').val(response[0].formatted_address);
-          $('#startlocation').effect("highlight", {color:"red"}, 3000);
+          $('#startlocation').effect("highlight", {color:"#bb5555"}, 3000);
           $('#start_startlocation').val(response[0].formatted_address);
-          $('#start_startlocation').effect("highlight", {color:"red"}, 3000);
+          $('#start_startlocation').effect("highlight", {color:"#bb5555"}, 3000);
         }
       } else {
         console.log('No results found: ' + status);
