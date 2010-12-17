@@ -471,6 +471,12 @@ function calculateTrip(response) {
     $('#warnings_panel').append("<li>Your estimated driving time exceeds your reservation time.</li>");
   }
   
+  //Calculate Waypoints to add to walking, biking routes.
+  var waypoints = new Array;
+  for(var i=0;i<response.routes[0].legs[0].via_waypoint.length;i++){
+    waypoints[i] = {"location":  response.routes[0].legs[0].via_waypoint[i].location, "stopover":false}
+  }
+  
   //Do Walking Directions
   // Instantiate a directions service for walking.
   DirectionsService = new google.maps.DirectionsService();
@@ -478,6 +484,7 @@ function calculateTrip(response) {
   var request = {
       origin: response.routes[0].legs[0].start_address,
       destination: response.routes[0].legs[leg_count-1].end_address,
+      waypoints: waypoints,
       travelMode: google.maps.DirectionsTravelMode.WALKING
   };
   DirectionsService.route(request, function(response, status) {
@@ -494,6 +501,7 @@ function calculateTrip(response) {
    var request = {
        origin: response.routes[0].legs[0].start_address,
        destination: response.routes[0].legs[leg_count-1].end_address,
+       waypoints: waypoints,
        travelMode: google.maps.DirectionsTravelMode.BICYCLING
    };
    DirectionsService.route(request, function(response, status) {
