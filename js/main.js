@@ -11,6 +11,10 @@ var tripweekendccstime = 0;
 var tripweekendccs2time = 0;
 var triplatenighttime = 0;
 var tripdist = 0;
+var ccscost = 0;
+var zipcarcost = 0;
+var taxicost = 0;
+var ubercost = 0;
 var ccsplans = {
   "sharealittle": {
     "title":"Share-a-Little",
@@ -280,7 +284,10 @@ function calculateTrip(response) {
   tripdist = Math.round(onewaydistance*2);
   
   //Estimate costs
-  estimateCosts();
+  estimateCCSHourCosts();
+  estimateZipcarHourCosts();
+  estimateTaxiCosts();
+  estimateUberCosts();
   
   if($('#extramiles').val()!=''){
     $("#drivingdistance").html("Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
@@ -669,16 +676,10 @@ function computeTotalTime(){
   return true;
 }
 
-function estimateCosts(){
-  var ccscost = 0;
-  var zipcarcost = 0;
-  var taxicost = 0;
-  var ubercost = 0;
-  
+function estimateCCSHourCosts(){
+  ccscost = 0;
   var ccsplan = ccsplans[$('#ccsplan').val()];
-  var zipcarplan = zipcarplans[$('#zipcarplan').val()];
-  
-  //CCS
+
   $('#ccssummary').html("");
   if($('#ccsplan').val()=='sharealittle'){
     //Share a little doesn't havce late night hours so use CCS2 time
@@ -713,8 +714,12 @@ function estimateCosts(){
   
   $('#ccstotal').html(formatCurrency(ccscost));
   $('#ccssummary').append("<li class='total'>City Carshare Total<div>" + formatCurrency(ccscost) + "</div></li>");
-  
-  //Zipcar
+}
+
+function estimateZipcarHourCosts(){  
+  zipcarcost = 0;
+  var zipcarplan = zipcarplans[$('#zipcarplan').val()];
+
   $('#zipcarsummary').html("");
   if(isNaN($('#zipcarrate').val()) || $('#zipcarrate').val()==''){
     zipcarcost+= zipcarplan.weekdayhourly*((triptime - tripweekendzipcartime)/60)+zipcarplan.weekendhourly*(tripweekendzipcartime/60);
@@ -730,6 +735,10 @@ function estimateCosts(){
   
   $('#zipcarsummary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcarcost) + "</div></li>");
   $('#zipcartotal').html(formatCurrency(zipcarcost));
+}
+
+function estimateTaxiCosts(){ 
+  taxicost = 0;
   
   //Taxi (assume 1.5 minute of waiting per mile)
   var taxitrafficpermile = 1.5;
@@ -746,10 +755,15 @@ function estimateCosts(){
   $('#taxisummary').append("<li>Waiting in Traffic (~"+(tripdist*taxitrafficpermile)+" min)<div>"+formatCurrency(cabfares.waitingminute*(tripdist*taxitrafficpermile))+"</div></li>");
   $('#taxisummary').append("<li>10% Tip<div>"+formatCurrency(tipamount)+"</div></li>");
   $('#taxisummary').append("<li class='total'>Taxi Total<div>"+formatCurrency(taxicost)+"</div></li>");
+}  
+
+function estimateUberCosts(){ 
+  ubercost = 0;
   
   //Uber (assume 1.5 minute of waiting per mile)
+  var ubertrafficpermile = 1.5;
   $('#ubersummary').html("");
-  ubercost+= uberfares.flag*2 + (uberfares.mileage*tripdist) + uberfares.idleminute*(tripdist*taxitrafficpermile);
+  ubercost+= uberfares.flag*2 + (uberfares.mileage*tripdist) + uberfares.idleminute*(tripdist*ubertrafficpermile);
   if(ubercost<30){
     //Minimum fare is $15 each way
     ubercost = 30;
@@ -758,7 +772,7 @@ function estimateCosts(){
   } else {
     $('#ubersummary').append("<li>Flag Drop x 2<div>"+formatCurrency(uberfares.flag*2)+"</div></li>");
     $('#ubersummary').append("<li>"+tripdist+" mi x " + formatCurrency(uberfares.mileage) + " per mi<div>"+formatCurrency(uberfares.mileage*tripdist)+"</div></li>");
-    $('#ubersummary').append("<li>Waiting in Traffic (~"+(tripdist*taxitrafficpermile)+" min)<div>"+formatCurrency(uberfares.idleminute*(tripdist*taxitrafficpermile))+"</div></li>");
+    $('#ubersummary').append("<li>Waiting in Traffic (~"+(tripdist*ubertrafficpermile)+" min)<div>"+formatCurrency(uberfares.idleminute*(tripdist*ubertrafficpermile))+"</div></li>");
     $('#ubersummary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
   }
   $('#ubertotal').html(formatCurrency(ubercost));
