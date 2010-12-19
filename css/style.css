@@ -558,7 +558,7 @@ ul.ccs li#podAddy {
   background:url(../images/logo.png) 0 0 no-repeat;
   width:176px;
   height:100px;
-  display:inline-block;
+  float:left;
 }
 
 .titlebar .topmenu{
