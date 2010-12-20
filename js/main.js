@@ -284,10 +284,10 @@ function calculateTrip(response) {
   tripdist = Math.round(onewaydistance*2);
   
   //Estimate costs
-  estimateCCSHourCosts();
-  estimateZipcarHourCosts();
-  estimateTaxiCosts();
-  estimateUberCosts();
+  estimateCCSHourCost();
+  estimateZipcarHourCost();
+  estimateTaxiCost();
+  estimateUberCost();
   
   if($('#extramiles').val()!=''){
     $("#drivingdistance").html("Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
@@ -676,7 +676,7 @@ function computeTotalTime(){
   return true;
 }
 
-function estimateCCSHourCosts(){
+function estimateCCSHourCost(){
   ccscost = 0;
   var ccsplan = ccsplans[$('#ccsplan').val()];
 
@@ -716,7 +716,7 @@ function estimateCCSHourCosts(){
   $('#ccssummary').append("<li class='total'>City Carshare Total<div>" + formatCurrency(ccscost) + "</div></li>");
 }
 
-function estimateZipcarHourCosts(){  
+function estimateZipcarHourCost(){  
   zipcarcost = 0;
   var zipcarplan = zipcarplans[$('#zipcarplan').val()];
 
@@ -737,7 +737,7 @@ function estimateZipcarHourCosts(){
   $('#zipcartotal').html(formatCurrency(zipcarcost));
 }
 
-function estimateTaxiCosts(){ 
+function estimateTaxiCost(){ 
   taxicost = 0;
   
   //Taxi (assume 1.5 minute of waiting per mile)
@@ -757,7 +757,7 @@ function estimateTaxiCosts(){
   $('#taxisummary').append("<li class='total'>Taxi Total<div>"+formatCurrency(taxicost)+"</div></li>");
 }  
 
-function estimateUberCosts(){ 
+function estimateUberCost(){ 
   ubercost = 0;
   
   //Uber (assume 1.5 minute of waiting per mile)
@@ -778,9 +778,8 @@ function estimateUberCosts(){
   $('#ubertotal').html(formatCurrency(ubercost));
 }
 
-function submitTrip(){
-  // Retrieve the start and end locations and create
-  // a DirectionsRequest using DRIVING directions.
+function recalc(){
+  //Called after mapSetup to recalculate trip
   var start = $('#startlocation').val();
   var end = $('#destinationlocation').val();
   var request = {
@@ -806,6 +805,46 @@ function submitTrip(){
   }
   
   $("#resultsWrapper").fadeIn();
+}
+
+function mapSetup(){
+  //Fade out start form and fade in results
+  $("#start_form").fadeOut();
+  $("#wrapper").fadeIn();
+
+  // Launch Map
+  map = new google.maps.Map(document.getElementById("map_canvas"), {
+    zoom: 12,
+    center: new google.maps.LatLng(37.7601, -122.4478),
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  });
+
+  // Instantiate a directions service.
+  directionsService = new google.maps.DirectionsService();
+
+  // Create a renderer for directions and bind it to the map.
+  directionsDisplay = new google.maps.DirectionsRenderer({
+    map: map,
+    draggable: true,
+    markerOptions: {
+    zIndex: 100
+    }
+  })
+
+  //Bind recalc function to 'directions_changed' event
+  google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+    calculateTrip(directionsDisplay.directions);
+
+    //Highlight results box on change
+    $('#resultsWrapper').effect("highlight", {color:"#d1d1d1"}, 3000);
+
+    //Put new addresses in input box
+    $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
+    $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
+  });
+
+  //Process trip
+  recalc();
 }
 
 function getStartGeoLocator(position) {
@@ -850,8 +889,30 @@ function resizeWindow( e ) {
 }
     
 google.setOnLoadCallback(function(){
-  //If the User resizes the window, adjust the #container height
+  //If the User resizes the window, adjust the height
   $(window).bind("resize", resizeWindow);
+
+  //Read the page's GET URL variables and process trip
+  //Sample URL: ?saddr=1st+and+mission,+SF&daddr=Haight+%26+Ashbury,+SF&stime=09:00&sdate=12/20/2010&etime=14:00&edate=12/20/2010
+  urlVars = getUrlVars();
+  if('saddr' in urlVars && 'daddr' in urlVars && 'stime' in urlVars && 'sdate' in urlVars && 'etime' in urlVars && 'edate' in urlVars){
+    //We have all the variables needed to process a trip
+    $("#startlocation").val(urlVars['saddr']);
+    $("#departuretime").val(urlVars['stime']);
+    $("#departuredate").val(urlVars['sdate']);
+    $("#destinationlocation").val(urlVars['daddr']);
+    $("#returntime").val(urlVars['etime']);
+    $("#returndate").val(urlVars['edate']);
+    //Get non-required variables if present
+    'ccsplan' in urlVars ? $("#ccsplan").val(urlVars['ccsplan']) : $("#ccsplan").val($("#start_ccsplan").val());
+    'zipcarplan' in urlVars ? $("#zipcarplan").val(urlVars['zipcarplan']) : $("#zipcarplan").val($("#start_zipcarplan").val());
+    'extramiles' in urlVars ? $("#extramiles").val(urlVars['extramiles']) : $("#extramiles").val($("#start_extramiles").val());
+    'zipcarrate' in urlVars ? $("#zipcarrate").val(urlVars['zipcarrate']) : $("#zipcarrate").val($("#start_zipcarrate").val());
+    'passengers' in urlVars ? $("#passengers").val(urlVars['passengers']) : $("#passengers").val($("#start_passengers").val());
+    
+    //Do initial map setup
+    mapSetup();
+  }
 
   $("#departuredate").datepicker({
     onSelect: function(dateText, inst){
@@ -930,72 +991,9 @@ google.setOnLoadCallback(function(){
     }
   });
   
-  //Initial form submit click handler
-  $("#start_submit").click(function(){
-    if($("#start_startlocation").val() == ''){
-      $("#start_startlocation").css('border','2px solid red');
-    }
-    if($("#start_destinationlocation").val() == ''){
-      $("#start_destinationlocation").css('border','2px solid red');
-    }
-    if($("#start_startlocation").val()!='' && $("#start_destinationlocation").val()!=''){
-      //Do initial setup
-      //Move all variables to sidebar form
-      $("#ccsplan").val($("#start_ccsplan").val());
-      $("#zipcarplan").val($("#start_zipcarplan").val());
-      $("#startlocation").val($("#start_startlocation").val());
-      $("#departuretime").val($("#start_departuretime").val());
-      $("#departuredate").val($("#start_departuredate").val());
-      $("#destinationlocation").val($("#start_destinationlocation").val());
-      $("#returntime").val($("#start_returntime").val());
-      $("#returndate").val($("#start_returndate").val());
-      $("#extramiles").val($("#start_extramiles").val());
-      $("#zipcarrate").val($("#start_zipcarrate").val());
-      $("#passengers").val($("#start_passengers").val());
-
-      //Fade out start form and fade in results
-      $("#start_form").fadeOut();
-      $("#wrapper").fadeIn();
-
-      // Launch Map
-      map = new google.maps.Map(document.getElementById("map_canvas"), {
-        zoom: 12,
-        center: new google.maps.LatLng(37.7601, -122.4478),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-      });
-
-      // Instantiate a directions service.
-      directionsService = new google.maps.DirectionsService();
-
-      // Create a renderer for directions and bind it to the map.
-      directionsDisplay = new google.maps.DirectionsRenderer({
-        map: map,
-        draggable: true,
-        markerOptions: {
-        zIndex: 100
-        }
-      })
-
-      //Bind recalc function to 'directions_changed' event
-      google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-        calculateTrip(directionsDisplay.directions);
-
-        //Highlight results box on change
-        $('#resultsWrapper').effect("highlight", {color:"#d1d1d1"}, 3000);
-
-        //Put new addresses in input box
-        $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
-        $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
-      });
-
-      //Process trip
-      submitTrip();
-    }
-  });
-  
   //Secondary form submit click handler
   $("#trip_submit").click(function(){
-    submitTrip();
+    recalc();
     return false;
   });
 
@@ -1020,7 +1018,34 @@ google.setOnLoadCallback(function(){
   
   $('#options_panel_submit').click(function(){
     $('#options_panel').fadeOut();
-    submitTrip();
+    recalc();
+  });
+ 
+  //Initial form submit click handler
+  $("#start_submit").click(function(){
+    if($("#start_startlocation").val() == ''){
+      $("#start_startlocation").css('border','2px solid red');
+    }
+    if($("#start_destinationlocation").val() == ''){
+      $("#start_destinationlocation").css('border','2px solid red');
+    }
+    if($("#start_startlocation").val()!='' && $("#start_destinationlocation").val()!=''){
+      //Move all variables to sidebar form
+      $("#startlocation").val($("#start_startlocation").val());
+      $("#departuretime").val($("#start_departuretime").val());
+      $("#departuredate").val($("#start_departuredate").val());
+      $("#destinationlocation").val($("#start_destinationlocation").val());
+      $("#returntime").val($("#start_returntime").val());
+      $("#returndate").val($("#start_returndate").val());
+      $("#ccsplan").val($("#start_ccsplan").val());
+      $("#zipcarplan").val($("#start_zipcarplan").val());
+      $("#extramiles").val($("#start_extramiles").val());
+      $("#zipcarrate").val($("#start_zipcarrate").val());
+      $("#passengers").val($("#start_passengers").val());
+      
+      //Do initial map setup
+      mapSetup();
+    }
   });
  
 });

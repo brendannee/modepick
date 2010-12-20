@@ -167,3 +167,11 @@ function parseTime(str) {
   var t = str.split(':')
   return new Date(2007,0,1,  ((str.toLowerCase().indexOf('pm')!=-1)?(12+parseInt(t[0],10)):t[0]),parseInt(t[1],10),00).getTime();
 }
+
+function getUrlVars() {
+	var map = {};
+	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+		map[key] = value;
+	});
+	return map;
+}
