@@ -805,10 +805,10 @@ function recalc(){
   }
   
   //Create Permalink URL
-	linkURL = "?saddr=" + $('#startlocation').val().replace(/&/g, "and") + "&daddr=" + $('#destinationlocation').val().replace(/&/g, "and") + "&stime=" + $("#departuretime").val() + "&sdate="  + $("#departuredate").val() + "&etime=" + $("#returntime").val() + "&edate="  + $("#returndate").val();
+	linkURL = "?saddr=" + $('#startlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&daddr=" + $('#destinationlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&stime=" + $("#departuretime").val() + "&sdate="  + $("#departuredate").val() + "&etime=" + $("#returntime").val() + "&edate="  + $("#returndate").val();
   
   //Add Permalink Control on top of map
-	$("#permalink").html("<a href='" + linkURL.replace(/ /g, "+") + "' title='Direct Link to this trip'><img src='images/link.png'> Permalink to Route</a>");
+	$("#permalink").html("<a href='" + linkURL + "' title='Direct Link to this trip'><img src='images/link.png'> Permalink to Route</a>");
 	
 	//Add Twitter Control on top of map
 	$("#twitter a").attr("href","http://www.addtoany.com/add_to/twitter?linkurl=" + encodeURIComponent("http://modepick.com"+linkURL) + "&linkname=" + encodeURIComponent("The best way from " + $('#startlocation').val().replace(/\+/g, " ").replace(/&/g, "and") + " to " + $('#destinationlocation').val().replace(/\+/g, " ").replace(/&/g, "and")));
