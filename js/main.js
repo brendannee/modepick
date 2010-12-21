@@ -234,7 +234,7 @@ function addCarshareLocations(map, lat, lon, type){
         if(calculateDistance(zipcar_arr[pod][2],zipcar_arr[pod][3],lat,lon)<=1){
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(zipcar_arr[pod][2],zipcar_arr[pod][3]),
-            title: Url.decode(zipcar_arr[pod][1]).replace(/\+/g,' '),
+            title: decodeURIComponent(zipcar_arr[pod][1]).replace(/\+/g,' '),
             map:map,
             icon: image,
             zIndex:1
@@ -246,7 +246,7 @@ function addCarshareLocations(map, lat, lon, type){
           google.maps.event.addListener(marker,'click', (function(marker,pod) {
             return function() {
               popup.setContent(
-                "<ul class=\"pod\">" + "<li id=\"podName\">" + Url.decode(zipcar_arr[pod][1]).replace(/\+/g,' ') + "</li>" + "</ul>"
+                "<ul class=\"pod\">" + "<li id=\"podName\">" + decodeURIComponent(zipcar_arr[pod][1]).replace(/\+/g,' ') + "</li>" + "</ul>"
               );
               popup.open(map,marker);
             }
@@ -804,6 +804,16 @@ function recalc(){
     });
   }
   
+  //Create Permalink URL
+	linkURL = "?saddr=" + $('#startlocation').val().replace(/&/g, "and") + "&daddr=" + $('#destinationlocation').val().replace(/&/g, "and") + "&stime=" + $("#departuretime").val() + "&sdate="  + $("#departuredate").val() + "&etime=" + $("#returntime").val() + "&edate="  + $("#returndate").val();
+  
+  //Add Permalink Control on top of map
+	$("#permalink").html("<a href='" + linkURL.replace(/ /g, "+") + "' title='Direct Link to this trip'><img src='images/link.png'> Permalink to Route</a>");
+	
+	//Add Twitter Control on top of map
+	$("#twitter a").attr("href","http://www.addtoany.com/add_to/twitter?linkurl=" + encodeURIComponent("http://modepick.com"+linkURL) + "&linkname=" + encodeURIComponent("The best way from " + $('#startlocation').val().replace(/\+/g, " ").replace(/&/g, "and") + " to " + $('#destinationlocation').val().replace(/\+/g, " ").replace(/&/g, "and")));
+  
+  //Show Results
   $("#resultsWrapper").fadeIn();
 }
 
@@ -885,7 +895,6 @@ function resizeWindow( e ) {
   var resultsWrapperHeight = 2 +parseInt($("#resultsWrapper").height()) +parseInt($("#resultsWrapper").css("margin-top")) +parseInt($("#resultsWrapper").css("margin-bottom") +parseInt($("#resultsWrapper").css("padding-top")) +parseInt($("#resultsWrapper").css("padding-bottom")) +parseInt($("#resultsWrapper").css("border-top-width")) +parseInt($("#resultsWrapper").css("border-bottom-width")));
   $("#map_canvas").css("min-height", (parseInt($("#sidebar").css("height"))+50));
   $("#map_canvas").css("height", (parseInt($("#sidebar").css("height"))+50));
-  $("#loading_image").css("top", ((newWindowHeight)/3) );
 }
     
 google.setOnLoadCallback(function(){
@@ -893,7 +902,7 @@ google.setOnLoadCallback(function(){
   $(window).bind("resize", resizeWindow);
 
   //Read the page's GET URL variables and process trip
-  //Sample URL: ?saddr=1st+and+mission,+SF&daddr=Haight+%26+Ashbury,+SF&stime=09:00&sdate=12/20/2010&etime=14:00&edate=12/20/2010
+  //Sample URL: ?saddr=101+15th+St,+San+Francisco&daddr=1010+Mission+St,+San+Francisco&stime=06:45&sdate=12/21/2010&etime=07:45&edate=12/21/2010
   urlVars = getUrlVars();
   if('saddr' in urlVars && 'daddr' in urlVars && 'stime' in urlVars && 'sdate' in urlVars && 'etime' in urlVars && 'edate' in urlVars){
     //We have all the variables needed to process a trip

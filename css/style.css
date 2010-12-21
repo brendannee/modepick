@@ -263,40 +263,6 @@ margin-left: 20px;
 	border:none;
 }
 
-.map-button{
-	color:#0000cc;
-	text-align:center;
-	background-color:#FFF;
-	border:1px solid #000;
-	margin:3px;
-}
-
-.map-button img{
-	vertical-align:top;
-}
-
-.map-button a{
-	color:#000;
-	display:block;
-	padding:2px;
-}
-
-#permalink{
-	position:absolute;
-	top:30px;
-	right:85px;
-	width:11em;
-	display:none;
-}
-
-#twitter{
-	position:absolute;
-	top:30px;
-	right:5px;
-	width:7em;
-	display:none;
-}
-
 #map_canvas{
 	min-height:500px;
 }
@@ -312,6 +278,42 @@ margin-left: 20px;
 
 #map_canvas a {
 	text-decoration:underline;
+}
+
+.map-button{
+	color:#0000cc;
+	text-align:center;
+	background-color:#FFF;
+	border:1px solid #000;
+	margin:3px;
+}
+
+.map-button:hover{
+	background-color:#EEE;
+}
+
+.map-button img{
+	vertical-align:top;
+}
+
+.map-button a{
+	color:#000;
+	display:block;
+	padding:2px;
+}
+
+#permalink{
+	position:absolute;
+	top:30px;
+	right:96px;
+	width:12em;
+}
+
+#twitter{
+	position:absolute;
+	top:30px;
+	right:3px;
+	width:8em;
 }
 
 .popup{
@@ -341,13 +343,6 @@ margin-left: 20px;
 	position:absolute;
 	top:5px;
 	right:5px;
-}
-
-#loading_image{
-	top:50%; 
-	right:50%;
-	background:#000;
-	text-align:center;
 }
 
 #options_panel{
