@@ -3,8 +3,8 @@ var directionDisplay;
 var directionsService;
 var markerArray = [];
 var popup;
-var closestCCSMarker;
-var closestZipCarMarker;
+var closestCCSMarker = {};
+var closestZipcarMarker = {};
 var triptime = 0;
 var tripweekendzipcartime = 0;
 var tripweekendccstime = 0;
@@ -164,33 +164,36 @@ function clearOverlays() {
 function addCarshareLocations(map, lat, lon, type){
   //Add carshare locations to map
   
+  //Radius to show carshare locations (in miles)
+  var radius = 1;
+  
   //Create 1 mile bounding box
   var NBound = lat+0.02;
   var SBound = lat-0.02; 
   var EBound = lon+0.02;
   var WBound = lon-0.02;
   
-  closestCCSMarker = 1000;
+  //Set closestCCSMarker
+  closestCCSMarker.distance = 0;
+  closestZipcarMarker.distance = 0;
   
   if(type=='ccs'){
     var image = new google.maps.MarkerImage(
       'images/ccs.png',
-      // This marker is 20 pixels wide by 32 pixels tall.
       new google.maps.Size(24, 24),
-      // The origin for this image is 0,0.
       new google.maps.Point(0,0),
-      // The anchor for this image is the base of the flagpole at 0,32.
       new google.maps.Point(12, 12));
     for (pod in ccs_arr) {
+      distanceAway = calculateDistance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon);
+      //Check to see if this marker is the closest
+      if(closestCCSMarker.distance==0 || distanceAway<closestCCSMarker.distance){
+        ccs_arr[pod].distance = distanceAway;
+        closestCCSMarker = ccs_arr[pod];
+      }
       //check to see if within bounding box
       if(ccs_arr[pod].lat>SBound && ccs_arr[pod].lat<NBound && ccs_arr[pod].lon>WBound && ccs_arr[pod].lon<EBound){
-        //Check to see if within 1 mile radius
-        distanceAway = calculateDistance(ccs_arr[pod].lat,ccs_arr[pod].lon,lat,lon);
-        if(distanceAway<=1){
-          if(distanceAway<closestCCSMarker){
-            closestCCSMarker = distanceAway;
-          }
-          
+        //Check to see if within radius to choose which to display
+        if(distanceAway<=radius){
           var marker = new google.maps.Marker({
             position: new google.maps.LatLng(ccs_arr[pod].lat,ccs_arr[pod].lon),
             title: ccs_arr[pod].name.replace(/&amp;/g,'&'),
@@ -217,22 +220,37 @@ function addCarshareLocations(map, lat, lon, type){
         }
       }
     }
+    //List closest CCS location in results
+    if(closestCCSMarker.distance<.2){
+      //Within 1000 feet, display feet
+      closestCCSMarker.distanceformatted = Math.round(closestCCSMarker.distance*5280) + " ft";
+    } else{
+      //Use miles
+      closestCCSMarker.distanceformatted = Math.round(closestCCSMarker.distance*10)/10 + " mi";
+    }
+    $('#ccsclosest').html("Nearest car: <strong>" + closestCCSMarker.distanceformatted + "</strong> (" + closestCCSMarker.name + ")");
+
   } else if(type == 'zipcar'){
     var image = new google.maps.MarkerImage(
       'images/zipcar.png',
-      // This marker is 20 pixels wide by 32 pixels tall.
       new google.maps.Size(24, 24),
-      // The origin for this image is 0,0.
       new google.maps.Point(0,0),
-      // The anchor for this image is the base of the flagpole at 0,32.
       new google.maps.Point(12, 12));
   
     for (pod in zipcar_arr) {
+      distanceAway = calculateDistance(zipcar_arr[pod][2],zipcar_arr[pod][3],lat,lon);
+      //Check to see if this marker is the closest
+      if(closestZipcarMarker.distance==0 || distanceAway<closestZipcarMarker.distance){
+        closestZipcarMarker.name = zipcar_arr[pod][1];
+        closestZipcarMarker.lat = zipcar_arr[pod][2];
+        closestZipcarMarker.lng = zipcar_arr[pod][3];
+        closestZipcarMarker.distance = distanceAway;
+      }
       //check to see if within bounding box
       if(zipcar_arr[pod][2]>SBound && zipcar_arr[pod][2]<NBound && zipcar_arr[pod][3]>WBound && zipcar_arr[pod][3]<EBound){
-        //Check to see if within 1 mile radius
-        if(calculateDistance(zipcar_arr[pod][2],zipcar_arr[pod][3],lat,lon)<=1){
-          var marker = new google.maps.Marker({
+        //Check to see if within radius to choose which to display
+        if(distanceAway<=radius){
+            var marker = new google.maps.Marker({
             position: new google.maps.LatLng(zipcar_arr[pod][2],zipcar_arr[pod][3]),
             title: decodeURIComponent(zipcar_arr[pod][1]).replace(/\+/g,' '),
             map:map,
@@ -255,6 +273,17 @@ function addCarshareLocations(map, lat, lon, type){
       }
     }
   }
+  //List closest Zipcar location in results
+  if(closestZipcarMarker.distance<.2){
+    //Within 1000 feet, display feet
+    closestZipcarMarker.distanceformatted = Math.round(closestZipcarMarker.distance*5280) + " ft";
+  } else{
+    //Use miles
+    closestZipcarMarker.distanceformatted = Math.round(closestZipcarMarker.distance*10)/10 + " mi";
+  }
+  if(typeof closestZipcarMarker.name !== "undefined"){
+    $('#zipcarclosest').html("Nearest car: <strong>" + closestZipcarMarker.distanceformatted + "</strong> (" + decodeURIComponent(closestZipcarMarker.name.replace(/\+/g,' ')) + ")");
+  }
 }
 
 function calculateTrip(response) {
@@ -263,11 +292,6 @@ function calculateTrip(response) {
   
   //Create popup window
   popup = new google.maps.InfoWindow({maxWidth:200});
-  
-  //Add CCS and zipcar locations
-  
-  addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
-  addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
 
   $('#warnings_panel').html('');
   var onewaydistance = 0;
@@ -283,11 +307,30 @@ function calculateTrip(response) {
   
   tripdist = Math.round(onewaydistance*2);
   
+  //Allow City Carshare and Uber if within 15 miles of San Francisco
+  //San Francisco Area lat lon
+  var sf = {
+    lat:37.8,
+    lng:-122.33
+  };
+  if(calculateDistance(sf.lat,sf.lng,response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng())<15){
+    //Add CCS as a mode, add locations
+    addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
+    estimateCCSHourCost();
+    estimateUberCost();
+    $('#ccsresult').show();
+    $('#uberresult').show();
+  } else{
+    $('#ccsresult').hide();
+    $('#uberresult').hide();
+  }
+  
+  //Add zipcar locations
+  addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
+  
   //Estimate costs
-  estimateCCSHourCost();
   estimateZipcarHourCost();
   estimateTaxiCost();
-  estimateUberCost();
   
   if($('#extramiles').val()!=''){
     $("#drivingdistance").html("Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");

@@ -194,9 +194,18 @@ ul.input_boxes li .textbox{
   display:block;
 }
 
+#ccsresult{
+  display:none;
+}
+
+#uberresult{
+  display:none;
+}
+
 .mode {
   float: left;
   padding: 0 8px 10px 8px;
+  width:220px;
 }
 
 .mode:hover{
