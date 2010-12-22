@@ -722,8 +722,10 @@ function estimateZipcarHourCost(){
 
   $('#zipcarsummary').html("");
   if(isNaN($('#zipcarrate').val()) || $('#zipcarrate').val()==''){
-    zipcarcost+= zipcarplan.weekdayhourly*((triptime - tripweekendzipcartime)/60)+zipcarplan.weekendhourly*(tripweekendzipcartime/60);
-    $('#zipcarsummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(zipcarplan.weekendhourly) + "/hr<div>" + formatCurrency(zipcarplan.weekendhourly*(triptime/60)) + "</div></li>");
+    //Use default zipcar rate of $10/hr
+    zipcarrate = 10;
+    zipcarcost+= zipcarrate*((triptime - tripweekendzipcartime)/60)+zipcarrate*(tripweekendzipcartime/60);
+    $('#zipcarsummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(zipcarrate) + "/hr<div>" + formatCurrency(zipcarrate*(triptime/60)) + "</div></li>");
   } else{
     //Use custom zipcar rate entered by user
     zipcarcost+= parseFloat($('#zipcarrate').val())*(triptime/60)*(100-zipcarplan.percentdiscount)/100;
