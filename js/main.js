@@ -313,43 +313,36 @@ function calculateTrip(response) {
   DirectionsService = new google.maps.DirectionsService();
   
   var request = {
-      origin: response.routes[0].legs[0].start_address,
-      destination: response.routes[0].legs[leg_count-1].end_address,
-      waypoints: waypoints,
-      travelMode: google.maps.DirectionsTravelMode.WALKING
+    origin: response.routes[0].legs[0].start_address,
+    destination: response.routes[0].legs[leg_count-1].end_address,
+    waypoints: waypoints,
+    travelMode: google.maps.DirectionsTravelMode.WALKING
   };
   DirectionsService.route(request, function(response, status) {
-     if (status == google.maps.DirectionsStatus.OK) {
-       if(response.routes[0].warnings!=''){
-         $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
-       }
-       //directionsDisplay.setDirections(response);
-       calculateWalkTrip(response);
-     }
-   });
+    if (status == google.maps.DirectionsStatus.OK) {
+      calculateWalkTrip(response);
+    }
+  });
    
-   //Do Biking Directions
-   var request = {
-       origin: response.routes[0].legs[0].start_address,
-       destination: response.routes[0].legs[leg_count-1].end_address,
-       waypoints: waypoints,
-       travelMode: google.maps.DirectionsTravelMode.BICYCLING
-   };
-   DirectionsService.route(request, function(response, status) {
-      if (status == google.maps.DirectionsStatus.OK) {
-        if(response.routes[0].warnings!=''){
-          $('#warnings_panel').append("<li>" + response.routes[0].warnings + "</li>");
-        }
-        //directionsDisplay.setDirections(response);
-        calculateBikeTrip(response);
-      }
-    });
+  //Do Biking Directions
+  var request = {
+    origin: response.routes[0].legs[0].start_address,
+    destination: response.routes[0].legs[leg_count-1].end_address,
+    waypoints: waypoints,
+    travelMode: google.maps.DirectionsTravelMode.BICYCLING
+  };
+  DirectionsService.route(request, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      calculateBikeTrip(response);
+    }
+  });
     
-    //Do Transit Directions 
-    //Use lat lon coordinates to avoid issues with start/end names - need space between coordinates
-    calculateTransitTrip(response.routes[0].legs[0].start_location.lat()+", "+response.routes[0].legs[0].start_location.lng(),
-      response.routes[0].legs[leg_count-1].end_location.lat()+", "+response.routes[0].legs[leg_count-1].end_location.lng());
-  
+  //Do Transit Directions 
+  //Use lat lon coordinates to avoid issues with start/end names - need space between coordinates
+  calculateTransitTrip(response.routes[0].legs[0].start_location.lat()+", "+response.routes[0].legs[0].start_location.lng(),
+  response.routes[0].legs[leg_count-1].end_location.lat()+", "+response.routes[0].legs[leg_count-1].end_location.lng());
+
+  //We've got everything we need, show results
   $("#results").show(); 
   
   //Resize window
