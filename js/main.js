@@ -13,6 +13,11 @@ var triplatenighttime = 0;
 var tripdist = 0;
 var ccscost = 0;
 var zipcarcost = 0;
+var zipcarplan;
+var ccsplan;
+var zipcarrate;
+var extramiles = 0;
+var passengers = 0;
 var taxicost = 0;
 var ubercost = 0;
 var ccsplans = {
@@ -270,6 +275,13 @@ function calculateTrip(response) {
   //clear markers
   clearOverlays()
   
+  //Get settings
+  zipcarplan = zipcarplans[$('#zipcarplan').val()];
+  ccsplan = ccsplans[$('#ccsplan').val()];
+  zipcarrate = $('#zipcarrate').val();
+  extramiles = $('#extramiles').val();
+  passengers = $('#passengers').val();
+  
   //Create popup window
   popup = new google.maps.InfoWindow({maxWidth:200});
 
@@ -296,10 +308,15 @@ function calculateTrip(response) {
     //Add CCS as a mode, add locations
     addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
     estimateCCSHourCost();
+    
+    //Add Uber as a mode
     estimateUberCost();
+    
+    //Show these modes results
     $('#ccsresult').show();
     $('#uberresult').show();
   } else{
+    //If not in SF, hide SF modes
     $('#ccsresult').hide();
     $('#uberresult').hide();
   }
@@ -311,8 +328,8 @@ function calculateTrip(response) {
   estimateZipcarHourCost();
   estimateTaxiCost();
   
-  if($('#extramiles').val()!=''){
-    $("#drivingdistance").html("Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
+  if(extramiles!=''){
+    $("#drivingdistance").html("Distance: <strong>" +  (tripdist+parseFloat(extramiles)) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat(extramiles) + " additional)");
   } else {
     $("#drivingdistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
@@ -384,8 +401,8 @@ function calculateWalkTrip(response){
   
   tripdist = Math.round(onewaydistance*2);
   
-  if($('#extramiles').val()!=''){
-    $("#walkingdistance").html("Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
+  if(extramiles!=''){
+    $("#walkingdistance").html("Distance: <strong>" +  (tripdist+parseFloat(extramiles)) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat(extramiles) + " additional)");
   } else {
     $("#walkingdistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
@@ -406,8 +423,8 @@ function calculateBikeTrip(response){
   
   tripdist = Math.round(onewaydistance*2);
   
-  if($('#extramiles').val()!=''){
-    $("#bikingdistance").html("Distance: <strong>" +  (tripdist+parseFloat($('#extramiles').val())) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat($('#extramiles').val()) + " additional)");
+  if(extramiles!=''){
+    $("#bikingdistance").html("Distance: <strong>" +  (tripdist+parseFloat(extramiles)) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat(extramiles) + " additional)");
   } else {
     $("#bikingdistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
   }
@@ -421,9 +438,6 @@ function calculateTransitTrip(start,end){
   
   //Clear existing directions
   $("#transit div").html('');
-  
-  //get number of travelers
-  var passengers = $("#passengers").val();
   
   //Get departure date and time
   var day;
@@ -693,7 +707,6 @@ function computeTotalTime(){
 
 function estimateCCSHourCost(){
   ccscost = 0;
-  var ccsplan = ccsplans[$('#ccsplan').val()];
 
   $('#ccssummary').html("");
   if($('#ccsplan').val()=='sharealittle'){
@@ -719,9 +732,9 @@ function estimateCCSHourCost(){
     }
   }
   //Add in Mileage
-  if($('#extramiles').val()!=''){
-    ccscost+= (tripdist+parseFloat($('#extramiles').val()))*ccsplan.mileagehourly;
-    $('#ccssummary').append("<li>" + (tripdist+parseFloat($('#extramiles').val())) + " mi x " + formatCurrency(ccsplan.mileagehourly) + " per mi<div>" + formatCurrency((tripdist+parseFloat($('#extramiles').val()))*ccsplan.mileagehourly) + "</div></li>");
+  if(extramiles!=''){
+    ccscost+= (tripdist+parseFloat(extramiles))*ccsplan.mileagehourly;
+    $('#ccssummary').append("<li>" + (tripdist+parseFloat(extramiles)) + " mi x " + formatCurrency(ccsplan.mileagehourly) + " per mi<div>" + formatCurrency((tripdist+parseFloat(extramiles))*ccsplan.mileagehourly) + "</div></li>");
   } else {
     ccscost+= tripdist*ccsplan.mileagehourly;
     $('#ccssummary').append("<li>" + tripdist + " mi x " + formatCurrency(ccsplan.mileagehourly) + " per mi<div>" + formatCurrency(tripdist*ccsplan.mileagehourly) + "</div></li>");
@@ -733,20 +746,19 @@ function estimateCCSHourCost(){
 
 function estimateZipcarHourCost(){  
   zipcarcost = 0;
-  var zipcarplan = zipcarplans[$('#zipcarplan').val()];
 
   $('#zipcarsummary').html("");
-  if(isNaN($('#zipcarrate').val()) || $('#zipcarrate').val()==''){
+  if(isNaN(zipcarrate) || zipcarrate==''){
     //Use default zipcar rate of $10/hr
     zipcarrate = 10;
     zipcarcost+= zipcarrate*((triptime - tripweekendzipcartime)/60)+zipcarrate*(tripweekendzipcartime/60);
     $('#zipcarsummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(zipcarrate) + "/hr<div>" + formatCurrency(zipcarrate*(triptime/60)) + "</div></li>");
   } else{
     //Use custom zipcar rate entered by user
-    zipcarcost+= parseFloat($('#zipcarrate').val())*(triptime/60)*(100-zipcarplan.percentdiscount)/100;
-    $('#zipcarsummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(parseFloat($('#zipcarrate').val())) + "/hr<div>" + formatCurrency(parseFloat($('#zipcarrate').val())*(triptime/60)) + "</div></li>");
+    zipcarcost+= parseFloat(zipcarrate)*(triptime/60)*(100-zipcarplan.percentdiscount)/100;
+    $('#zipcarsummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(parseFloat(zipcarrate)) + "/hr<div>" + formatCurrency(parseFloat(zipcarrate)*(triptime/60)) + "</div></li>");
     if(zipcarplan.percentdiscount>0){
-      $('#zipcarsummary').append("<li>" + zipcarplan.percentdiscount + "% Discount<div>" + formatCurrency(-parseFloat($('#zipcarrate').val())*(triptime/60)*(zipcarplan.percentdiscount/100)) + "</div></li>");
+      $('#zipcarsummary').append("<li>" + zipcarplan.percentdiscount + "% Discount<div>" + formatCurrency(-parseFloat(zipcarrate)*(triptime/60)*(zipcarplan.percentdiscount/100)) + "</div></li>");
     }
   }
   
