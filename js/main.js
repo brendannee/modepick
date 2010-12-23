@@ -325,7 +325,7 @@ function calculateTrip(response) {
   addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
   
   //Estimate costs
-  estimateZipcarHourCost();
+  estimateZipcarCost();
   estimateTaxiCost();
   
   if(extramiles!=''){
@@ -744,26 +744,68 @@ function estimateCCSHourCost(){
   $('#ccssummary').append("<li class='total'>City Carshare Total<div>" + formatCurrency(ccscost) + "</div></li>");
 }
 
-function estimateZipcarHourCost(){  
+function estimateZipcarCost(){  
   zipcarcost = 0;
+  
+  zipcarhour = estimateZipcarHourCost();
+  zipcarday = estimateZipcarDayCost();
+  
+  //See which is least expensive - hourly or daily
+  if(zipcarhour.cost<zipcarday.cost){
+    $('#zipcarsummary').html("");
+     $('#zipcarsummary').append("<li>" + formatTimeDecimal(zipcarhour.time) + " x " + formatCurrency(parseFloat(zipcarhour.rate)) + "/hr<div>" + formatCurrency(parseFloat(zipcarhour.rate)*(zipcarhour.time/60)) + "</div></li>");
+     if(zipcarplan.percentdiscount>0){
+       $('#zipcarsummary').append("<li>" + zipcarplan.percentdiscount + "% Discount<div>" + formatCurrency(-parseFloat(zipcarhour.rate)*(zipcarhour.time/60)*(zipcarplan.percentdiscount/100)) + "</div></li>");
+     }
 
-  $('#zipcarsummary').html("");
+     $('#zipcarsummary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcarhour.cost) + "</div></li>");
+     $('#zipcartotal').html(formatCurrency(zipcarhour.cost));
+  } else {
+    
+  }
+}
+
+function estimateZipcarHourCost(){  
+  zipcarhour = {};
+  zipcarhour.cost = 0;
+  
+  if(isNaN(zipcarrate) || zipcarrate==''){
+    //Use default zipcar rate of $10/hr
+    zipcarhour.rate = 10;
+    zipcarhour.cost += zipcarhour.rate * ((triptime - tripweekendzipcartime)/60) + zipcarhour.rate * (tripweekendzipcartime/60);
+    zipcarhour.time = triptime;
+  } else{
+    //Use custom zipcar rate entered by user
+    zipcarhour.rate = zipcarrate;
+    zipcarhour.cost += parseFloat(zipcarrate) * (triptime/60) * (100-zipcarplan.percentdiscount)/100;
+    zipcarhour.time = triptime;
+  }
+  
+  return zipcarhour;
+}
+
+function estimateZipcarDayCost(){  
+  zipcarday = {};
+  zipcarday.cost = 10000;
+/*
+  $('#zipcardaysummary').html("");
   if(isNaN(zipcarrate) || zipcarrate==''){
     //Use default zipcar rate of $10/hr
     zipcarrate = 10;
-    zipcarcost+= zipcarrate*((triptime - tripweekendzipcartime)/60)+zipcarrate*(tripweekendzipcartime/60);
-    $('#zipcarsummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(zipcarrate) + "/hr<div>" + formatCurrency(zipcarrate*(triptime/60)) + "</div></li>");
+    zipcardaycost+= zipcarrate*((triptime - tripweekendzipcartime)/60)+zipcarrate*(tripweekendzipcartime/60);
+    $('#zipcardaysummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(zipcarrate) + "/hr<div>" + formatCurrency(zipcarrate*(triptime/60)) + "</div></li>");
   } else{
     //Use custom zipcar rate entered by user
-    zipcarcost+= parseFloat(zipcarrate)*(triptime/60)*(100-zipcarplan.percentdiscount)/100;
-    $('#zipcarsummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(parseFloat(zipcarrate)) + "/hr<div>" + formatCurrency(parseFloat(zipcarrate)*(triptime/60)) + "</div></li>");
+    zipcardaycost+= parseFloat(zipcarrate)*(triptime/60)*(100-zipcarplan.percentdiscount)/100;
+    $('#zipcardaysummary').append("<li>" + formatTimeDecimal(triptime) + " x " + formatCurrency(parseFloat(zipcarrate)) + "/hr<div>" + formatCurrency(parseFloat(zipcarrate)*(triptime/60)) + "</div></li>");
     if(zipcarplan.percentdiscount>0){
-      $('#zipcarsummary').append("<li>" + zipcarplan.percentdiscount + "% Discount<div>" + formatCurrency(-parseFloat(zipcarrate)*(triptime/60)*(zipcarplan.percentdiscount/100)) + "</div></li>");
+      $('#zipcardaysummary').append("<li>" + zipcarplan.percentdiscount + "% Discount<div>" + formatCurrency(-parseFloat(zipcarrate)*(triptime/60)*(zipcarplan.percentdiscount/100)) + "</div></li>");
     }
   }
   
-  $('#zipcarsummary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcarcost) + "</div></li>");
-  $('#zipcartotal').html(formatCurrency(zipcarcost));
+  $('#zipcardaysummary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcardaycost) + "</div></li>");
+  $('#zipcardaytotal').html(formatCurrency(zipcardaycost));*/
+  return zipcarday;
 }
 
 function estimateTaxiCost(){ 
