@@ -3,9 +3,9 @@ modepick
 
 #### Choose your mode
 
-modepick is a frontend for a website that lets you compare modes for a chosen trip. It uses Google Maps API to get distance and time estimates for an origin and destination and presents the estimated costs and time by mode. 
+Modepick is a website that lets you compare transportation options (modes).  It uses Google Maps API to get distance and time estimates for an origin and destination and presents the estimated costs and time by mode. 
 
-Currently, the focus is on comparing carshare vs taxi modes. Additional modes will be added.
+Currently, the focus is on comparing carshare vs taxi modes.
 
 modepick is very San Francisco focused at the moment, at some point it could be made to work anywhere.
 
@@ -15,14 +15,14 @@ modepick is very San Francisco focused at the moment, at some point it could be 
 - [Zipcar](http://zipcar.com)
 - Taxi
 - [Uber](http://uberapp.com)
+- Transit
+- Walking
+- Biking
 	
 ### Future Modes
 	
-- Transit
 - Amtrak
 - Greyhound
-- Walking
-- Biking
 - Drive/Carpool
 
 ### Credits
