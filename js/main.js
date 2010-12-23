@@ -133,26 +133,6 @@ var uberfares = {
   idleminute:1.25
 }
 
-function enableTooltips(){
-    // select all desired input fields and attach tooltips to them 
-    $("#startlocation,#destinationlocation,#zipcarrate,#extramiles").tooltip({ 
-        // place tooltip on the right edge 
-        position: "center right", 
-
-        // a little tweaking of the position 
-        offset: [0, 10], 
-
-        // use the built-in fadeIn/fadeOut effect 
-        effect: "fade", 
-
-        // custom opacity setting 
-        opacity: 0.8, 
-
-        // use this single tooltip element 
-        tip: '.tooltip' 
-    });
-}
-
 function clearOverlays() {
   if (markerArray) {
     for (i in markerArray) {
@@ -1044,7 +1024,13 @@ google.setOnLoadCallback(function(){
   });
 
   //Enable Tooltips
-  enableTooltips();
+  $("#startlocation,#destinationlocation,#zipcarrate,#extramiles").tooltip({ 
+      position: "center right",
+      offset: [0, 10],
+      effect: "fade",
+      opacity: 0.8,
+      tip: '.tooltip'
+  });
 
   //Show geolocation if browser supports it
   if (navigator.geolocation) {  
