@@ -507,7 +507,7 @@ function computeTotalTime(){
   today = new Date();
   if(dates.compare(departuredate,(today.getMonth()+1)+"/"+today.getDate()+"/"+today.getFullYear())<0){
     $('#warnings_panel').append("<li>Your departure date has already passed.</li>");
-    //Keep going as this is a valid trip, just in the past
+    //Keep going as this is a valid trip, its just in the past
   } 
   
   //Check if return date is after todays date
@@ -518,209 +518,200 @@ function computeTotalTime(){
   
   triptime = (returndate-departuredate)/(1000*60)
   
-  //determine how many days the trip time is
-  var days = Math.floor((triptime/60)/24);
-  
   //Calculate latenight time
   departuremidnight = new Date(departuredate.getFullYear(),departuredate.getMonth(),departuredate.getDate());
   returnmidnight = new Date(returndate.getFullYear(),returndate.getMonth(),returndate.getDate());
-  if(days<1){
     if(departuredate.getHours()<8){
-      //departure time before 8 AM
-      if(returndate.getDate()==departuredate.getDate()){
-        //Return is same day
-        if(returndate.getHours()<8){
-          //depart and return before 8 AM
-          triplatenighttime += (returndate-departuredate)/(1000*60);
-        }
-        else {
-          //Return after 8 AM
-          triplatenighttime += (8*60)-((departuredate-departuremidnight)/(1000*60));
-        }
-      } else {
-        //Return is next day
+    //departure time before 8 AM
+    if(returndate.getDate()==departuredate.getDate()){
+      //Return is same day
+      if(returndate.getHours()<8){
+        //depart and return before 8 AM
+        triplatenighttime += (returndate-departuredate)/(1000*60);
+      }
+      else {
+        //Return after 8 AM
         triplatenighttime += (8*60)-((departuredate-departuremidnight)/(1000*60));
-        triplatenighttime += (returndate-returnmidnight)/(1000*60);
       }
     } else {
-      //Departure is after 8 AM
-      if(returndate.getDate()==departuredate.getDate()){
-        //Return is same day, no late night
-      } else {
-        //Return is next day
-        if(returndate.getHours()<8){
-          //depart and return before 8 AM
-          triplatenighttime += (returndate-returnmidnight)/(1000*60);
-        }
-        else {
-          //Return after 8 AM
-          triplatenighttime += (8*60);
-        }
+      //Return is next day
+      triplatenighttime += (8*60)-((departuredate-departuremidnight)/(1000*60));
+      triplatenighttime += (returndate-returnmidnight)/(1000*60);
+    }
+  } else {
+    //Departure is after 8 AM
+    if(returndate.getDate()==departuredate.getDate()){
+      //Return is same day, no late night
+    } else {
+      //Return is next day
+      if(returndate.getHours()<8){
+        //depart and return before 8 AM
+        triplatenighttime += (returndate-returnmidnight)/(1000*60);
+      }
+      else {
+        //Return after 8 AM
+        triplatenighttime += (8*60);
       }
     }
-    
-    //Weekend calculation for CCS with weeknights
-    if(departuredate.getDay()==5){
-      //departure day is friday
-      if(returndate.getDate()==departuredate.getDate()){
-        //Return is same day
-        if(departuredate.getHours()<17){
-          //depart before 5 PM
-          if(returndate.getHours()>=17){
-            //return after 5 PM
-            tripweekendccstime += ((returndate-returnmidnight)/(1000*60))-(17*60);
-          }
-        } else {
-          //Depart after 5 PM
-          tripweekendccstime += (returndate-departuredate)/(1000*60);
+  }
+  
+  //Weekend calculation for CCS with weeknights
+  if(departuredate.getDay()==5){
+    //departure day is friday
+    if(returndate.getDate()==departuredate.getDate()){
+      //Return is same day
+      if(departuredate.getHours()<17){
+        //depart before 5 PM
+        if(returndate.getHours()>=17){
+          //return after 5 PM
+          tripweekendccstime += ((returndate-returnmidnight)/(1000*60))-(17*60);
         }
       } else {
-        //Return is next day
-        if(departuredate.getHours()<17){
-          //depart before 5 PM
-          tripweekendccstime += (7*60);
-        } else {
-          //depart after 5 PM
-          tripweekendccstime += (24*60)-((departuredate-departuremidnight)/(1000*60));
-        }
+        //Depart after 5 PM
+        tripweekendccstime += (returndate-departuredate)/(1000*60);
+      }
+    } else {
+      //Return is next day
+      if(departuredate.getHours()<17){
+        //depart before 5 PM
+        tripweekendccstime += (7*60);
+      } else {
+        //depart after 5 PM
+        tripweekendccstime += (24*60)-((departuredate-departuremidnight)/(1000*60));
+      }
+      if(returndate.getHours()>=8){
+        tripweekendccstime += ((returndate-returnmidnight)/(1000*60))-(8*60);
+      }
+    }
+  } else if(departuredate.getDay()==6){
+    //departure day is Saturday
+    if(returndate.getDate()==departuredate.getDate()){
+      //Return is same day
+      if(departuredate.getHours()<8){
+        //depart before 8 AM
         if(returndate.getHours()>=8){
+          //return after 8 AM
+          tripweekendccstime += ((returndate-departuredate)/(1000*60)) - ((8*60)-((departuredate-departuremidnight)/(1000*60)));
+        }
+      } else {
+        //Depart after 8 AM
+        tripweekendccstime += (returndate-departuredate)/(1000*60);
+      }
+    } else {
+      //Return is next day
+      if(departuredate.getHours()<8){
+        //depart before 8 AM, return must be before 8 AM
+        tripweekendccstime += (16*60);
+      } else{
+        //departure after 8 AM
+        if(returndate.getHours()<8){
+          //return before 8 AM
+          tripweekendccstime += (24*60)-((departuredate-departuremidnight)/(1000*60));
+        } else {
+          //return after 8 AM
+          tripweekendccstime += (24*60)-((departuredate-departuremidnight)/(1000*60));
           tripweekendccstime += ((returndate-returnmidnight)/(1000*60))-(8*60);
         }
       }
-    } else if(departuredate.getDay()==6){
-      //departure day is Saturday
-      if(returndate.getDate()==departuredate.getDate()){
-        //Return is same day
-        if(departuredate.getHours()<8){
-          //depart before 8 AM
-          if(returndate.getHours()>=8){
-            //return after 8 AM
-            tripweekendccstime += ((returndate-departuredate)/(1000*60)) - ((8*60)-((departuredate-departuremidnight)/(1000*60)));
-          }
-        } else {
-          //Depart after 8 AM
-          tripweekendccstime += (returndate-departuredate)/(1000*60);
-        }
-      } else {
-        //Return is next day
-        if(departuredate.getHours()<8){
-          //depart before 8 AM, return must be before 8 AM
-          tripweekendccstime += (16*60);
-        } else{
-          //departure after 8 AM
-          if(returndate.getHours()<8){
-            //return before 8 AM
-            tripweekendccstime += (24*60)-((departuredate-departuremidnight)/(1000*60));
-          } else {
-            //return after 8 AM
-            tripweekendccstime += (24*60)-((departuredate-departuremidnight)/(1000*60));
-            tripweekendccstime += ((returndate-returnmidnight)/(1000*60))-(8*60);
-          }
-        }
-      }
-    } else if(departuredate.getDay()==0){
-      //departure day is Sunday
-      if(returndate.getDate()==departuredate.getDate()){
-        //Return is same day
-        if(departuredate.getHours()<8){
-          //depart before 8 AM
-          if(returndate.getHours()>=8){
-            //return after 8 AM
-            tripweekendccstime += ((returndate-departuredate)/(1000*60)) - ((8*60)-((departuredate-departuremidnight)/(1000*60)));
-          }
-        } else {
-          //Depart after 8 AM
-          tripweekendccstime += (returndate-departuredate)/(1000*60);
-        }
-      } else {
-        //Return is next day
-        if(departuredate.getHours()<8){
-          //depart before 8 AM, return must be before 8 AM
-          tripweekendccstime += (16*60);
-        } else{
-          //departure after 8 AM
-          tripweekendccstime += (24*60)-((departuredate-departuremidnight)/(1000*60));
-        }
-      }
     }
-    
-    //Weekend calculation CCS with no weeknights
-    if(departuredate.getDay()==5){
-      //departure day is friday
-     if(departuredate.getHours()<17){
-        //depart before 5 PM
-        if(returndate.getHours()>=17 || returndate.getDate()!=departuredate.getDate()){
-          //return after 5 PM
-          tripweekendccs2time += (returndate-departuredate)/(1000*60) - ((17*60)-((departuredate-departuremidnight)/(1000*60)));
-        }
-      } else {
-        //depart after 5 PM
-        tripweekendccs2time += (returndate-departuredate)/(1000*60);
-      }
-    } else if(departuredate.getDay()==6){
-      //departure day is Saturday
-      tripweekendccs2time += (returndate-departuredate)/(1000*60);
-    } else if(departuredate.getDay()==0){
-      //departure day is Sunday
-      if(returndate.getDate()==departuredate.getDate()){
-        //Return is same day
-        tripweekendccs2time += (returndate-departuredate)/(1000*60);
-      } else {
-        //Return is next day
-        if(returndate.getHours()<8){
-          //return before 8 AM
-          tripweekendccs2time += (returndate-departuredate)/(1000*60);
-        } else{
+  } else if(departuredate.getDay()==0){
+    //departure day is Sunday
+    if(returndate.getDate()==departuredate.getDate()){
+      //Return is same day
+      if(departuredate.getHours()<8){
+        //depart before 8 AM
+        if(returndate.getHours()>=8){
           //return after 8 AM
-          tripweekendccs2time += (returndate-departuredate)/(1000*60) - ((returndate-returnmidnight)/(1000*60)-(8*60));
+          tripweekendccstime += ((returndate-departuredate)/(1000*60)) - ((8*60)-((departuredate-departuremidnight)/(1000*60)));
         }
+      } else {
+        //Depart after 8 AM
+        tripweekendccstime += (returndate-departuredate)/(1000*60);
+      }
+    } else {
+      //Return is next day
+      if(departuredate.getHours()<8){
+        //depart before 8 AM, return must be before 8 AM
+        tripweekendccstime += (16*60);
+      } else{
+        //departure after 8 AM
+        tripweekendccstime += (24*60)-((departuredate-departuremidnight)/(1000*60));
       }
     }
-  } else{
-    //more than 24 hours
-     $('#warnings_panel').append("<li>This calculator doesn't work for trips over 24 hours yet.</li>");
-    //return false;
   }
-    
-    //Weekend calculation Zipcar
-    //Assume no reservtions over 7 days length
-    //Calculate number of minutes from midnight Monday
-    //Shift getDay function by one day
-    if(departuredate.getDay()==0){
-      startday = 6;
+  
+  //Weekend calculation CCS with no weeknights
+  if(departuredate.getDay()==5){
+    //departure day is friday
+   if(departuredate.getHours()<17){
+      //depart before 5 PM
+      if(returndate.getHours()>=17 || returndate.getDate()!=departuredate.getDate()){
+        //return after 5 PM
+        tripweekendccs2time += (returndate-departuredate)/(1000*60) - ((17*60)-((departuredate-departuremidnight)/(1000*60)));
+      }
     } else {
-      startday = departuredate.getDay()-1;
+      //depart after 5 PM
+      tripweekendccs2time += (returndate-departuredate)/(1000*60);
     }
-    departurecode = startday*(24*60) + departuredate.getHours()*60 + departuredate.getMinutes();
-    
-    if(returndate.getDay()==0){
-      endday = 6;
+  } else if(departuredate.getDay()==6){
+    //departure day is Saturday
+    tripweekendccs2time += (returndate-departuredate)/(1000*60);
+  } else if(departuredate.getDay()==0){
+    //departure day is Sunday
+    if(returndate.getDate()==departuredate.getDate()){
+      //Return is same day
+      tripweekendccs2time += (returndate-departuredate)/(1000*60);
     } else {
-      endday = returndate.getDay()-1;
+      //Return is next day
+      if(returndate.getHours()<8){
+        //return before 8 AM
+        tripweekendccs2time += (returndate-departuredate)/(1000*60);
+      } else{
+        //return after 8 AM
+        tripweekendccs2time += (returndate-departuredate)/(1000*60) - ((returndate-returnmidnight)/(1000*60)-(8*60));
+      }
     }
-    returncode = endday*(24*60) + returndate.getHours()*60 + returndate.getMinutes();
-    
-    if(returncode<departurecode){
-      //trip spans a weekend, add  7 days to returncode
-      returncode += 7*24*60;
-    }
-    
-    if(departurecode<=(5*24*60) && returncode<=(5*24*60)){
-      //trip entirely weekday
-      tripweekendzipcartime = 0;
-    } else if(departurecode<=(5*24*60) && returncode>=(7*24*60)){
-      //trip spans entire weekend
-      tripweekendzipcartime = (2*24*60);
-    } else if(departurecode<=(5*24*60) && returncode<=(7*24*60)){
-      //trip starts on weekday, ends on weekend
-      tripweekendzipcartime = returncode - (5*24*60);
-    } else if(departurecode>(5*24*60) && returncode<=(7*24*60)){
-      //trip entirely weekend
-      tripweekendzipcartime = returncode - departurecode;
-    } else if(departurecode>(5*24*60) && returncode>(7*24*60)){
-      //trip starts on weekend, ends of weekday
-      tripweekendzipcartime = (7*24*60) - departurecode;
-    }
+  }
+  
+  //Weekend calculation Zipcar
+  //Assume no reservtions over 7 days length
+  //Calculate number of minutes from midnight Monday
+  //Shift getDay function by one day
+  if(departuredate.getDay()==0){
+    startday = 6;
+  } else {
+    startday = departuredate.getDay()-1;
+  }
+  departurecode = startday*(24*60) + departuredate.getHours()*60 + departuredate.getMinutes();
+  
+  if(returndate.getDay()==0){
+    endday = 6;
+  } else {
+    endday = returndate.getDay()-1;
+  }
+  returncode = endday*(24*60) + returndate.getHours()*60 + returndate.getMinutes();
+  
+  if(returncode<departurecode){
+    //trip spans a weekend, add  7 days to returncode
+    returncode += 7*24*60;
+  }
+  
+  if(departurecode<=(5*24*60) && returncode<=(5*24*60)){
+    //trip entirely weekday
+    tripweekendzipcartime = 0;
+  } else if(departurecode<=(5*24*60) && returncode>=(7*24*60)){
+    //trip spans entire weekend
+    tripweekendzipcartime = (2*24*60);
+  } else if(departurecode<=(5*24*60) && returncode<=(7*24*60)){
+    //trip starts on weekday, ends on weekend
+    tripweekendzipcartime = returncode - (5*24*60);
+  } else if(departurecode>(5*24*60) && returncode<=(7*24*60)){
+    //trip entirely weekend
+    tripweekendzipcartime = returncode - departurecode;
+  } else if(departurecode>(5*24*60) && returncode>(7*24*60)){
+    //trip starts on weekend, ends of weekday
+    tripweekendzipcartime = (7*24*60) - departurecode;
+  }
   
   return true;
 }

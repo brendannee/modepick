@@ -118,22 +118,22 @@
     <ul id="warnings_panel"></ul>
     <div id="results">
       <h2>All Results are for Round Trip travel</h2>
-      <div id="driving" class="moderesult">
+      <div id="driving" class="mode">
         <h3>Driving/Carshare/Taxi <div id="drivinglink" class="modeLink"></div></h3>
         <div id="drivingtime"></div>
         <div id="drivingdistance"></div>
       </div>
-      <div id="walking" class="moderesult">
+      <div id="walking" class="mode">
         <h3>Walking <div id="walkinglink" class="modeLink"></div></h3>
         <div id="walkingtime"></div>
         <div id="walkingdistance"></div>
       </div>
-      <div id="biking" class="moderesult">
+      <div id="biking" class="mode">
         <h3>Biking <div id="bikinglink" class="modeLink"></div></h3>
         <div id="bikingtime"></div>
         <div id="bikingdistance"></div>
       </div>
-      <div id="transit" class="moderesult">
+      <div id="transit" class="mode">
         <h3>Transit <div id="transitlink" class="modeLink"></div></h3>
         <div id="transittime"></div>
         <div id="transitroutes"></div>
@@ -143,27 +143,27 @@
         <div id="transitsinglefare"></div>
         <div id="transitfare"></div>
       </div>
+      <div id="tripcomparisons">
+      <li id="ccsresult" class="mode">
+        <h3>City Carshare: <span id="ccstotal"></span> <a href="http://citycarshare.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
+        <div id="ccsclosest"></div>
+        <ul id="ccssummary" class="summary"></ul>
+      </li>
+      <li id="zipcarresult" class="mode">
+        <h3>Zipcar: <span id="zipcartotal"></span> <a href="http://zipcar.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
+        <div id="zipcarclosest"></div>
+        <ul id="zipcarsummary" class="summary"></ul>
+      </li>
+      <li id="taxiresult" class="mode">
+        <h3>Roundtrip Taxi: <span id="taxitotal"></span></h3>
+        <ul id="taxisummary" class="summary"></ul>
+      </li>
+      <li id="uberresult" class="mode">
+        <h3>Roundtrip Uber: <span id="ubertotal"></span> <a href="http://uberapp.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
+        <ul id="ubersummary" class="summary"></ul>
+      </li>
+      </div><!--#tripcomparisons-->
     </div><!-- #results -->
-    <div id="tripcomparisons">
-    <li id="ccsresult" class="mode">
-      <h3>City Carshare: <span id="ccstotal"></span> <a href="http://citycarshare.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
-      <div id="ccsclosest"></div>
-      <ul id="ccssummary" class="summary"></ul>
-    </li>
-    <li id="zipcarresult" class="mode">
-      <h3>Zipcar: <span id="zipcartotal"></span> <a href="http://zipcar.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
-      <div id="zipcarclosest"></div>
-      <ul id="zipcarsummary" class="summary"></ul>
-    </li>
-    <li id="taxiresult" class="mode">
-      <h3>Roundtrip Taxi: <span id="taxitotal"></span></h3>
-      <ul id="taxisummary" class="summary"></ul>
-    </li>
-    <li id="uberresult" class="mode">
-      <h3>Roundtrip Uber: <span id="ubertotal"></span> <a href="http://uberapp.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
-      <ul id="ubersummary" class="summary"></ul>
-    </li>
-    </div><!--#tripcomparisons-->
   </div><!-- #resultsWrapper -->
   </div><!-- #wrapper -->
   
