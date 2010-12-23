@@ -4,18 +4,14 @@ var directionsService;
 var markerArray = [];
 var popup;
 var closestCCSMarker = {};
-var closestZipcarMarker = {};
 var triptime = 0;
-var tripweekendzipcartime = 0;
+var zipcar = {};
 var tripweekendccstime = 0;
 var tripweekendccs2time = 0;
 var triplatenighttime = 0;
 var tripdist = 0;
 var ccscost = 0;
-var zipcarplan;
 var ccsplan;
-var zipcarrate;
-var zipcardailyrate;
 var extramiles = 0;
 var passengers = 0;
 var taxicost = 0;
@@ -160,7 +156,7 @@ function addCarshareLocations(map, lat, lon, type){
   
   //Set closestCCSMarker
   closestCCSMarker.distance = 0;
-  closestZipcarMarker.distance = 0;
+  zipcar.closestMarker = {};
   
   if(type=='ccs'){
     var image = new google.maps.MarkerImage(
@@ -225,11 +221,11 @@ function addCarshareLocations(map, lat, lon, type){
     for (pod in zipcar_arr) {
       distanceAway = calculateDistance(zipcar_arr[pod][2],zipcar_arr[pod][3],lat,lon);
       //Check to see if this marker is the closest
-      if(closestZipcarMarker.distance==0 || distanceAway<closestZipcarMarker.distance){
-        closestZipcarMarker.name = zipcar_arr[pod][1];
-        closestZipcarMarker.lat = zipcar_arr[pod][2];
-        closestZipcarMarker.lng = zipcar_arr[pod][3];
-        closestZipcarMarker.distance = distanceAway;
+      if(typeof zipcar.closestMarker.distance == "undefined" || distanceAway<zipcar.closestMarker.distance){
+        zipcar.closestMarker.name = zipcar_arr[pod][1];
+        zipcar.closestMarker.lat = zipcar_arr[pod][2];
+        zipcar.closestMarker.lng = zipcar_arr[pod][3];
+        zipcar.closestMarker.distance = distanceAway;
       }
       //check to see if within bounding box
       if(zipcar_arr[pod][2]>SBound && zipcar_arr[pod][2]<NBound && zipcar_arr[pod][3]>WBound && zipcar_arr[pod][3]<EBound){
@@ -259,15 +255,15 @@ function addCarshareLocations(map, lat, lon, type){
     }
   }
   //List closest Zipcar location in results
-  if(closestZipcarMarker.distance<.2){
+  if(zipcar.closestMarker.distance<.2){
     //Within 1000 feet, display feet
-    closestZipcarMarker.distanceformatted = Math.round(closestZipcarMarker.distance*5280) + " ft";
+    zipcar.closestMarker.distanceformatted = Math.round(zipcar.closestMarker.distance*5280) + " ft";
   } else{
     //Use miles
-    closestZipcarMarker.distanceformatted = Math.round(closestZipcarMarker.distance*10)/10 + " mi";
+    zipcar.closestMarker.distanceformatted = Math.round(zipcar.closestMarker.distance*10)/10 + " mi";
   }
-  if(typeof closestZipcarMarker.name !== "undefined"){
-    $('#zipcarclosest').html("Nearest car: <strong>" + closestZipcarMarker.distanceformatted + "</strong> (" + decodeURIComponent(closestZipcarMarker.name.replace(/\+/g,' ')) + ")");
+  if(typeof zipcar.closestMarker.name !== "undefined"){
+    $('#zipcarclosest').html("Nearest car: <strong>" + zipcar.closestMarker.distanceformatted + "</strong> (" + decodeURIComponent(zipcar.closestMarker.name.replace(/\+/g,' ')) + ")");
   }
 }
 
@@ -276,10 +272,7 @@ function calculateTrip(response) {
   clearOverlays()
   
   //Get settings
-  zipcarplan = zipcarplans[$('#zipcarplan').val()];
   ccsplan = ccsplans[$('#ccsplan').val()];
-  zipcarrate = $('#zipcarrate').val();
-  zipcardailyrate = $('#zipcardailyrate').val();
   extramiles = $('#extramiles').val();
   passengers = $('#passengers').val();
   
@@ -307,8 +300,9 @@ function calculateTrip(response) {
   };
   if(calculateDistance(sf.lat,sf.lng,response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng())<15){
     //Add CCS as a mode, add locations
-    addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
     estimateCCSHourCost();
+    
+    addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
     
     //Add Uber as a mode
     estimateUberCost();
@@ -322,12 +316,12 @@ function calculateTrip(response) {
     $('#uberresult').hide();
   }
   
-  //Add zipcar locations
-  addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
-  
   //Estimate costs
   estimateZipcarCost();
   estimateTaxiCost();
+  
+  //Add zipcar locations
+  addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
   
   if(extramiles!=''){
     $("#drivingdistance").html("Distance: <strong>" +  (tripdist+parseFloat(extramiles)) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ parseFloat(extramiles) + " additional)");
@@ -433,7 +427,6 @@ function calculateBikeTrip(response){
   $("#bikinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=b' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
 }
 
-
 function calculateTransitTrip(start,end){
   //Use YQL to scrape google maps for screenreader to get transit directions
   
@@ -499,9 +492,29 @@ function computeTotalTime(){
   triplatenighttime = 0;
   tripweekendccstime = 0;
   tripweekendccs2time = 0;
-  tripweekendzipcartime = 0;
   var departuredate=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
   var returndate=dates.convert(""+$('#returndate').val()+" "+$('#returntime').val());
+  
+  //Calculate number of minutes from midnight Monday
+  //Shift getDay function by one day
+  if(departuredate.getDay()==0){
+    startday = 6;
+  } else {
+    startday = departuredate.getDay()-1;
+  }
+  departurecode = startday*(24*60) + departuredate.getHours()*60 + departuredate.getMinutes();
+  
+  if(returndate.getDay()==0){
+    endday = 6;
+  } else {
+    endday = returndate.getDay()-1;
+  }
+  returncode = endday*(24*60) + returndate.getHours()*60 + returndate.getMinutes();
+  
+  if(returncode<departurecode){
+    //trip spans a weekend, add  7 days to returncode
+    returncode += 7*24*60;
+  }
   
   //Check if after todays date
   today = new Date();
@@ -515,6 +528,9 @@ function computeTotalTime(){
     $('#warnings_panel').append("<li>Your departure date is before your return date.</li>");
     return false;
   }
+  
+  //Calculate CCS Times
+  //Assume no reservtions over 7 days length
   
   triptime = (returndate-departuredate)/(1000*60)
   
@@ -673,46 +689,6 @@ function computeTotalTime(){
     }
   }
   
-  //Weekend calculation Zipcar
-  //Assume no reservtions over 7 days length
-  //Calculate number of minutes from midnight Monday
-  //Shift getDay function by one day
-  if(departuredate.getDay()==0){
-    startday = 6;
-  } else {
-    startday = departuredate.getDay()-1;
-  }
-  departurecode = startday*(24*60) + departuredate.getHours()*60 + departuredate.getMinutes();
-  
-  if(returndate.getDay()==0){
-    endday = 6;
-  } else {
-    endday = returndate.getDay()-1;
-  }
-  returncode = endday*(24*60) + returndate.getHours()*60 + returndate.getMinutes();
-  
-  if(returncode<departurecode){
-    //trip spans a weekend, add  7 days to returncode
-    returncode += 7*24*60;
-  }
-  
-  if(departurecode<=(5*24*60) && returncode<=(5*24*60)){
-    //trip entirely weekday
-    tripweekendzipcartime = 0;
-  } else if(departurecode<=(5*24*60) && returncode>=(7*24*60)){
-    //trip spans entire weekend
-    tripweekendzipcartime = (2*24*60);
-  } else if(departurecode<=(5*24*60) && returncode<=(7*24*60)){
-    //trip starts on weekday, ends on weekend
-    tripweekendzipcartime = returncode - (5*24*60);
-  } else if(departurecode>(5*24*60) && returncode<=(7*24*60)){
-    //trip entirely weekend
-    tripweekendzipcartime = returncode - departurecode;
-  } else if(departurecode>(5*24*60) && returncode>(7*24*60)){
-    //trip starts on weekend, ends of weekday
-    tripweekendzipcartime = (7*24*60) - departurecode;
-  }
-  
   return true;
 }
 
@@ -755,13 +731,63 @@ function estimateCCSHourCost(){
   $('#ccssummary').append("<li class='total'>City Carshare Total<div>" + formatCurrency(ccscost) + "</div></li>");
 }
 
-function estimateZipcarCost(){  
-  zipcar = estimateZipcarDayCost(triptime);
+function estimateZipcarCost(){
+  zipcar = {}
+  zipcar.plan = zipcarplans[$('#zipcarplan').val()];
+  zipcar.rates={};
+  zipcar.rates.customHourly = $('#zipcarrate').val();
+  zipcar.rates.customDaily = $('#zipcardailyrate').val();
+  var departuredate=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
+  var returndate=dates.convert(""+$('#returndate').val()+" "+$('#returntime').val());
+  
+  //Calculate number of minutes from midnight Monday
+  //Shift getDay function by one day
+  if(departuredate.getDay()==0){
+    startday = 6;
+  } else {
+    startday = departuredate.getDay()-1;
+  }
+  departurecode = startday*(24*60) + departuredate.getHours()*60 + departuredate.getMinutes();
+  
+  if(returndate.getDay()==0){
+    endday = 6;
+  } else {
+    endday = returndate.getDay()-1;
+  }
+  returncode = endday*(24*60) + returndate.getHours()*60 + returndate.getMinutes();
+  
+  if(returncode<departurecode){
+    //trip spans a weekend, add  7 days to returncode
+    returncode += 7*24*60;
+  }
+  
+  //Weekend calculation Zipcar
+  //Assume no reservtions over 7 days length
+  
+  if(departurecode<=(5*24*60) && returncode<=(5*24*60)){
+    //trip entirely weekday
+    zipcar.weekendtime = 0;
+  } else if(departurecode<=(5*24*60) && returncode>=(7*24*60)){
+    //trip spans entire weekend
+    zipcar.weekendtime = (2*24*60);
+  } else if(departurecode<=(5*24*60) && returncode<=(7*24*60)){
+    //trip starts on weekday, ends on weekend
+    zipcar.weekendtime = returncode - (5*24*60);
+  } else if(departurecode>(5*24*60) && returncode<=(7*24*60)){
+    //trip entirely weekend
+    zipcar.weekendtime = returncode - departurecode;
+  } else if(departurecode>(5*24*60) && returncode>(7*24*60)){
+    //trip starts on weekend, ends of weekday
+    zipcar.weekendtime = (7*24*60) - departurecode;
+  }
+  
+  //Do cost estimations
+  estimateZipcarDayCost(triptime);
   
   $('#zipcarsummary').html("");
   if(zipcar.days>0){
     //Daily Rate
-    $('#zipcarsummary').append("<li>" + zipcar.days + " day x " + formatCurrency(parseFloat(zipcar.dailyrate)) + "/day<div>" + formatCurrency(parseFloat(zipcar.dailyrate)*(zipcar.days)) + "</div></li>");
+    $('#zipcarsummary').append("<li>" + zipcar.days + " day x " + formatCurrency(parseFloat(zipcar.rates.daily)) + "/day<div>" + formatCurrency(parseFloat(zipcar.rates.daily)*(zipcar.days)) + "</div></li>");
   }
   if(zipcar.hours.time>0){
     //Hourly Rate
@@ -777,66 +803,65 @@ function estimateZipcarHourCost(triptime){
   zipcarhour.cost = 0;
   zipcarhour.time = triptime;
   
-  if(isNaN(zipcarrate) || zipcarrate==''){
+  if(isNaN(zipcar.rates.customHourly) || zipcar.rates.customHourly==''){
     //Use default zipcar hourly rates
-    zipcarhour.rate = zipcarplan.weekdayhourly;
+    zipcarhour.rate = zipcar.plan.weekdayhourly;
   } else{
     //Use custom zipcar hourly rate entered by user
-    zipcarhour.rate = zipcarrate;
+    zipcarhour.rate = zipcar.rates.customHourly;
   }
   
-  zipcarhour.cost += zipcarhour.rate * ((triptime - tripweekendzipcartime)/60) + zipcarhour.rate * (tripweekendzipcartime/60);
+  zipcarhour.cost += zipcarhour.rate * ((triptime - zipcar.weekendtime)/60) + zipcarhour.rate * (zipcar.weekendtime/60);
   
   return zipcarhour;
 }
 
 function estimateZipcarDayCost(triptime){  
-  zipcarday = {};
-  zipcarday.cost = 0;
-  zipcarday.time = triptime;
+  zipcar.cost = 0;
+  zipcar.time = triptime;
   
-  if(isNaN(zipcardailyrate) || zipcardailyrate==''){
+  if(isNaN(zipcar.rates.customDaily) || zipcar.rates.customDaily==''){
     //Use default zipcar daily rates of $73/weekday and $78/weekend
-    if(tripweekendzipcartime>0){
+    if(zipcar.weekendtime>0){
       //Trip touches a weekend, so use daily avg rates for weekend
-      zipcarday.dailyrate = zipcarplan.weekenddaily;
+      zipcar.rates.daily = zipcar.plan.weekenddaily;
     } else {
       //Use daily avg rates for weekday
-      zipcarday.dailyrate = zipcarplan.weekdaydaily;
+      zipcar.rates.daily = zipcar.plan.weekdaydaily;
     }
   } else {
     //Use custom zipcar daily rate entered by user
-    zipcarday.dailyrate = zipcardailyrate;
+    zipcar.rates.daily = zipcar.rates.customDaily;
   }
   
   //First try a rate that is a number of days that exceeds the reservation time
-  zipcarday.ceiling = {}
-  zipcarday.ceiling.days = Math.ceil(triptime / (24*60));
-  zipcarday.ceiling.hours = 0;
-  zipcarday.ceiling.cost = zipcarday.ceiling.days * parseFloat(zipcarday.dailyrate);
+  zipcar.ceiling = {}
+  zipcar.ceiling.days = Math.ceil(triptime / (24*60));
+  zipcar.ceiling.hours = 0;
+  zipcar.ceiling.cost = zipcar.ceiling.days * parseFloat(zipcar.rates.daily);
   
   //Now try a rate that is a number of days with a few trailing hours
-  zipcarday.floor = {}
-  zipcarday.floor.days = Math.floor(triptime / (24*60));
-  zipcarday.floor.hours = estimateZipcarHourCost(triptime % (24*60));
-  zipcarday.floor.cost = zipcarday.floor.days * parseFloat(zipcarday.dailyrate) + zipcarday.floor.hours.cost;
+  zipcar.floor = {}
+  zipcar.floor.days = Math.floor(triptime / (24*60));
+  zipcar.floor.hours = estimateZipcarHourCost(triptime % (24*60));
+  zipcar.floor.cost = zipcar.floor.days * parseFloat(zipcar.rates.daily) + zipcar.floor.hours.cost;
   
   //See which day option is least expensive
-  if(zipcarday.floor.cost<zipcarday.ceiling.cost){
+  if(zipcar.floor.cost<zipcar.ceiling.cost){
     //Zipcar floor cost is cheapest
-    zipcarday.cheapest = "floor";
-    zipcarday.cost = zipcarday.floor.cost;
-    zipcarday.days = zipcarday.floor.days;
-    zipcarday.hours = zipcarday.floor.hours;
+    zipcar.cheapest = "floor";
+    zipcar.cost = zipcar.floor.cost;
+    zipcar.days = zipcar.floor.days;
+    zipcar.hours = zipcar.floor.hours;
   } else {
     //Zipcar ceiling cost is cheapest or equal
-    zipcarday.cheapest = "ceiling";
-    zipcarday.cost = zipcarday.ceiling.cost;
-    zipcarday.days = zipcarday.ceiling.days;
-    zipcarday.hours = 0;
+    zipcar.cheapest = "ceiling";
+    zipcar.cost = zipcar.ceiling.cost;
+    zipcar.days = zipcar.ceiling.days;
+    zipcar.hours = 0;
   }
   
-  return zipcarday;
+  return zipcar;
 }
 
 function estimateTaxiCost(){ 
