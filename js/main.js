@@ -293,7 +293,6 @@ function calculateTrip(response) {
   //Create popup window
   popup = new google.maps.InfoWindow({maxWidth:200});
 
-  $('#warnings_panel').html('');
   var onewaydistance = 0;
   var onewaytime = 0;
   var leg_count = response.routes[0].legs.length;
@@ -513,7 +512,7 @@ function computeTotalTime(){
   today = new Date();
   if(dates.compare(departuredate,(today.getMonth()+1)+"/"+today.getDate()+"/"+today.getFullYear())<0){
     $('#warnings_panel').append("<li>Your departure date has already passed.</li>");
-    return false;
+    //Keep going as this is a valid trip, just in the past
   } 
   
   //Check if return date is after todays date
