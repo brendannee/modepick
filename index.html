@@ -67,6 +67,11 @@
           <span class="smalllink">(Rates range from $7/hr to $12.50/hr)</span>
         </li>
         <li>
+          <img src="images/money.png" alt="Zipcar rate" class="smallicon" /><label>Assumed Zipcar daily rate: $</label>
+          <input id="zipcardailyrate" name="zipcardailyrate" type="text" class="textbox" placeholder="81.00" style="width:4em" title="Enter a daily rate for Zipcar you'd like to use, otherwise we'll use $81/day.  Zipcar rates range from $73/day to $104/day"/><br>
+          <span class="smalllink">(Rates range from $73/day to $104/day)</span>
+        </li>
+        <li>
           <img src="images/group.png" alt="Number of passengers" class="smallicon" /><label>Number of Travelers: </label>
           <select id="passengers" name="passengers" title="Select the number of travelers">
             <option value="1">1</option>
@@ -223,8 +228,12 @@
                 <input id="start_extramiles" name="extramiles" type="text"  class="textbox" placeholder="0" style="width:3em" title="Will you need to drive around a bit at your destination?  If so, how many extra miles should we factor in?"/>
               </li>
               <li>
-                <img src="images/money.png" alt="Zipcar rate" class="smallicon" /><label>Assumed Zipcar hourly rate: $</label>
-                <input id="start_zipcarrate" name="zipcarrate" type="text" class="textbox" placeholder="10.00" style="width:4em" title="Enter an hourly rate for Zipcar you'd like to use, otherwise we'll use $10/hr.  Zipcar rates range from $7/hr to $12.50/hr"/> <span class="smalllink">(Rates range from $7/hr to $12.50/hr)</span>
+                <img src="images/money.png" alt="Zipcar hourly rate" class="smallicon" /><label>Assumed Zipcar hourly rate: $</label>
+                <input id="start_zipcarrate" name="zipcarrate" type="text" class="textbox" placeholder="10.00" style="width:4em" title="Enter an hourly rate for Zipcar you'd like to use, otherwise we'll use $10/hr.  Zipcar hourly rates range from $7/hr to $12.50/hr"/> <span class="smalllink">(Rates range from $7/hr to $12.50/hr)</span>
+              </li>
+              <li>
+                <img src="images/money.png" alt="Zipcar daily rate" class="smallicon" /><label>Assumed Zipcar daily rate: $</label>
+                <input id="start_zipcardailyrate" name="zipcardailyrate" type="text" class="textbox" placeholder="81.00" style="width:4em" title="Enter a daily rate for Zipcar you'd like to use, otherwise we'll use $81/day.  Zipcar daily rates range from $73/day to $104/day"/> <span class="smalllink">(Rates range from $73/day to $104/day)</span>
               </li>
               <li>
                 <img src="images/group.png" alt="Number of passengers" class="smallicon" /><label>Number of Travelers: </label>

@@ -12,10 +12,10 @@ var tripweekendccs2time = 0;
 var triplatenighttime = 0;
 var tripdist = 0;
 var ccscost = 0;
-var zipcarcost = 0;
 var zipcarplan;
 var ccsplan;
 var zipcarrate;
+var zipcardailyrate;
 var extramiles = 0;
 var passengers = 0;
 var taxicost = 0;
@@ -62,12 +62,12 @@ var ccsplans = {
 var zipcarplans = {
   "occasional": {
     "title":"Occasional",
-    "weekdayhourly":7,
-    "weekendhourly":7,
+    "weekdayhourly":10,
+    "weekendhourly":10,
     "mileagehourly":0,
-    "latenighthourly":7,
-    "weekdaydaily":73,
-    "weekenddaily":78,
+    "latenighthourly":10,
+    "weekdaydaily":81,
+    "weekenddaily":86,
     "mileagedaily":0,
     "dailymileagecap":180,
     "mileageoverage":0.45,
@@ -75,12 +75,12 @@ var zipcarplans = {
   },
   "evp50": {
     "title":"EVP $50",
-    "weekdayhourly":6.3,
-    "weekendhourly":6.3,
+    "weekdayhourly":9,
+    "weekendhourly":9,
     "mileagehourly":0,
-    "latenighthourly":6.3,
-    "weekdaydaily":65.70,
-    "weekenddaily":70.20,
+    "latenighthourly":9,
+    "weekdaydaily":72,
+    "weekenddaily":76,
     "mileagedaily":0,
     "dailymileagecap":180,
     "mileageoverage":0.45,
@@ -88,12 +88,12 @@ var zipcarplans = {
   },
   "evp75": {
     "title":"EVP $75",
-    "weekdayhourly":6.3,
-    "weekendhourly":6.3,
+    "weekdayhourly":9,
+    "weekendhourly":9,
     "mileagehourly":0,
-    "latenighthourly":6.3,
-    "weekdaydaily":65.70,
-    "weekenddaily":70.20,
+    "latenighthourly":9,
+    "weekdaydaily":72,
+    "weekenddaily":76,
     "mileagedaily":0,
     "dailymileagecap":180,
     "mileageoverage":0.45,
@@ -101,12 +101,12 @@ var zipcarplans = {
   },
   "evp125": {
     "title":"EVP $125",
-    "weekdayhourly":6.3,
-    "weekendhourly":6.3,
+    "weekdayhourly":9,
+    "weekendhourly":9,
     "mileagehourly":0,
-    "latenighthourly":6.3,
-    "weekdaydaily":65.70,
-    "weekenddaily":70.20,
+    "latenighthourly":9,
+    "weekdaydaily":72,
+    "weekenddaily":76,
     "mileagedaily":0,
     "dailymileagecap":180,
     "mileageoverage":0.45,
@@ -114,12 +114,12 @@ var zipcarplans = {
   },
   "evp250": {
     "title":"EVP $250",
-    "weekdayhourly":5.95,
-    "weekendhourly":5.95,
+    "weekdayhourly":8.5,
+    "weekendhourly":8.5,
     "mileagehourly":0,
     "latenighthourly":5.95,
-    "weekdaydaily":62.05,
-    "weekenddaily":66.30,
+    "weekdaydaily":68,
+    "weekenddaily":73,
     "mileagedaily":0,
     "dailymileagecap":180,
     "mileageoverage":0.45,
@@ -279,6 +279,7 @@ function calculateTrip(response) {
   zipcarplan = zipcarplans[$('#zipcarplan').val()];
   ccsplan = ccsplans[$('#ccsplan').val()];
   zipcarrate = $('#zipcarrate').val();
+  zipcardailyrate = $('#zipcardailyrate').val();
   extramiles = $('#extramiles').val();
   passengers = $('#passengers').val();
   
@@ -764,7 +765,6 @@ function estimateCCSHourCost(){
 }
 
 function estimateZipcarCost(){  
-  zipcarcost = 0;
   zipcar = estimateZipcarDayCost(triptime);
   
   $('#zipcarsummary').html("");
@@ -776,9 +776,6 @@ function estimateZipcarCost(){
     //Hourly Rate
     $('#zipcarsummary').append("<li>" + formatTimeDecimal(zipcar.hours.time) + " x " + formatCurrency(parseFloat(zipcar.hours.rate)) + "/hr<div>" + formatCurrency(parseFloat(zipcar.hours.rate)*(zipcar.hours.time/60)) + "</div></li>");
   }
-  /*if(zipcarplan.percentdiscount>0){
-    $('#zipcarsummary').append("<li>" + zipcarplan.percentdiscount + "% Discount<div>" + formatCurrency(-parseFloat(zipcar.rate)*(zipcar.time/60)*(zipcarplan.percentdiscount/100)) + "</div></li>");
-  }*/
 
   $('#zipcarsummary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcar.cost) + "</div></li>");
   $('#zipcartotal').html(formatCurrency(zipcar.cost));
@@ -790,14 +787,14 @@ function estimateZipcarHourCost(triptime){
   zipcarhour.time = triptime;
   
   if(isNaN(zipcarrate) || zipcarrate==''){
-    //Use default zipcar rate of $10/hr
-    zipcarhour.rate = 10;
-    zipcarhour.cost += zipcarhour.rate * ((triptime - tripweekendzipcartime)/60) + zipcarhour.rate * (tripweekendzipcartime/60);
+    //Use default zipcar hourly rates
+    zipcarhour.rate = zipcarplan.weekdayhourly;
   } else{
-    //Use custom zipcar rate entered by user
+    //Use custom zipcar hourly rate entered by user
     zipcarhour.rate = zipcarrate;
-    zipcarhour.cost += parseFloat(zipcarrate) * (triptime/60) * (100-zipcarplan.percentdiscount)/100;
   }
+  
+  zipcarhour.cost += zipcarhour.rate * ((triptime - tripweekendzipcartime)/60) + zipcarhour.rate * (tripweekendzipcartime/60);
   
   return zipcarhour;
 }
@@ -807,13 +804,18 @@ function estimateZipcarDayCost(triptime){
   zipcarday.cost = 0;
   zipcarday.time = triptime;
   
-  
-  if(tripweekendzipcartime>0){
-    //Trip touches a weekend, so use daily avg rates for weekend
-    zipcarday.dailyrate = zipcarplan.weekenddaily;
+  if(isNaN(zipcardailyrate) || zipcardailyrate==''){
+    //Use default zipcar daily rates of $73/weekday and $78/weekend
+    if(tripweekendzipcartime>0){
+      //Trip touches a weekend, so use daily avg rates for weekend
+      zipcarday.dailyrate = zipcarplan.weekenddaily;
+    } else {
+      //Use daily avg rates for weekday
+      zipcarday.dailyrate = zipcarplan.weekdaydaily;
+    }
   } else {
-    //Use daily avg rates for weekday
-    zipcarday.dailyrate = zipcarplan.weekdaydaily;
+    //Use custom zipcar daily rate entered by user
+    zipcarday.dailyrate = zipcardailyrate;
   }
   
   //First try a rate that is a number of days that exceeds the reservation time
@@ -914,7 +916,7 @@ function recalc(){
   }
   
   //Create Permalink URL
-	linkURL = "?saddr=" + $('#startlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&daddr=" + $('#destinationlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&stime=" + $("#departuretime").val() + "&sdate="  + $("#departuredate").val() + "&etime=" + $("#returntime").val() + "&edate="  + $("#returndate").val() + "&ccsplan=" + $("#ccsplan").val() + "&zipcarplan=" + $("#zipcarplan").val() + "&extramiles=" + $("#extramiles").val() + "&zipcarrate=" + $("#zipcarrate").val() + "&passengers=" + $("#passengers").val();
+	linkURL = "?saddr=" + $('#startlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&daddr=" + $('#destinationlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&stime=" + $("#departuretime").val() + "&sdate="  + $("#departuredate").val() + "&etime=" + $("#returntime").val() + "&edate="  + $("#returndate").val() + "&ccsplan=" + $("#ccsplan").val() + "&zipcarplan=" + $("#zipcarplan").val() + "&extramiles=" + $("#extramiles").val() + "&zipcarrate=" + $("#zipcarrate").val() + "&zipcardailyrate=" + $("#zipcardailyrate").val() + "&passengers=" + $("#passengers").val();
 	
   //Add Permalink Control on top of map
 	$("#permalink").html("<a href='" + linkURL + "' title='Direct Link to this trip'><img src='images/link.png'> Permalink to Route</a>");
@@ -1026,6 +1028,7 @@ google.setOnLoadCallback(function(){
     'zipcarplan' in urlVars ? $("#zipcarplan").val(urlVars['zipcarplan']) : $("#zipcarplan").val($("#start_zipcarplan").val());
     'extramiles' in urlVars ? $("#extramiles").val(urlVars['extramiles']) : $("#extramiles").val($("#start_extramiles").val());
     'zipcarrate' in urlVars ? $("#zipcarrate").val(urlVars['zipcarrate']) : $("#zipcarrate").val($("#start_zipcarrate").val());
+    'zipcardailyrate' in urlVars ? $("#zipcardailyrate").val(urlVars['zipcardailyrate']) : $("#zipcardailyrate").val($("#start_zipcardailyrate").val());
     'passengers' in urlVars ? $("#passengers").val(urlVars['passengers']) : $("#passengers").val($("#start_passengers").val());
     
     //Do initial map setup
@@ -1051,6 +1054,19 @@ google.setOnLoadCallback(function(){
     }
   });
   $("#start_returndate").datepicker();
+  
+  //Adjust default zipcar rates based on zipcar plan type
+  $("#zipcarplan").change(function(){
+    zipcarplan = $("#"+$(this).attr('id')+" option:selected").val();
+    $("#zipcarrate").attr("placeholder",zipcarplans[zipcarplan].weekendhourly);
+    $("#zipcardailyrate").attr("placeholder",zipcarplans[zipcarplan].weekenddaily);
+  });
+  
+  $("#start_zipcarplan").change(function(){
+    zipcarplan = $("#"+$(this).attr('id')+" option:selected").val();
+    $("#start_zipcarrate").attr("placeholder",zipcarplans[zipcarplan].weekendhourly);
+    $("#start_zipcardailyrate").attr("placeholder",zipcarplans[zipcarplan].weekenddaily);
+  });
 
   //Set Todays Date and Time
   var currentTime = new Date()
@@ -1116,7 +1132,7 @@ google.setOnLoadCallback(function(){
   });
 
   //Enable Tooltips
-  $("#startlocation,#destinationlocation,#zipcarrate,#extramiles").tooltip({ 
+  $("#startlocation,#destinationlocation,#zipcarrate,#zipcardailyrate,#extramiles").tooltip({ 
       position: "center right",
       offset: [0, 10],
       effect: "fade",
@@ -1165,6 +1181,7 @@ google.setOnLoadCallback(function(){
       $("#zipcarplan").val($("#start_zipcarplan").val());
       $("#extramiles").val($("#start_extramiles").val());
       $("#zipcarrate").val($("#start_zipcarrate").val());
+      $("#zipcardailyrate").val($("#start_zipcardailyrate").val());
       $("#passengers").val($("#start_passengers").val());
       
       //Do initial map setup
