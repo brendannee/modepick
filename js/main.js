@@ -457,18 +457,26 @@ function calculateTransitTrip(start,end){
   
   //Get departure date and time
   var day;
+  var month;
   var d=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
   if (d.getDate()<10) {
     day="0"+d.getDate();
   } else {
-    day=d.getDate()
+    day=d.getDate();
   }
-  var date = d.getFullYear() + '-' + (d.getMonth()+1) + '-' + day;
+  if ((d.getMonth()+1)<10) {
+    month="0"+(d.getMonth()+1);
+  } else {
+    month=(d.getMonth()+1);
+  }
+  var date = d.getFullYear() + '-' + month + '-' + day;
   var time = d.getHours() + ':' + d.getMinutes();
   
   //Get URL ready
   var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
   var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'') + '&format=json';  
+  
+  console.log('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'');
 
    // Request that YSQL string, and run a callback function.  
   $.getJSON( yql, cbfunc );  
