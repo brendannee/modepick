@@ -1,5 +1,4 @@
 var map;
-var directionDisplay;
 var directionsService;
 var markerArray = [];
 var popup;
@@ -295,7 +294,7 @@ function calculateTrip(response) {
   };
   if(calculateDistance(sf.lat,sf.lng,response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng())<15){
     //Add CCS as a mode, add locations
-    estimateCCSHourCost();
+    estimateCCSCost();
     
     addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
     
@@ -379,6 +378,9 @@ function calculateTrip(response) {
 }
 
 function calculateWalkTrip(response){
+  //Assign walk directions response to display renderer
+  directionsDisplayWalk.setDirections(response);
+  
   var onewaydistance = 0;
   var onewaytime = 0;
   for (i = 0; i < response.routes[0].legs.length; i++) {
@@ -398,9 +400,23 @@ function calculateWalkTrip(response){
   }
   $("#walkingtime").html("Est. time: <strong>" + timetext + "</strong>");
   $("#walkinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=w' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
+  
+  //Show Walk Directions when hovered over walking button
+  $("#walking").hover(
+    function(){
+    directionsDisplay.setMap(null);
+    directionsDisplayWalk.setMap(map);
+    }, 
+    function(){
+      directionsDisplayWalk.setMap(null);
+      directionsDisplay.setMap(map);
+    });
 }
 
 function calculateBikeTrip(response){
+  //Assign bike directions response to display renderer
+  directionsDisplayBike.setDirections(response);
+
   var onewaydistance = 0;
   var onewaytime = 0;
   for (i = 0; i < response.routes[0].legs.length; i++) {
@@ -420,6 +436,17 @@ function calculateBikeTrip(response){
   }
   $("#bikingtime").html("Est. time: <strong>" + timetext + "</strong>");
   $("#bikinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=b' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
+  
+  //Show Bike Directions when hovered over biking button
+  $("#biking").hover(
+    function(){
+    directionsDisplay.setMap(null);
+    directionsDisplayBike.setMap(map);
+    }, 
+    function(){
+      directionsDisplayBike.setMap(null);
+      directionsDisplay.setMap(map);
+    });
 }
 
 function calculateTransitTrip(start,end){
@@ -483,12 +510,10 @@ function calculateTransitTrip(start,end){
   }
 }
 
-function estimateCCSHourCost(){
+function estimateCCSCost(){
   ccs = {};
   ccs.plan = ccsplans[$('#ccsplan').val()];
   ccs.cost=0;
-  
-  
   ccs.latenighttime = 0;
   ccs.weekendtime = 0;
   ccs.weekendtime2 = 0;
@@ -516,6 +541,7 @@ function estimateCCSHourCost(){
   
   //Calculate CCS Times
   //Assume no reservtions over 7 days length
+  
   
   //Calculate latenight time
   departuremidnight = new Date(trip.departuredate.getFullYear(),trip.departuredate.getMonth(),trip.departuredate.getDate());
@@ -951,22 +977,31 @@ function mapSetup(){
 
   // Instantiate a directions service.
   directionsService = new google.maps.DirectionsService();
-
-  // Create a renderer for directions and bind it to the map.
-  directionsDisplay = new google.maps.DirectionsRenderer({
-    map: map,
+  
+  directionsOptions = {
+    map: null,
     draggable: true,
     markerOptions: {
     zIndex: 100
     }
-  })
+  };
+
+  // Create a renderer for directions and bind it to the map.
+  directionsDisplay = new google.maps.DirectionsRenderer(directionsOptions);
+  directionsDisplay.setMap(map);
+  
+  // Create a renderer for bike directions
+  directionsDisplayBike = new google.maps.DirectionsRenderer(directionsOptions);
+  
+  // Create a renderer for walk directions
+  directionsDisplayWalk = new google.maps.DirectionsRenderer(directionsOptions);
 
   //Bind recalc function to 'directions_changed' event
   google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
     calculateTrip(directionsDisplay.directions);
 
     //Highlight results box on change
-    $('#resultsWrapper').effect("highlight", {color:"#d1d1d1"}, 3000);
+    $('#resultsWrapper').effect("highlight", {color:"#f1f1f1"}, 3000);
 
     //Put new addresses in input box
     $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
