@@ -16,42 +16,102 @@
   <div id="wrapper">
   <div id="content">
     <div id="sidebar">
-      <div id="sidebar-top">
         <div class="titlebar">
-          <h1>ModePick.com: Pick the best mode for your trip</h1>
-        </div>
-        <a href="" id="show_options">Change trip options &raquo;</a>
-        <div class="tooltip"></div>
-        <form id="inputs" method="post">
+        <h1>ModePick.com: Pick the best mode for your trip</h1>
+      </div>
+      <div id="resultsWrapper">
+        <ul id="warnings_panel"></ul>
+        <div id="results">
+          <div id="driving" class="mode">
+            <h3>Driving/Carshare/Taxi</h3>
+            <div class="time"></div>
+            <div class="distance"></div>
+            <div class="additionalinfo">
+              <ul class="summary"></ul>
+              <div class="modeLink"></div>
+            </div>
+          </div>
+          <div id="walking" class="mode">
+            <h3>Walking</h3>
+            <div class="time"></div>
+            <div class="distance"></div>
+            <div class="additionalinfo">
+              <div class="modeLink"></div>
+            </div>
+          </div>
+          <div id="biking" class="mode">
+            <h3>Biking</h3>
+            <div class="time"></div>
+            <div class="distance"></div>
+            <div class="additionalinfo">
+              <div class="modeLink"></div>
+            </div>
+          </div>
+          <div id="transit" class="mode">
+            <h3>Transit</h3>
+            <div class="time"></div>
+            <div class="totalfare"></div>
+            <div class="additionalinfo">
+              <div class="routes"></div>
+              <div class="waittime"></div>
+              <div class="departure"></div>
+              <div class="arrival"></div>
+              <div class="singlefare"></div>
+              <div class="fare"></div>
+              <div class="modeLink"></div>
+            </div>
+          </div>
+          <div id="ccsresult" class="mode">
+            <h3>City Carshare: <span id="ccstotal"></span> <a href="http://citycarshare.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
+            <div id="ccsclosest"></div>
+            <ul id="ccssummary" class="summary"></ul>
+          </div>
+          <div id="zipcarresult" class="mode">
+            <h3>Zipcar: <span id="zipcartotal"></span> <a href="http://zipcar.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
+            <div id="zipcarclosest"></div>
+            <ul id="zipcarsummary" class="summary"></ul>
+          </div>
+          <div id="taxiresult" class="mode">
+            <h3>Roundtrip Taxi: <span id="taxitotal"></span></h3>
+            <ul id="taxisummary" class="summary"></ul>
+          </div>
+          <div id="uberresult" class="mode">
+            <h3>Roundtrip Uber: <span id="ubertotal"></span> <a href="http://uberapp.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
+            <ul id="ubersummary" class="summary"></ul>
+          </div>
+        </div><!-- #results -->
+      </div><!-- #resultsWrapper -->
+      <a href="" id="show_options">Change trip options &raquo;</a>
+      <div class="tooltip"></div>
+      <form id="inputs" method="post">
+        <fieldset>
+         <legend>Start Location and Time</legend>
+          <ul class="input_boxes">
+            <li class="inputbox"><img src="images/marker_greenA-24x24.png" alt="Origin" class="icon" /><input id="startlocation" name="startlocation" type="text" class="textbox" value="16th &amp; Mission, SF"  title="Enter your starting address, city, zip or intersection" /></li>
+            <li id="slocation" class="geolocation inputbox"><img src="images/geolocation.png" alt="GeoLocation" style="height:16px;width:16px;" /><a href="#" onclick="navigator.geolocation.getCurrentPosition(getStartGeoLocator,showGeoLocatorError);">Map from my current location</a></li>
+            <li class="inputbox"><img src="images/time.png" alt="Departure Time" class="smallicon" />
+              <select class="departuretime" id="departuretime"><option value="00:00">12:00am</option><option value="00:15">12:15am</option><option value="00:30">12:30am</option><option value="00:45">12:45am</option><option value="01:00">1:00am</option><option value="01:15">1:15am</option><option value="01:30">1:30am</option><option value="01:45">1:45am</option><option value="02:00">2:00am</option><option value="02:15">2:15am</option><option value="02:30">2:30am</option><option value="02:45">2:45am</option><option value="03:00">3:00am</option><option value="03:15">3:15am</option><option value="03:30">3:30am</option><option value="03:45">3:45am</option><option value="04:00">4:00am</option><option value="04:15">4:15am</option><option value="04:30">4:30am</option><option value="04:45">4:45am</option><option value="05:00">5:00am</option><option value="05:15">5:15am</option><option value="05:30">5:30am</option><option value="05:45">5:45am</option><option value="06:00">6:00am</option><option value="06:15">6:15am</option><option value="06:30">6:30am</option><option value="06:45">6:45am</option><option value="07:00">7:00am</option><option value="07:15">7:15am</option><option value="07:30">7:30am</option><option value="07:45">7:45am</option><option value="08:00">8:00am</option><option value="08:15">8:15am</option><option value="08:30">8:30am</option><option value="08:45">8:45am</option><option value="09:00">9:00am</option><option value="09:15">9:15am</option><option value="09:30">9:30am</option><option value="09:45">9:45am</option><option value="10:00">10:00am</option><option value="10:15">10:15am</option><option value="10:30">10:30am</option><option value="10:45">10:45am</option><option value="11:00">11:00am</option><option value="11:15">11:15am</option><option value="11:30">11:30am</option><option value="11:45">11:45am</option><option value="12:00">12:00pm</option><option value="12:15">12:15pm</option><option value="12:30">12:30pm</option><option value="12:45">12:45pm</option><option value="13:00">1:00pm</option><option value="13:15">1:15pm</option><option value="13:30">1:30pm</option><option value="13:45">1:45pm</option><option value="14:00">2:00pm</option><option value="14:15">2:15pm</option><option value="14:30">2:30pm</option><option value="14:45">2:45pm</option><option value="15:00">3:00pm</option><option value="15:15">3:15pm</option><option value="15:30">3:30pm</option><option value="15:45">3:45pm</option><option value="16:00">4:00pm</option><option value="16:15">4:15pm</option><option value="16:30">4:30pm</option><option value="16:45">4:45pm</option><option value="17:00">5:00pm</option><option value="17:15">5:15pm</option><option value="17:30">5:30pm</option><option value="17:45">5:45pm</option><option value="18:00">6:00pm</option><option value="18:15">6:15pm</option><option value="18:30">6:30pm</option><option value="18:45">6:45pm</option><option value="19:00">7:00pm</option><option value="19:15">7:15pm</option><option value="19:30">7:30pm</option><option value="19:45">7:45pm</option><option value="20:00">8:00pm</option><option value="20:15">8:15pm</option><option value="20:30">8:30pm</option><option value="20:45">8:45pm</option><option value="21:00">9:00pm</option><option value="21:15">9:15pm</option><option value="21:30">9:30pm</option><option value="21:45">9:45pm</option><option value="22:00">10:00pm</option><option value="22:15">10:15pm</option><option value="22:30">10:30pm</option><option value="22:45">10:45pm</option><option value="23:00">11:00pm</option><option value="23:15">11:15pm</option><option value="23:30">11:30pm</option><option value="23:45">11:45pm</option></select>
+              <input type="text" id="departuredate">
+              </li>
+            </ul>
+          </fieldset>
           <fieldset>
-           <legend>Start Location and Time</legend>
+            <legend>Destination Location</legend>
             <ul class="input_boxes">
-              <li class="inputbox"><img src="images/marker_greenA-24x24.png" alt="Origin" class="icon" /><input id="startlocation" name="startlocation" type="text" class="textbox" value="16th &amp; Mission, SF"  title="Enter your starting address, city, zip or intersection" /></li>
-              <li id="slocation" class="geolocation inputbox"><img src="images/geolocation.png" alt="GeoLocation" style="height:16px;width:16px;" /><a href="#" onclick="navigator.geolocation.getCurrentPosition(getStartGeoLocator,showGeoLocatorError);">Map from my current location</a></li>
-              <li class="inputbox"><img src="images/time.png" alt="Departure Time" class="smallicon" />
-                <select class="departuretime" id="departuretime"><option value="00:00">12:00am</option><option value="00:15">12:15am</option><option value="00:30">12:30am</option><option value="00:45">12:45am</option><option value="01:00">1:00am</option><option value="01:15">1:15am</option><option value="01:30">1:30am</option><option value="01:45">1:45am</option><option value="02:00">2:00am</option><option value="02:15">2:15am</option><option value="02:30">2:30am</option><option value="02:45">2:45am</option><option value="03:00">3:00am</option><option value="03:15">3:15am</option><option value="03:30">3:30am</option><option value="03:45">3:45am</option><option value="04:00">4:00am</option><option value="04:15">4:15am</option><option value="04:30">4:30am</option><option value="04:45">4:45am</option><option value="05:00">5:00am</option><option value="05:15">5:15am</option><option value="05:30">5:30am</option><option value="05:45">5:45am</option><option value="06:00">6:00am</option><option value="06:15">6:15am</option><option value="06:30">6:30am</option><option value="06:45">6:45am</option><option value="07:00">7:00am</option><option value="07:15">7:15am</option><option value="07:30">7:30am</option><option value="07:45">7:45am</option><option value="08:00">8:00am</option><option value="08:15">8:15am</option><option value="08:30">8:30am</option><option value="08:45">8:45am</option><option value="09:00">9:00am</option><option value="09:15">9:15am</option><option value="09:30">9:30am</option><option value="09:45">9:45am</option><option value="10:00">10:00am</option><option value="10:15">10:15am</option><option value="10:30">10:30am</option><option value="10:45">10:45am</option><option value="11:00">11:00am</option><option value="11:15">11:15am</option><option value="11:30">11:30am</option><option value="11:45">11:45am</option><option value="12:00">12:00pm</option><option value="12:15">12:15pm</option><option value="12:30">12:30pm</option><option value="12:45">12:45pm</option><option value="13:00">1:00pm</option><option value="13:15">1:15pm</option><option value="13:30">1:30pm</option><option value="13:45">1:45pm</option><option value="14:00">2:00pm</option><option value="14:15">2:15pm</option><option value="14:30">2:30pm</option><option value="14:45">2:45pm</option><option value="15:00">3:00pm</option><option value="15:15">3:15pm</option><option value="15:30">3:30pm</option><option value="15:45">3:45pm</option><option value="16:00">4:00pm</option><option value="16:15">4:15pm</option><option value="16:30">4:30pm</option><option value="16:45">4:45pm</option><option value="17:00">5:00pm</option><option value="17:15">5:15pm</option><option value="17:30">5:30pm</option><option value="17:45">5:45pm</option><option value="18:00">6:00pm</option><option value="18:15">6:15pm</option><option value="18:30">6:30pm</option><option value="18:45">6:45pm</option><option value="19:00">7:00pm</option><option value="19:15">7:15pm</option><option value="19:30">7:30pm</option><option value="19:45">7:45pm</option><option value="20:00">8:00pm</option><option value="20:15">8:15pm</option><option value="20:30">8:30pm</option><option value="20:45">8:45pm</option><option value="21:00">9:00pm</option><option value="21:15">9:15pm</option><option value="21:30">9:30pm</option><option value="21:45">9:45pm</option><option value="22:00">10:00pm</option><option value="22:15">10:15pm</option><option value="22:30">10:30pm</option><option value="22:45">10:45pm</option><option value="23:00">11:00pm</option><option value="23:15">11:15pm</option><option value="23:30">11:30pm</option><option value="23:45">11:45pm</option></select>
-                <input type="text" id="departuredate">
+              <li class="inputbox"><img src="images/marker_greenB-24x24.png" alt="Destination" class="icon" /><input id="destinationlocation" name="destinationlocation" type="text"  class="textbox" value="The Presidio, SF"  title="Enter your destination address, city, zip or intersection"/></li>
+            </ul>
+          </fieldset>
+          <fieldset>
+            <legend>Return Time</legend>
+            <ul class="input_boxes">
+              <li class="inputbox"><img src="images/time.png" alt="Return Time" class="smallicon" />
+                <select class="returntime" id="returntime"><option value="00:00">12:00am</option><option value="00:15">12:15am</option><option value="00:30">12:30am</option><option value="00:45">12:45am</option><option value="01:00">1:00am</option><option value="01:15">1:15am</option><option value="01:30">1:30am</option><option value="01:45">1:45am</option><option value="02:00">2:00am</option><option value="02:15">2:15am</option><option value="02:30">2:30am</option><option value="02:45">2:45am</option><option value="03:00">3:00am</option><option value="03:15">3:15am</option><option value="03:30">3:30am</option><option value="03:45">3:45am</option><option value="04:00">4:00am</option><option value="04:15">4:15am</option><option value="04:30">4:30am</option><option value="04:45">4:45am</option><option value="05:00">5:00am</option><option value="05:15">5:15am</option><option value="05:30">5:30am</option><option value="05:45">5:45am</option><option value="06:00">6:00am</option><option value="06:15">6:15am</option><option value="06:30">6:30am</option><option value="06:45">6:45am</option><option value="07:00">7:00am</option><option value="07:15">7:15am</option><option value="07:30">7:30am</option><option value="07:45">7:45am</option><option value="08:00">8:00am</option><option value="08:15">8:15am</option><option value="08:30">8:30am</option><option value="08:45">8:45am</option><option value="09:00">9:00am</option><option value="09:15">9:15am</option><option value="09:30">9:30am</option><option value="09:45">9:45am</option><option value="10:00">10:00am</option><option value="10:15">10:15am</option><option value="10:30">10:30am</option><option value="10:45">10:45am</option><option value="11:00">11:00am</option><option value="11:15">11:15am</option><option value="11:30">11:30am</option><option value="11:45">11:45am</option><option value="12:00">12:00pm</option><option value="12:15">12:15pm</option><option value="12:30">12:30pm</option><option value="12:45">12:45pm</option><option value="13:00">1:00pm</option><option value="13:15">1:15pm</option><option value="13:30">1:30pm</option><option value="13:45">1:45pm</option><option value="14:00">2:00pm</option><option value="14:15">2:15pm</option><option value="14:30">2:30pm</option><option value="14:45">2:45pm</option><option value="15:00">3:00pm</option><option value="15:15">3:15pm</option><option value="15:30">3:30pm</option><option value="15:45">3:45pm</option><option value="16:00">4:00pm</option><option value="16:15">4:15pm</option><option value="16:30">4:30pm</option><option value="16:45">4:45pm</option><option value="17:00">5:00pm</option><option value="17:15">5:15pm</option><option value="17:30">5:30pm</option><option value="17:45">5:45pm</option><option value="18:00">6:00pm</option><option value="18:15">6:15pm</option><option value="18:30">6:30pm</option><option value="18:45">6:45pm</option><option value="19:00">7:00pm</option><option value="19:15">7:15pm</option><option value="19:30">7:30pm</option><option value="19:45">7:45pm</option><option value="20:00">8:00pm</option><option value="20:15">8:15pm</option><option value="20:30">8:30pm</option><option value="20:45">8:45pm</option><option value="21:00">9:00pm</option><option value="21:15">9:15pm</option><option value="21:30">9:30pm</option><option value="21:45">9:45pm</option><option value="22:00">10:00pm</option><option value="22:15">10:15pm</option><option value="22:30">10:30pm</option><option value="22:45">10:45pm</option><option value="23:00">11:00pm</option><option value="23:15">11:15pm</option><option value="23:30">11:30pm</option><option value="23:45">11:45pm</option></select>
+                <input type="text" id="returndate">
                 </li>
               </ul>
             </fieldset>
-            <fieldset>
-              <legend>Destination Location</legend>
-              <ul class="input_boxes">
-                <li class="inputbox"><img src="images/marker_greenB-24x24.png" alt="Destination" class="icon" /><input id="destinationlocation" name="destinationlocation" type="text"  class="textbox" value="The Presidio, SF"  title="Enter your destination address, city, zip or intersection"/></li>
-              </ul>
-            </fieldset>
-            <fieldset>
-              <legend>Return Time</legend>
-              <ul class="input_boxes">
-                <li class="inputbox"><img src="images/time.png" alt="Return Time" class="smallicon" />
-                  <select class="returntime" id="returntime"><option value="00:00">12:00am</option><option value="00:15">12:15am</option><option value="00:30">12:30am</option><option value="00:45">12:45am</option><option value="01:00">1:00am</option><option value="01:15">1:15am</option><option value="01:30">1:30am</option><option value="01:45">1:45am</option><option value="02:00">2:00am</option><option value="02:15">2:15am</option><option value="02:30">2:30am</option><option value="02:45">2:45am</option><option value="03:00">3:00am</option><option value="03:15">3:15am</option><option value="03:30">3:30am</option><option value="03:45">3:45am</option><option value="04:00">4:00am</option><option value="04:15">4:15am</option><option value="04:30">4:30am</option><option value="04:45">4:45am</option><option value="05:00">5:00am</option><option value="05:15">5:15am</option><option value="05:30">5:30am</option><option value="05:45">5:45am</option><option value="06:00">6:00am</option><option value="06:15">6:15am</option><option value="06:30">6:30am</option><option value="06:45">6:45am</option><option value="07:00">7:00am</option><option value="07:15">7:15am</option><option value="07:30">7:30am</option><option value="07:45">7:45am</option><option value="08:00">8:00am</option><option value="08:15">8:15am</option><option value="08:30">8:30am</option><option value="08:45">8:45am</option><option value="09:00">9:00am</option><option value="09:15">9:15am</option><option value="09:30">9:30am</option><option value="09:45">9:45am</option><option value="10:00">10:00am</option><option value="10:15">10:15am</option><option value="10:30">10:30am</option><option value="10:45">10:45am</option><option value="11:00">11:00am</option><option value="11:15">11:15am</option><option value="11:30">11:30am</option><option value="11:45">11:45am</option><option value="12:00">12:00pm</option><option value="12:15">12:15pm</option><option value="12:30">12:30pm</option><option value="12:45">12:45pm</option><option value="13:00">1:00pm</option><option value="13:15">1:15pm</option><option value="13:30">1:30pm</option><option value="13:45">1:45pm</option><option value="14:00">2:00pm</option><option value="14:15">2:15pm</option><option value="14:30">2:30pm</option><option value="14:45">2:45pm</option><option value="15:00">3:00pm</option><option value="15:15">3:15pm</option><option value="15:30">3:30pm</option><option value="15:45">3:45pm</option><option value="16:00">4:00pm</option><option value="16:15">4:15pm</option><option value="16:30">4:30pm</option><option value="16:45">4:45pm</option><option value="17:00">5:00pm</option><option value="17:15">5:15pm</option><option value="17:30">5:30pm</option><option value="17:45">5:45pm</option><option value="18:00">6:00pm</option><option value="18:15">6:15pm</option><option value="18:30">6:30pm</option><option value="18:45">6:45pm</option><option value="19:00">7:00pm</option><option value="19:15">7:15pm</option><option value="19:30">7:30pm</option><option value="19:45">7:45pm</option><option value="20:00">8:00pm</option><option value="20:15">8:15pm</option><option value="20:30">8:30pm</option><option value="20:45">8:45pm</option><option value="21:00">9:00pm</option><option value="21:15">9:15pm</option><option value="21:30">9:30pm</option><option value="21:45">9:45pm</option><option value="22:00">10:00pm</option><option value="22:15">10:15pm</option><option value="22:30">10:30pm</option><option value="22:45">10:45pm</option><option value="23:00">11:00pm</option><option value="23:15">11:15pm</option><option value="23:30">11:30pm</option><option value="23:45">11:45pm</option></select>
-                  <input type="text" id="returndate">
-                  </li>
-                </ul>
-              </fieldset>
-              <a id="trip_submit" type="submit" class="btn" href="#">Update Trip</a>
-        </form>
-      </div>      
+            <a id="trip_submit" type="submit" class="btn" href="#">Update Trip</a>
+      </form> 
     </div>
     <div id="options_panel">
       <div id="options_panel_close">x</div>
@@ -113,58 +173,6 @@
     </div>
     <div id="bottomCredits">This site is not affiliated with Zipcar, City Carshare or Uber &nbsp;|&nbsp; Developed by <a href='http://blinktag.com' title='BlinkTag Inc'>BlinkTag Inc</a> &nbsp;|&nbsp; <a href='http://github.com/brendannee/modepick' title='Source on GitHub'>Source</a> &nbsp;|&nbsp; <a href="mailto:info@blinktag.com" title="Email Us">Contact</a></div> 
   </div>
-  
-  <div id="resultsWrapper">
-    <ul id="warnings_panel"></ul>
-    <div id="results">
-      <h2>All Results are for Round Trip travel</h2>
-      <div id="driving" class="mode">
-        <h3>Driving/Carshare/Taxi <div id="drivinglink" class="modeLink"></div></h3>
-        <div id="drivingtime"></div>
-        <div id="drivingdistance"></div>
-      </div>
-      <div id="walking" class="mode">
-        <h3>Walking <div id="walkinglink" class="modeLink"></div></h3>
-        <div id="walkingtime"></div>
-        <div id="walkingdistance"></div>
-      </div>
-      <div id="biking" class="mode">
-        <h3>Biking <div id="bikinglink" class="modeLink"></div></h3>
-        <div id="bikingtime"></div>
-        <div id="bikingdistance"></div>
-      </div>
-      <div id="transit" class="mode">
-        <h3>Transit <div id="transitlink" class="modeLink"></div></h3>
-        <div id="transittime"></div>
-        <div id="transitroutes"></div>
-        <div id="transitwaittime"></div>
-        <div id="transitdeparture"></div>
-        <div id="transitarrival"></div>
-        <div id="transitsinglefare"></div>
-        <div id="transitfare"></div>
-      </div>
-      <div id="tripcomparisons">
-      <li id="ccsresult" class="mode">
-        <h3>City Carshare: <span id="ccstotal"></span> <a href="http://citycarshare.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
-        <div id="ccsclosest"></div>
-        <ul id="ccssummary" class="summary"></ul>
-      </li>
-      <li id="zipcarresult" class="mode">
-        <h3>Zipcar: <span id="zipcartotal"></span> <a href="http://zipcar.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
-        <div id="zipcarclosest"></div>
-        <ul id="zipcarsummary" class="summary"></ul>
-      </li>
-      <li id="taxiresult" class="mode">
-        <h3>Roundtrip Taxi: <span id="taxitotal"></span></h3>
-        <ul id="taxisummary" class="summary"></ul>
-      </li>
-      <li id="uberresult" class="mode">
-        <h3>Roundtrip Uber: <span id="ubertotal"></span> <a href="http://uberapp.com" title="More Info" target="_blank" class="modeLink"><img src="images/link.png" alt="Link" class="smallicon"></a></h3>
-        <ul id="ubersummary" class="summary"></ul>
-      </li>
-      </div><!--#tripcomparisons-->
-    </div><!-- #results -->
-  </div><!-- #resultsWrapper -->
   </div><!-- #wrapper -->
   
   <div id="start_form">
@@ -181,7 +189,7 @@
           <li class="inputbox"><img src="images/marker_greenA.png" alt="Origin" class="icon" /><input id="start_startlocation" name="startlocation" type="text" class="textbox" placeholder="starting address, city, zip or intersection"/></li>
           <li id="start_slocation" class="geolocation inputbox"><img src="images/geolocation.png" alt="GeoLocation" style="height:16px;width:16px;" /><a href="#" onclick="$('#geolocationwaiting').fadeIn(); navigator.geolocation.getCurrentPosition(getStartGeoLocator,showGeoLocatorError);">Map from my current location</a><div id="geolocationwaiting"></div></li>
           <li class="inputbox"><img src="images/time.png" alt="Departure Time" class="smallicon" /><label class="timelabel">Departure Time</label>
-            <select class="textbox time" id="start_departuretime" ><option value="00:00">12:00am</option><option value="00:15">12:15am</option><option value="00:30">12:30am</option><option value="00:45">12:45am</option><option value="01:00">1:00am</option><option value="01:15">1:15am</option><option value="01:30">1:30am</option><option value="01:45">1:45am</option><option value="02:00">2:00am</option><option value="02:15">2:15am</option><option value="02:30">2:30am</option><option value="02:45">2:45am</option><option value="03:00">3:00am</option><option value="03:15">3:15am</option><option value="03:30">3:30am</option><option value="03:45">3:45am</option><option value="04:00">4:00am</option><option value="04:15">4:15am</option><option value="04:30">4:30am</option><option value="04:45">4:45am</option><option value="05:00">5:00am</option><option value="05:15">5:15am</option><option value="05:30">5:30am</option><option value="05:45">5:45am</option><option value="06:00">6:00am</option><option value="06:15">6:15am</option><option value="06:30">6:30am</option><option value="06:45">6:45am</option><option value="07:00">7:00am</option><option value="07:15">7:15am</option><option value="07:30">7:30am</option><option value="07:45">7:45am</option><option value="08:00">8:00am</option><option value="08:15">8:15am</option><option value="08:30">8:30am</option><option value="08:45">8:45am</option><option value="09:00">9:00am</option><option value="09:15">9:15am</option><option value="09:30">9:30am</option><option value="09:45">9:45am</option><option value="10:00">10:00am</option><option value="10:15">10:15am</option><option value="10:30">10:30am</option><option value="10:45">10:45am</option><option value="11:00">11:00am</option><option value="11:15">11:15am</option><option value="11:30">11:30am</option><option value="11:45">11:45am</option><option value="12:00">12:00pm</option><option value="12:15">12:15pm</option><option value="12:30">12:30pm</option><option value="12:45">12:45pm</option><option value="13:00">1:00pm</option><option value="13:15">1:15pm</option><option value="13:30">1:30pm</option><option value="13:45">1:45pm</option><option value="14:00">2:00pm</option><option value="14:15">2:15pm</option><option value="14:30">2:30pm</option><option value="14:45">2:45pm</option><option value="15:00">3:00pm</option><option value="15:15">3:15pm</option><option value="15:30">3:30pm</option><option value="15:45">3:45pm</option><option value="16:00">4:00pm</option><option value="16:15">4:15pm</option><option value="16:30">4:30pm</option><option value="16:45">4:45pm</option><option value="17:00">5:00pm</option><option value="17:15">5:15pm</option><option value="17:30">5:30pm</option><option value="17:45">5:45pm</option><option value="18:00">6:00pm</option><option value="18:15">6:15pm</option><option value="18:30">6:30pm</option><option value="18:45">6:45pm</option><option value="19:00">7:00pm</option><option value="19:15">7:15pm</option><option value="19:30">7:30pm</option><option value="19:45">7:45pm</option><option value="20:00">8:00pm</option><option value="20:15">8:15pm</option><option value="20:30">8:30pm</option><option value="20:45">8:45pm</option><option value="21:00">9:00pm</option><option value="21:15">9:15pm</option><option value="21:30">9:30pm</option><option value="21:45">9:45pm</option><option value="22:00">10:00pm</option><option value="22:15">10:15pm</option><option value="22:30">10:30pm</option><option value="22:45">10:45pm</option><option value="23:00">11:00pm</option><option value="23:15">11:15pm</option><option value="23:30">11:30pm</option><option value="23:45">11:45pm</option></select>
+            <select class="textbox timebox" id="start_departuretime" ><option value="00:00">12:00am</option><option value="00:15">12:15am</option><option value="00:30">12:30am</option><option value="00:45">12:45am</option><option value="01:00">1:00am</option><option value="01:15">1:15am</option><option value="01:30">1:30am</option><option value="01:45">1:45am</option><option value="02:00">2:00am</option><option value="02:15">2:15am</option><option value="02:30">2:30am</option><option value="02:45">2:45am</option><option value="03:00">3:00am</option><option value="03:15">3:15am</option><option value="03:30">3:30am</option><option value="03:45">3:45am</option><option value="04:00">4:00am</option><option value="04:15">4:15am</option><option value="04:30">4:30am</option><option value="04:45">4:45am</option><option value="05:00">5:00am</option><option value="05:15">5:15am</option><option value="05:30">5:30am</option><option value="05:45">5:45am</option><option value="06:00">6:00am</option><option value="06:15">6:15am</option><option value="06:30">6:30am</option><option value="06:45">6:45am</option><option value="07:00">7:00am</option><option value="07:15">7:15am</option><option value="07:30">7:30am</option><option value="07:45">7:45am</option><option value="08:00">8:00am</option><option value="08:15">8:15am</option><option value="08:30">8:30am</option><option value="08:45">8:45am</option><option value="09:00">9:00am</option><option value="09:15">9:15am</option><option value="09:30">9:30am</option><option value="09:45">9:45am</option><option value="10:00">10:00am</option><option value="10:15">10:15am</option><option value="10:30">10:30am</option><option value="10:45">10:45am</option><option value="11:00">11:00am</option><option value="11:15">11:15am</option><option value="11:30">11:30am</option><option value="11:45">11:45am</option><option value="12:00">12:00pm</option><option value="12:15">12:15pm</option><option value="12:30">12:30pm</option><option value="12:45">12:45pm</option><option value="13:00">1:00pm</option><option value="13:15">1:15pm</option><option value="13:30">1:30pm</option><option value="13:45">1:45pm</option><option value="14:00">2:00pm</option><option value="14:15">2:15pm</option><option value="14:30">2:30pm</option><option value="14:45">2:45pm</option><option value="15:00">3:00pm</option><option value="15:15">3:15pm</option><option value="15:30">3:30pm</option><option value="15:45">3:45pm</option><option value="16:00">4:00pm</option><option value="16:15">4:15pm</option><option value="16:30">4:30pm</option><option value="16:45">4:45pm</option><option value="17:00">5:00pm</option><option value="17:15">5:15pm</option><option value="17:30">5:30pm</option><option value="17:45">5:45pm</option><option value="18:00">6:00pm</option><option value="18:15">6:15pm</option><option value="18:30">6:30pm</option><option value="18:45">6:45pm</option><option value="19:00">7:00pm</option><option value="19:15">7:15pm</option><option value="19:30">7:30pm</option><option value="19:45">7:45pm</option><option value="20:00">8:00pm</option><option value="20:15">8:15pm</option><option value="20:30">8:30pm</option><option value="20:45">8:45pm</option><option value="21:00">9:00pm</option><option value="21:15">9:15pm</option><option value="21:30">9:30pm</option><option value="21:45">9:45pm</option><option value="22:00">10:00pm</option><option value="22:15">10:15pm</option><option value="22:30">10:30pm</option><option value="22:45">10:45pm</option><option value="23:00">11:00pm</option><option value="23:15">11:15pm</option><option value="23:30">11:30pm</option><option value="23:45">11:45pm</option></select>
             <input type="text" id="start_departuredate" class="textbox date" placeholder="Date">
             </li>
           </ul>
@@ -190,7 +198,7 @@
           <ul class="input_boxes">
             <li class="inputbox"><img src="images/marker_greenB.png" alt="Destination" class="icon" /><input id="start_destinationlocation" name="destinationlocation" type="text"  class="textbox" placeholder="destination address, city, zip or intersection"/></li>
             <li class="inputbox"><img src="images/time.png" alt="Return Time" class="smallicon" /><label class="timelabel">Return Time</label>
-              <select class="textbox time" id="start_returntime"><option value="00:00">12:00am</option><option value="00:15">12:15am</option><option value="00:30">12:30am</option><option value="00:45">12:45am</option><option value="01:00">1:00am</option><option value="01:15">1:15am</option><option value="01:30">1:30am</option><option value="01:45">1:45am</option><option value="02:00">2:00am</option><option value="02:15">2:15am</option><option value="02:30">2:30am</option><option value="02:45">2:45am</option><option value="03:00">3:00am</option><option value="03:15">3:15am</option><option value="03:30">3:30am</option><option value="03:45">3:45am</option><option value="04:00">4:00am</option><option value="04:15">4:15am</option><option value="04:30">4:30am</option><option value="04:45">4:45am</option><option value="05:00">5:00am</option><option value="05:15">5:15am</option><option value="05:30">5:30am</option><option value="05:45">5:45am</option><option value="06:00">6:00am</option><option value="06:15">6:15am</option><option value="06:30">6:30am</option><option value="06:45">6:45am</option><option value="07:00">7:00am</option><option value="07:15">7:15am</option><option value="07:30">7:30am</option><option value="07:45">7:45am</option><option value="08:00">8:00am</option><option value="08:15">8:15am</option><option value="08:30">8:30am</option><option value="08:45">8:45am</option><option value="09:00">9:00am</option><option value="09:15">9:15am</option><option value="09:30">9:30am</option><option value="09:45">9:45am</option><option value="10:00">10:00am</option><option value="10:15">10:15am</option><option value="10:30">10:30am</option><option value="10:45">10:45am</option><option value="11:00">11:00am</option><option value="11:15">11:15am</option><option value="11:30">11:30am</option><option value="11:45">11:45am</option><option value="12:00">12:00pm</option><option value="12:15">12:15pm</option><option value="12:30">12:30pm</option><option value="12:45">12:45pm</option><option value="13:00">1:00pm</option><option value="13:15">1:15pm</option><option value="13:30">1:30pm</option><option value="13:45">1:45pm</option><option value="14:00">2:00pm</option><option value="14:15">2:15pm</option><option value="14:30">2:30pm</option><option value="14:45">2:45pm</option><option value="15:00">3:00pm</option><option value="15:15">3:15pm</option><option value="15:30">3:30pm</option><option value="15:45">3:45pm</option><option value="16:00">4:00pm</option><option value="16:15">4:15pm</option><option value="16:30">4:30pm</option><option value="16:45">4:45pm</option><option value="17:00">5:00pm</option><option value="17:15">5:15pm</option><option value="17:30">5:30pm</option><option value="17:45">5:45pm</option><option value="18:00">6:00pm</option><option value="18:15">6:15pm</option><option value="18:30">6:30pm</option><option value="18:45">6:45pm</option><option value="19:00">7:00pm</option><option value="19:15">7:15pm</option><option value="19:30">7:30pm</option><option value="19:45">7:45pm</option><option value="20:00">8:00pm</option><option value="20:15">8:15pm</option><option value="20:30">8:30pm</option><option value="20:45">8:45pm</option><option value="21:00">9:00pm</option><option value="21:15">9:15pm</option><option value="21:30">9:30pm</option><option value="21:45">9:45pm</option><option value="22:00">10:00pm</option><option value="22:15">10:15pm</option><option value="22:30">10:30pm</option><option value="22:45">10:45pm</option><option value="23:00">11:00pm</option><option value="23:15">11:15pm</option><option value="23:30">11:30pm</option><option value="23:45">11:45pm</option></select>
+              <select class="textbox timebox" id="start_returntime"><option value="00:00">12:00am</option><option value="00:15">12:15am</option><option value="00:30">12:30am</option><option value="00:45">12:45am</option><option value="01:00">1:00am</option><option value="01:15">1:15am</option><option value="01:30">1:30am</option><option value="01:45">1:45am</option><option value="02:00">2:00am</option><option value="02:15">2:15am</option><option value="02:30">2:30am</option><option value="02:45">2:45am</option><option value="03:00">3:00am</option><option value="03:15">3:15am</option><option value="03:30">3:30am</option><option value="03:45">3:45am</option><option value="04:00">4:00am</option><option value="04:15">4:15am</option><option value="04:30">4:30am</option><option value="04:45">4:45am</option><option value="05:00">5:00am</option><option value="05:15">5:15am</option><option value="05:30">5:30am</option><option value="05:45">5:45am</option><option value="06:00">6:00am</option><option value="06:15">6:15am</option><option value="06:30">6:30am</option><option value="06:45">6:45am</option><option value="07:00">7:00am</option><option value="07:15">7:15am</option><option value="07:30">7:30am</option><option value="07:45">7:45am</option><option value="08:00">8:00am</option><option value="08:15">8:15am</option><option value="08:30">8:30am</option><option value="08:45">8:45am</option><option value="09:00">9:00am</option><option value="09:15">9:15am</option><option value="09:30">9:30am</option><option value="09:45">9:45am</option><option value="10:00">10:00am</option><option value="10:15">10:15am</option><option value="10:30">10:30am</option><option value="10:45">10:45am</option><option value="11:00">11:00am</option><option value="11:15">11:15am</option><option value="11:30">11:30am</option><option value="11:45">11:45am</option><option value="12:00">12:00pm</option><option value="12:15">12:15pm</option><option value="12:30">12:30pm</option><option value="12:45">12:45pm</option><option value="13:00">1:00pm</option><option value="13:15">1:15pm</option><option value="13:30">1:30pm</option><option value="13:45">1:45pm</option><option value="14:00">2:00pm</option><option value="14:15">2:15pm</option><option value="14:30">2:30pm</option><option value="14:45">2:45pm</option><option value="15:00">3:00pm</option><option value="15:15">3:15pm</option><option value="15:30">3:30pm</option><option value="15:45">3:45pm</option><option value="16:00">4:00pm</option><option value="16:15">4:15pm</option><option value="16:30">4:30pm</option><option value="16:45">4:45pm</option><option value="17:00">5:00pm</option><option value="17:15">5:15pm</option><option value="17:30">5:30pm</option><option value="17:45">5:45pm</option><option value="18:00">6:00pm</option><option value="18:15">6:15pm</option><option value="18:30">6:30pm</option><option value="18:45">6:45pm</option><option value="19:00">7:00pm</option><option value="19:15">7:15pm</option><option value="19:30">7:30pm</option><option value="19:45">7:45pm</option><option value="20:00">8:00pm</option><option value="20:15">8:15pm</option><option value="20:30">8:30pm</option><option value="20:45">8:45pm</option><option value="21:00">9:00pm</option><option value="21:15">9:15pm</option><option value="21:30">9:30pm</option><option value="21:45">9:45pm</option><option value="22:00">10:00pm</option><option value="22:15">10:15pm</option><option value="22:30">10:30pm</option><option value="22:45">10:45pm</option><option value="23:00">11:00pm</option><option value="23:15">11:15pm</option><option value="23:30">11:30pm</option><option value="23:45">11:45pm</option></select>
               <input type="text" id="start_returndate" class="textbox date" placeholder="Date">
               </li>
             </ul>

@@ -112,7 +112,7 @@ ul.input_boxes li .textbox{
 #sidebar{
   position:absolute;
   left:0;
-  width:300px;
+  width:400px;
 }
 
 #show_options{
@@ -146,23 +146,12 @@ ul.input_boxes li .textbox{
 }
 
 #resultsWrapper{
-  min-width:1024px;
-  margin:10px;
   font-size:14px;
-  clear:both;
-  border: 1px #999 solid;
   display:none;
-  overflow:auto;
-  -moz-box-shadow:0px 3px 5px #999; 
-  -webkit-box-shadow:0px 3px 5px #999;
 }
 
 #resultsWrapper h2{
   margin:0;
-}
-
-#resultsWrapper h3{
-  margin:5px 0;
 }
 
 #results{
@@ -184,15 +173,6 @@ ul.input_boxes li .textbox{
   padding:4px 2px;
 }
 
-#tripcomparisons {
-  clear:both;
-}
-
-#tripcomparisons h2 span{
-  float:right;
-  display:block;
-}
-
 #ccsresult{
   display:none;
 }
@@ -202,17 +182,20 @@ ul.input_boxes li .textbox{
 }
 
 .mode {
-  float: left;
-  padding: 0 8px 10px 8px;
-  width:238px;
+  padding: 10px;
   background:#d2dCd7;
-  margin:5px;
+  margin:10px 0;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
 }
 
 .mode:hover{
   background:#E2ECE7;
+}
+
+.mode h3{
+  margin:0;
+  display:inline;
 }
 
 .summary{
@@ -233,6 +216,31 @@ ul.input_boxes li .textbox{
 .summary li div{
   float:right;
 margin-left: 20px;
+}
+
+.time{
+  background: url(../images/time.png) 0 0 no-repeat;
+  padding-left:18px;
+  font-weight:bold;
+  display:inline;
+}
+
+.distance{
+  background: url(../images/ruler.png) 0 0 no-repeat;
+  padding-left:18px;
+  font-weight:bold;
+  display:inline;
+}
+
+.totalfare{
+  background: url(../images/money.png) 0 0 no-repeat;
+  padding-left:18px;
+  font-weight:bold;
+  display:inline;
+}
+
+.mode .additionalinfo{
+  display:none;
 }
 
 #warnings_panel{
@@ -258,8 +266,7 @@ margin-left: 20px;
 #map_wrapper{
   clear:both;
   border-left: solid 1px #999999;
-  border-bottom: solid 1px #999999;
-  margin-left:300px;
+  margin-left:400px;
   color:#000;
   font-size:11px;
   position:relative;
@@ -270,6 +277,7 @@ margin-left: 20px;
 }
 
 #map_canvas{
+  max-height:800px;
   min-height:500px;
 }
 
@@ -356,7 +364,7 @@ margin-left: 20px;
   top:50px;
   left:50%;
   margin-left:-152px;
-  width:300px;
+  width:400px;
   border:5px solid #eee;
   background:#333;
   text-align:left;
@@ -622,8 +630,9 @@ ul.ccs li#podAddy {
   margin-left:10px;
 }
 
-#start_inputs .time{
+#start_inputs .timebox{
   width:110px;
+  font-weight:bold;
 }
 
 #start_inputs .timelabel{

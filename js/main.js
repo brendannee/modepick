@@ -318,12 +318,12 @@ function calculateTrip(response) {
   addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
   
   if(trip.extramiles!=0){
-    $("#drivingdistance").html("Distance: <strong>" +  (trip.distance+trip.extramiles) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ trip.extramiles + " additional)");
+    $("#driving .distance").html((trip.distance+trip.extramiles) + " miles (" + Math.round(onewaydistance) + " mi each way plus "+ trip.extramiles + " additional)");
   } else {
-    $("#drivingdistance").html("Distance: <strong>" +  trip.distance + " miles</strong> (" + trip.onewaydistance + " mi each way)");
+    $("#driving .distance").html(trip.distance + " miles (" + trip.onewaydistance + " mi each way)");
   }
-  $("#drivingtime").html("Est. time: <strong>" + timetext + "</strong>");
-  $("#drivinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=d' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
+  $("#driving .time").html(timetext);
+  $("#driving .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=d' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
   
   //Check if estimated driving time exceeds trip time
   if(trip.time<(onewaytime*2/60)){
@@ -394,12 +394,12 @@ function calculateWalkTrip(response){
   tripdist = Math.round(onewaydistance*2);
   
   if(trip.extramiles!=0){
-    $("#walkingdistance").html("Distance: <strong>" +  (tripdist+trip.extramiles) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ trip.extramiles + " additional)");
+    $("#walking .distance").html((tripdist+trip.extramiles) + " miles (" + Math.round(onewaydistance) + " mi each way plus "+ trip.extramiles + " additional)");
   } else {
-    $("#walkingdistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
+    $("#walking .distance").html(tripdist + " miles (" + Math.round(onewaydistance) + " mi each way)");
   }
-  $("#walkingtime").html("Est. time: <strong>" + timetext + "</strong>");
-  $("#walkinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=w' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
+  $("#walking .time").html(timetext);
+  $("#walking .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=w' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
   
   //Show Walk Directions when hovered over walking button
   $("#walking").hover(
@@ -430,12 +430,12 @@ function calculateBikeTrip(response){
   tripdist = Math.round(onewaydistance*2);
   
   if(trip.extramiles!=0){
-    $("#bikingdistance").html("Distance: <strong>" +  (tripdist+trip.extramiles) + " miles</strong> (" + Math.round(onewaydistance) + " mi each way plus "+ trip.extramiles + " additional)");
+    $("#biking .distance").html((tripdist+trip.extramiles) + " miles (" + Math.round(onewaydistance) + " mi each way plus "+ trip.extramiles + " additional)");
   } else {
-    $("#bikingdistance").html("Distance: <strong>" +  tripdist + " miles</strong> (" + Math.round(onewaydistance) + " mi each way)");
+    $("#biking .distance").html(tripdist + " miles (" + Math.round(onewaydistance) + " mi each way)");
   }
-  $("#bikingtime").html("Est. time: <strong>" + timetext + "</strong>");
-  $("#bikinglink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=b' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
+  $("#biking .time").html(timetext);
+  $("#biking .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=b' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
   
   //Show Bike Directions when hovered over biking button
   $("#biking").hover(
@@ -476,15 +476,13 @@ function calculateTransitTrip(start,end){
   var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
   var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'') + '&format=json';  
   
-  console.log('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'');
-
    // Request that YSQL string, and run a callback function.  
   $.getJSON( yql, cbfunc );  
   function cbfunc(data) {
     // If we have something to work with...  
     if(data.query.count > 0){
       //Maybe we scraped a result
-      $("#transitroutes").html(data.query.results.p[0]);
+      $("#transit .routes").html(data.query.results.p[0]);
       
       startTime = data.query.results.p[1].a.content.replace(/\s-\s.*$/g,'');
       endTime = data.query.results.p[1].a.content.replace(/^.*\s-\s/,'');
@@ -502,18 +500,22 @@ function calculateTransitTrip(start,end){
         transitTime = 24*60 - (parseTime(startTime) - parseTime(endTime))/(1000*60)*2;
       }
       
-      $("#transitwaittime").html("Waiting time: <strong>" + formatTime(waitingTime) + "</strong>");
-      $("#transitdeparture").html("Departure Time: <strong>" + startTime + "</strong>");
-      $("#transitarrival").html("Arrival Time: <strong>" + endTime + "</strong>");
-      $("#transittime").html("Est. time: <strong>" + formatTime(transitTime) + "</strong>");
+      $("#transit .waittime").html("Waiting time: <strong>" + formatTime(waitingTime) + "</strong>");
+      $("#transit .departure").html("Departure Time: <strong>" + startTime + "</strong>");
+      $("#transit .arrival").html("Arrival Time: <strong>" + endTime + "</strong>");
+      $("#transit .time").html(formatTime(transitTime));
       if(typeof data.query.results.p[2] == 'string' && data.query.results.p[2].substr(0,1)=='$'){
         //Fare info is provided
-        $("#transitsinglefare").html("Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong>");
-        $("#transitfare").html("Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) + "</strong>");
+        $("#transit .singlefare").html("Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong>");
+        $("#transit .fare").html("Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) + "</strong>");
+        $("#transit .totalfare").html( formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) );
+      } else {
+        $("#transit .fare").html("No fare info available");
+        $("#transit .totalfare").html("No fare info");
       }
-      $("#transitlink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
+      $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
     } else{
-      $("#transitroutes").html("No transit information available");
+      $("#transit .routes").html("No transit information available");
     }
   }
 }
@@ -1056,8 +1058,7 @@ function showGeoLocatorError(error){
 function resizeWindow(e) {
   var newWindowHeight = $(window).height();
   var resultsWrapperHeight = 2 +parseInt($("#resultsWrapper").height()) +parseInt($("#resultsWrapper").css("margin-top")) +parseInt($("#resultsWrapper").css("margin-bottom") +parseInt($("#resultsWrapper").css("padding-top")) +parseInt($("#resultsWrapper").css("padding-bottom")) +parseInt($("#resultsWrapper").css("border-top-width")) +parseInt($("#resultsWrapper").css("border-bottom-width")));
-  $("#map_canvas").css("min-height", (parseInt($("#sidebar").css("height"))+50));
-  $("#map_canvas").css("height", (parseInt($("#sidebar").css("height"))+50));
+  $("#map_wrapper").css("height", newWindowHeight);
 }
     
 google.setOnLoadCallback(function(){
@@ -1211,6 +1212,13 @@ google.setOnLoadCallback(function(){
   $('#options_panel_submit').click(function(){
     $('#options_panel').fadeOut();
     recalc();
+  });
+  
+  //Click function for each mode
+  $('#driving').click(function(){
+    $('#driving .additionalinfo').toggle('fast', function(){
+      
+    });
   });
  
   //Initial form submit click handler
