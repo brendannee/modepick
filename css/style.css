@@ -160,19 +160,6 @@ ul.input_boxes li .textbox{
   overflow:hidden;
 }
 
-.modeLink{
-  display:inline;
-}
-
-.modeLink a:hover{
-  border:none;
-}
-
-.modeLink img{
-  vertical-align:top;
-  padding:4px 2px;
-}
-
 #ccsresult{
   display:none;
 }
@@ -193,13 +180,27 @@ ul.input_boxes li .textbox{
   background:#E2ECE7;
 }
 
+.mode a:hover{
+  border-bottom:1px dashed #999;
+}
+
 .mode h3{
   margin:0;
   display:inline;
 }
 
+.modeLink{
+  display:inline;
+  font-size:12px;
+}
+
+.modeLink img{
+  vertical-align:top;
+  padding:4px 2px;
+}
+
 .summary{
-  margin:0;
+  margin:5px 0;
   list-style-type:none;
   padding:0;
 }
@@ -222,21 +223,24 @@ margin-left: 20px;
   background: url(../images/time.png) 0 0 no-repeat;
   padding-left:18px;
   font-weight:bold;
-  display:inline;
+  float:right;
+  width:65px;
 }
 
 .distance{
   background: url(../images/ruler.png) 0 0 no-repeat;
   padding-left:18px;
   font-weight:bold;
-  display:inline;
+  float:right;
+  width:65px;
 }
 
-.totalfare{
+.cost{
   background: url(../images/money.png) 0 0 no-repeat;
   padding-left:18px;
   font-weight:bold;
-  display:inline;
+  float:right;
+  width:45px;
 }
 
 .mode .additionalinfo{
