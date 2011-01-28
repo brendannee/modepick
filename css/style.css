@@ -112,7 +112,7 @@ ul.input_boxes li .textbox{
 #sidebar{
   position:absolute;
   left:0;
-  width:400px;
+  width:450px;
 }
 
 #show_options{
@@ -130,6 +130,7 @@ ul.input_boxes li .textbox{
 #inputs{
   padding:0 5px;
   margin:0;
+  clear:both;
 }
 
 #inputs fieldset{
@@ -174,6 +175,7 @@ ul.input_boxes li .textbox{
   margin:10px 0;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
+  overflow:hidden;
 }
 
 .mode:hover{
@@ -225,6 +227,7 @@ margin-left: 20px;
   font-weight:bold;
   float:right;
   width:65px;
+  font-size:15px;
 }
 
 .distance{
@@ -233,14 +236,16 @@ margin-left: 20px;
   font-weight:bold;
   float:right;
   width:65px;
+  font-size:15px;
 }
 
 .cost{
   background: url(../images/money.png) 0 0 no-repeat;
-  padding-left:18px;
+  padding-left:15px;
   font-weight:bold;
   float:right;
-  width:45px;
+  width:60px;
+  font-size:15px;
 }
 
 .mode .additionalinfo{
@@ -270,7 +275,7 @@ margin-left: 20px;
 #map_wrapper{
   clear:both;
   border-left: solid 1px #999999;
-  margin-left:400px;
+  margin-left:450px;
   color:#000;
   font-size:11px;
   position:relative;
@@ -281,7 +286,6 @@ margin-left: 20px;
 }
 
 #map_canvas{
-  max-height:800px;
   min-height:500px;
 }
 
@@ -387,7 +391,21 @@ margin-left: 20px;
   top:0px;
   right:9px;
   font-size:19px;
+  width:20px;
+  height:20px;
+  text-align:center;
+  line-height:16px;
+  margin-top:5px;
+}
+
+#options_panel_close:hover{
   cursor:pointer;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+  background-color:rgba(100,100,100,.5);
+  -moz-box-shadow:0 0 5px #888; 
+  -webkit-box-shadow:0 0 5px #888;
 }
 
 #options_panel h2{
