@@ -246,7 +246,7 @@ function addCarshareLocations(map, lat, lon, type){
       ccs.closestMarker.distanceformatted = Math.round(ccs.closestMarker.distance*10)/10 + " mi";
     }
     if(typeof ccs.closestMarker.name !== "undefined"){
-      $('#ccsclosest').html("Nearest car: <strong>" + ccs.closestMarker.distanceformatted + "</strong> (" + ccs.closestMarker.name + ")");
+      $('#ccsclosest').html("Nearest car: <strong>" + ccs.closestMarker.distanceformatted + "</strong> (" + ccs.closestMarker.name + " - <a href='"+ccs.closestMarker.url+"' target='_blank'>View Details</a>)");
     }
 
   } else if(type == 'zipcar'){
@@ -307,6 +307,9 @@ function addCarshareLocations(map, lat, lon, type){
 }
 
 function calculateTrip(response) {
+  //Clear old warnings and trip
+  $('#warnings_panel').html('');
+  
   //Clear existing directions
   $("#driving .summary").html('');
   
@@ -364,6 +367,8 @@ function calculateTrip(response) {
   estimateZipcarCost();
   estimateTaxiCost();
   
+  estimateFlightCost();
+  
   //Add zipcar locations
   addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
   
@@ -386,7 +391,7 @@ function calculateTrip(response) {
   
   $("#driving .summary").append("<li><a id='traffic' href='' onClick='toggleTraffic();return false;' title='Show Current Traffic Conditions'>Show Current Traffic Conditions</a></li>");
   
-  $("#driving .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=d' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Open driving directions on Google Maps</a>");
+  $("#driving .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=d' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Driving directions on Google Maps</a>");
   
   //Check if estimated driving time exceeds trip time
   if(trip.time<(onewaytime*2/60)){
@@ -468,7 +473,7 @@ function calculateWalkTrip(response){
   }
   $("#walking .time").html(timetext);
   $("#walking .cost").html("$0.00");
-  $("#walking .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=w' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Open walking directions in Google Maps</a>");
+  $("#walking .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=w' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Walking directions in Google Maps</a>");
   
   //Show Walk Directions when hovered over walking button
   $("#walking").hover(
@@ -510,7 +515,7 @@ function calculateBikeTrip(response){
   }
   $("#biking .time").html(timetext);
   $("#biking .cost").html("$0.00");
-  $("#biking .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=b' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Open biking directions in Google Maps</a>");
+  $("#biking .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=b' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Biking directions in Google Maps</a>");
   
   //Show Bike Directions when hovered over biking button
   $("#biking").hover(
@@ -589,7 +594,7 @@ function calculateTransitTrip(start,end){
       } else {
         $("#transit .cost").html("No fare info");
       }
-      $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'></a>");
+      $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Transit Directions on Google Transit</a>");
     } else{
       $("#transit .summary").append("<li>No transit information available</li>");
     }
@@ -1002,6 +1007,24 @@ function estimateUberCost(){
   $('#uberresult .distance').html((trip.distance) + " mi");
 }
 
+function estimateFlightCost(){ 
+  //Hotwire Historical Flight Search
+  //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=?
+  
+  $.getJSON('php/hotwire.php', function(data) {
+    console.log(data);
+    alert('Load was performed.');
+  });
+  
+  
+  flightcost = 0;
+  
+  $('#flightresult .summary').append("<li class='total'>Flight Total<div>"+formatCurrency(flightcost)+"</div></li>");
+  $('#flightresult .cost').html(formatCurrency(flightcost));
+  $('#flightresult .time').html(formatTime(trip.traveltime));
+  $('#flightresult .distance').html((trip.distance) + " mi");
+}
+
 function recalc(){
   //Called after mapSetup to recalculate trip
   var start = $('#startlocation').val();
@@ -1012,8 +1035,6 @@ function recalc(){
       travelMode: google.maps.DirectionsTravelMode.DRIVING
   };
   
-  //Clear old warnings and trip
-  $('#warnings_panel').html('');
   $('#results').hide();
   
   var departuredate=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
