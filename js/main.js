@@ -1010,10 +1010,9 @@ function estimateUberCost(){
 function estimateFlightCost(){ 
   //Hotwire Historical Flight Search
   //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=?
-  
-  $.getJSON('php/hotwire.php', function(data) {
+  console.log('test');
+  $.getJSON('../php/hotwire.php', function(data) {
     console.log(data);
-    alert('Load was performed.');
   });
   
   
