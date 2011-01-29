@@ -170,12 +170,14 @@ ul.input_boxes li .textbox{
 }
 
 .mode {
-  padding: 10px;
+  padding: 10px 10px 15px 10px;
   background:#d2dCd7;
   margin:10px 0;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   overflow:hidden;
+  position:relative;
+  min-height:27px;
 }
 
 .mode:hover{
@@ -205,6 +207,7 @@ ul.input_boxes li .textbox{
   margin:5px 0;
   list-style-type:none;
   padding:0;
+  clear:both;
 }
 
 .summary li{
@@ -250,6 +253,21 @@ margin-left: 20px;
 
 .mode .additionalinfo{
   display:none;
+}
+
+.mode .expand{
+  height:20px;
+  text-align:center;
+  position:absolute;
+  bottom:3px;
+  right:50%;
+  cursor:pointer;
+  font-size:20px;
+}
+
+.mode .expand:hover{
+  color:#85c382;
+  text-shadow: rgba(0, 0, 0, .5) 0px 0px 3px;
 }
 
 #warnings_panel{

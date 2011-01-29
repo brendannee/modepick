@@ -970,7 +970,7 @@ function estimateTaxiCost(){
 
   $('#taxiresult .summary').append("<li>Flag Drop x 2<div>"+formatCurrency(cabfares.firstfifth*2)+"</div></li>");
   $('#taxiresult .summary').append("<li>"+trip.distance+" mi x $2.25 per mi<div>"+formatCurrency((cabfares.additionalfifth*((trip.distance-0.2)*5)))+"</div></li>");
-  $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(trip.distance*taxitrafficpermile)+" min)<div>"+formatCurrency(cabfares.waitingminute*(trip.distance*taxitrafficpermile))+"</div></li>");
+  $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*taxitrafficpermile*10)/10)+" min)<div>"+formatCurrency(cabfares.waitingminute*(trip.distance*taxitrafficpermile))+"</div></li>");
   $('#taxiresult .summary').append("<li>10% Tip<div>"+formatCurrency(tipamount)+"</div></li>");
   $('#taxiresult .summary').append("<li class='total'>Taxi Total<div>"+formatCurrency(taxicost)+"</div></li>");
   
@@ -994,7 +994,7 @@ function estimateUberCost(){
   } else {
     $('#uberresult .summary').append("<li>Flag Drop x 2<div>"+formatCurrency(uberfares.flag*2)+"</div></li>");
     $('#uberresult .summary').append("<li>"+trip.distance+" mi x " + formatCurrency(uberfares.mileage) + " per mi<div>"+formatCurrency(uberfares.mileage*trip.distance)+"</div></li>");
-    $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(trip.distance*ubertrafficpermile)+" min)<div>"+formatCurrency(uberfares.idleminute*(trip.distance*ubertrafficpermile))+"</div></li>");
+    $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*ubertrafficpermile*10)/10)+" min)<div>"+formatCurrency(uberfares.idleminute*(trip.distance*ubertrafficpermile))+"</div></li>");
     $('#uberresult .summary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
   }
   $('#uberresult .cost').html(formatCurrency(ubercost));
@@ -1312,10 +1312,17 @@ google.setOnLoadCallback(function(){
     recalc();
   });
   
-  //Click function for each mode
-  $('#results .mode').click(function(){
-    $('.additionalinfo',this).toggle('fast', function(){});
+  //Expand each mode
+  $('#results .mode .expand').click(function(){
+    if($('.additionalinfo',$(this).parent()).is(":visible")){
+      $(this).html('&#9660;');
+    } else {
+      $(this).html('&#9650;');
+    }
+    
+    $('.additionalinfo',$(this).parent()).toggle('fast', function(){});
   });
+  
   
   //Initial form submit click handler
   $("#start_submit").click(function(){
