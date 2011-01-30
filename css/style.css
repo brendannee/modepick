@@ -169,6 +169,10 @@ ul.input_boxes li .textbox{
   display:none;
 }
 
+#flightresult{
+  display:none;
+}
+
 .mode {
   padding: 10px 10px 15px 10px;
   background:#d2dCd7;

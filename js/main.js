@@ -363,11 +363,18 @@ function calculateTrip(response) {
     $('#uberresult').hide();
   }
   
+  //Only show flights if distance is greater than 150 miles
+  if(trip.onewaydistance>150){
+    estimateFlightCost();
+    //Show Flight mode
+    $('#flightresult').show();
+  } else {
+    $('#flightresult').hide();
+  }
+  
   //Estimate costs
   estimateZipcarCost();
   estimateTaxiCost();
-  
-  estimateFlightCost();
   
   //Add zipcar locations
   addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
@@ -1010,15 +1017,21 @@ function estimateUberCost(){
 function estimateFlightCost(){ 
   //Hotwire Historical Flight Search
   //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=?
+  
+  var flightcost = 0;
+  var originAirport ='';
+  var destAirport = '';
+   
   $.getJSON('../php/hotwire.php?origin=SFO&dest=LAS&startdate='+trip.departuredate,
     function(data) {
-      console.log(data);
+      flightcost = data.Result.AirPricing.AveragePrice;
+      originAirport = data.Result.AirPricing.OrigAirportCode;
+      destAirport = data.Result.AirPricing.DestinationAirportCode;
     }
   );
   
-  
-  flightcost = 0;
-  
+  $('#flightresult .summary').append("<li class='total'>Flight Origin Airport<div>"+originAirport+"</div></li>");
+  $('#flightresult .summary').append("<li class='total'>Flight Destination Airport<div>"+destAirport+"</div></li>");
   $('#flightresult .summary').append("<li class='total'>Flight Total<div>"+formatCurrency(flightcost)+"</div></li>");
   $('#flightresult .cost').html(formatCurrency(flightcost));
   $('#flightresult .time').html(formatTime(trip.traveltime));
