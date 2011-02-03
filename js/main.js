@@ -1111,19 +1111,19 @@ function estimateFlightCost(response){
                  $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
                  
                  //Get airport info from freebase
-                  $.getJSON('https://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+originAirport+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+destAirport+'%22,%22/common/topic/webpage%22:[{}]}]}}', function(data){
+                  $.getJSON('http://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+originAirport+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+destAirport+'%22,%22/common/topic/webpage%22:[{}]}]}}&callback=?', function(data){
                     console.log(data);
                   });
                  
                  
                  //Show Flight Line when hovered over biking button
                  $.getJSON('http://api.simplegeo.com/1.0/context/address.json?address=SFO',function(data){console.log(data);});
-                 
+                 path = {
+                   new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
+                   new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
+                   }
                  flightline = new google.maps.Polyline({
-                   path: [
-                    new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
-                    new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                   ],
+                   path: path,
                    strokeColor: "#0000CC",
                    strokeOpacity: 0.8,
                    strokeWeight: 4
