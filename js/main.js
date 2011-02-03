@@ -589,14 +589,14 @@ function calculateTransitTrip(start,end){
         transitTime = 24*60 - (parseTime(startTime) - parseTime(endTime))/(1000*60)*2;
       }
       
-      $("#transit .summary").append("<li>Wait time: <strong>" + formatTime(waitingTime) + "</strong></li>");
-      $("#transit .summary").append("<li>Depart at: <strong>" + startTime + "</strong></li>");
-      $("#transit .summary").append("<li>Arrive at: <strong>" + endTime + "</strong></li>");
+      $("#transit .summary").append("<li>Wait time <div>" + formatTime(waitingTime) + "</div></li>");
+      $("#transit .summary").append("<li>Depart at <div>" + startTime + "</div></li>");
+      $("#transit .summary").append("<li>Arrive at <div>" + endTime + "</div></li>");
       $("#transit .time").html(formatTime(transitTime));
       if(typeof data.query.results.p[2] == 'string' && data.query.results.p[2].substr(0,1)=='$'){
         //Fare info is provided
-        $("#transit .summary").append("<li>Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong></li>");
-        $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) + "</strong></li>");
+        $("#transit .summary").append("<li>Roundtrip fare per person <div>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</div></li>");
+        $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+" <div>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) + "</div></li>");
         $("#transit .cost").html( formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) );
       } else {
         $("#transit .cost").html("?");
@@ -1075,26 +1075,49 @@ function estimateFlightCost(response){
            //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=? 
            var startdate = new Date();
            startdate.setDate(trip.departuredate.getDate()-20)
-           startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDay() + "/" + startdate.getFullYear();
-           
-           console.log('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted);
+           var startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDay() + "/" + startdate.getFullYear();
+    
            $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
              function(data) {
-               console.log(data);
                if(data != null){
                  flightcost = data.Result.AirPricing.AveragePrice;
                  originAirport = data.Result.AirPricing.OrigAirportCode;
                  destAirport = data.Result.AirPricing.DestinationAirportCode;
                  flightdistance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
-
+                 
+                 $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of "+startdateformatted+"</li>");
                  $('#flightresult .summary').append("<li>Flight Origin Airport<div>"+originAirport+"</div></li>");
                  $('#flightresult .summary').append("<li>Flight Destination Airport<div>"+destAirport+"</div></li>");
-                 $('#flightresult .summary').append("<li>Oneway Flight Cost<div>"+formatCurrency(flightcost)+"</div></li>");
-                 $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Total<div>"+formatCurrency(flightcost)+"</div></li>");
+                 $('#flightresult .summary').append("<li>Oneway Flight Cost per person<div>"+formatCurrency(flightcost)+"</div></li>");
+                 $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for "+trip.passengers+" <div>"+formatCurrency(flightcost*2*trip.passengers)+"</div></li>");
                  $('#flightresult .cost').html(formatCurrency(flightcost*2));
                  $('#flightresult .time').html(formatTime(trip.traveltime));
                  $('#flightresult .distance').html(formatDistance(flightdistance*2));
                  $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
+                 
+                 //Show Bike Directions when hovered over biking button
+                 var flightline = new google.maps.Polyline({
+                   path: [
+                    new google.map.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
+                    new google.map.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
+                   ],
+                   strokeColor: "FF0000",
+                   strokeOpacity: 1.0,
+                  strokeWeight: 2
+                   });
+                 
+                 $("#flightresult").hover(
+                   function(){
+                     directionsDisplay.setMap(null);
+                     flightline.setMap(map)
+                   }, 
+                   function(){
+                     flightline.setMap(null);
+                     directionsDisplay.setMap(map);
+                   }
+                );
+                 
+                 
                } else{
                  //No results
                  $('#flightresult').hide();
