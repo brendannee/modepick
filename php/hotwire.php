@@ -1,4 +1,8 @@
 <?php 
+header('Cache-Control: no-cache, must-revalidate');
+header('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+header('Content-type: application/json');
+
 //Calculate start date from 1 year ago
 $startdate = date("n/j/Y",strtotime(date("n/j/Y", strtotime($_GET['startdate'])) . "-1 year"));
 

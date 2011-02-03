@@ -93,9 +93,30 @@ function formatCurrency(amount) {
   s = new String(i);
   if(s.indexOf('.') < 0) { s += '.00'; }
   if(s.indexOf('.') == (s.length - 2)) { s += '0'; }
-  if(amount>100) { s = Math.round(s); }
+  if(i>100) { s = Math.round(s); }
   s = minus + s;
   return "$"+s;
+}
+
+function formatDistance(length) {
+  var i = parseFloat(length);
+  if(isNaN(i)) { i = 0; }
+  var minus = '';
+  if(i < 0) { minus = '-'; }
+  i = Math.abs(i);
+  i = parseInt((i + .05) * 10);
+  i = i / 10;
+  s = new String(i);
+  if(s.indexOf('.') < 0) { s += '.0'; }
+  if(s.indexOf('.') == (s.length - 1)) { s += '0'; }
+  if(i>100) { s = Math.round(s); }
+  s = minus + s;
+  if(i<1) { 
+    s = Math.round(i*5280) + " ft"; 
+  } else {
+    s = s + " mi";
+  }
+  return s;
 }
 
 function parseTime(str) {

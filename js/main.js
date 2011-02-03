@@ -385,8 +385,8 @@ function calculateTrip(response) {
     drivingdistance = trip.distance;
   }
   
-  $("#driving .distance").html(drivingdistance + " mi");
-  $("#driving .summary").append("<li>" + trip.onewaydistance + " mi each way</li>");
+  $("#driving .distance").html(formatDistance(drivingdistance));
+  $("#driving .summary").append("<li>" + formatDistance(trip.onewaydistance) + " each way</li>");
   $("#driving .summary").append("<li>Gas Cost: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["gas"]/100) + "</strong></li>");
   $("#driving .summary").append("<li>Maintenence Cost: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["maintenance"]/100) + "</strong></li>");
   $("#driving .summary").append("<li>Tires: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["tires"]/100) + "</strong></li>");
@@ -472,11 +472,11 @@ function calculateWalkTrip(response){
   tripdist = Math.round(onewaydistance*2*10)/10;
   
   if(trip.extramiles!=0){
-    $("#walking .distance").html((tripdist+trip.extramiles) + " mi");
-    $("#walking .summary").append("<li>" + Math.round(onewaydistance*10)/10 + " mi each way plus "+ trip.extramiles + " additional</li>");
+    $("#walking .distance").html(formatDistance(tripdist+trip.extramiles));
+    $("#walking .summary").append("<li>" + formatDistance(onewaydistance) + " each way plus "+ trip.extramiles + " additional</li>");
   } else {
-    $("#walking .distance").html(tripdist + " mi");
-    $("#walking .summary").append("<li>" + Math.round(onewaydistance*10)/10 + " mi each way");
+    $("#walking .distance").html(formatDistance(tripdist));
+    $("#walking .summary").append("<li>" + formatDistance(onewaydistance) + " mi each way");
   }
   $("#walking .time").html(timetext);
   $("#walking .cost").html("$0.00");
@@ -514,11 +514,11 @@ function calculateBikeTrip(response){
   tripdist = Math.round(onewaydistance*2*10)/10;
   
   if(trip.extramiles!=0){
-    $("#biking .distance").html((tripdist+trip.extramiles) + " mi");
-    $("#biking .summary").append("<li>" + Math.round(onewaydistance*10)/10 + " mi each way plus "+ trip.extramiles + " additional</li>");
+    $("#biking .distance").html(formatDistance(tripdist+trip.extramiles));
+    $("#biking .summary").append("<li>" + formatDistance(onewaydistance) + " each way plus "+ trip.extramiles + " additional</li>");
   } else {
-    $("#biking .distance").html(tripdist + " mi");
-    $("#biking .summary").append("<li>" + Math.round(onewaydistance*10)/10 + " mi each way</li>");
+    $("#biking .distance").html(formatDistance(tripdist));
+    $("#biking .summary").append("<li>" + formatDistance(onewaydistance) + " each way</li>");
   }
   $("#biking .time").html(timetext);
   $("#biking .cost").html("$0.00");
@@ -599,7 +599,8 @@ function calculateTransitTrip(start,end){
         $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) + "</strong></li>");
         $("#transit .cost").html( formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) );
       } else {
-        $("#transit .cost").html("No fare info");
+        $("#transit .cost").html("?");
+        $("#transit .summary").append("<li>No fare info available</li>");
       }
       $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Transit Directions on Google Transit</a>");
     } else{
@@ -830,7 +831,7 @@ function estimateCCSCost(){
   
   $('#ccsresult .cost').html(formatCurrency(ccs.cost));
   $('#ccsresult .time').html(formatTime(trip.traveltime));
-  $('#ccsresult .distance').html((trip.distance) + " mi");
+  $('#ccsresult .distance').html(formatDistance(trip.distance));
   $('#ccsresult .summary').append("<li class='total'>City Carshare Total<div>" + formatCurrency(ccs.cost) + "</div></li>");
 }
 
@@ -899,7 +900,7 @@ function estimateZipcarCost(){
   
   $('#zipcarresult .cost').html(formatCurrency(zipcar.cost));
   $('#zipcarresult .time').html(formatTime(trip.traveltime));
-  $('#zipcarresult .distance').html((trip.distance) + " mi");
+  $('#zipcarresult .distance').html(formatDistance(trip.distance));
   $('#zipcarresult .summary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcar.cost) + "</div></li>");
 }
 
@@ -981,14 +982,14 @@ function estimateTaxiCost(){
   taxicost = taxicost*(1+(cabfares.tippercent/100));
 
   $('#taxiresult .summary').append("<li>Flag Drop x 2<div>"+formatCurrency(cabfares.firstfifth*2)+"</div></li>");
-  $('#taxiresult .summary').append("<li>"+trip.distance+" mi x $2.25 per mi<div>"+formatCurrency((cabfares.additionalfifth*((trip.distance-0.2)*5)))+"</div></li>");
+  $('#taxiresult .summary').append("<li>"+formatDistance(trip.distance)+" x $2.25 per mi<div>"+formatCurrency((cabfares.additionalfifth*((trip.distance-0.2)*5)))+"</div></li>");
   $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*taxitrafficpermile*10)/10)+" min)<div>"+formatCurrency(cabfares.waitingminute*(trip.distance*taxitrafficpermile))+"</div></li>");
   $('#taxiresult .summary').append("<li>10% Tip<div>"+formatCurrency(tipamount)+"</div></li>");
   $('#taxiresult .summary').append("<li class='total'>Taxi Total<div>"+formatCurrency(taxicost)+"</div></li>");
   
   $('#taxiresult .cost').html(formatCurrency(taxicost));
   $('#taxiresult .time').html(formatTime(trip.traveltime));
-  $('#taxiresult .distance').html((trip.distance) + " mi");
+  $('#taxiresult .distance').html(formatDistance(trip.distance));
 }  
 
 function estimateUberCost(){ 
@@ -1005,46 +1006,105 @@ function estimateUberCost(){
     $('#uberresult .summary').append("<li class='total'>Uber Total<div>$30.00</div></li>");
   } else {
     $('#uberresult .summary').append("<li>Flag Drop x 2<div>"+formatCurrency(uberfares.flag*2)+"</div></li>");
-    $('#uberresult .summary').append("<li>"+trip.distance+" mi x " + formatCurrency(uberfares.mileage) + " per mi<div>"+formatCurrency(uberfares.mileage*trip.distance)+"</div></li>");
+    $('#uberresult .summary').append("<li>"+formatDistance(trip.distance)+" x " + formatCurrency(uberfares.mileage) + " per mi<div>"+formatCurrency(uberfares.mileage*trip.distance)+"</div></li>");
     $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*ubertrafficpermile*10)/10)+" min)<div>"+formatCurrency(uberfares.idleminute*(trip.distance*ubertrafficpermile))+"</div></li>");
     $('#uberresult .summary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
   }
   $('#uberresult .cost').html(formatCurrency(ubercost));
   $('#uberresult .time').html(formatTime(trip.traveltime));
-  $('#uberresult .distance').html((trip.distance) + " mi");
+  $('#uberresult .distance').html(formatDistance(trip.distance));
 }
 
 function estimateFlightCost(response){ 
-  //Hotwire Historical Flight Search
-  //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=?
-  
   var flightcost = 0;
   var originAirport ='';
   var destAirport = '';
-   
-  $.getJSON('../php/hotwire.php?origin=SFO&dest=LAS&startdate='+trip.departuredate,
-    function(data) {
-      console.log(data);
-      if(data != null){
-        flightcost = data.Result.AirPricing.AveragePrice;
-        originAirport = data.Result.AirPricing.OrigAirportCode;
-        destAirport = data.Result.AirPricing.DestinationAirportCode;
-        flightdistance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
+  
+  //YQL to travelmath.com for closest airports
+  //https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22http%3A%2F%2Fwww.travelmath.com%2Fclosest-airport%2F37.766618%2C-122.41676%22%20and%20xpath%3D'%2F%2Fa%5B%40name%3D%22international-airports%22%5D%2F..%2Fp'&format=json&diagnostics=true&callback=cbfunc
+  
+  //Get URL ready
+  var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
+  var originAirport = BASE_URI + encodeURIComponent('select * from html where url="http://www.travelmath.com/closest-airport/'+response.routes[0].legs[0].start_location.lat()+','+response.routes[0].legs[0].start_location.lng()+'" and xpath=\'//a[@name="international-airports"]/../p\'') + '&format=json';
+  var destAirport = BASE_URI + encodeURIComponent('select * from html where url="http://www.travelmath.com/closest-airport/'+response.routes[0].legs[0].end_location.lat()+','+response.routes[0].legs[0].end_location.lng()+'" and xpath=\'//a[@name="international-airports"]/../p\'') + '&format=json';
+  
+  var originAirports = [];
+  var destAirports = [];
+  
+   // Request that YSQL string, and run a callback function.  
+  $.getJSON(originAirport, cbfunc1);  
+  function cbfunc1(data) {
+    // If we have something to work with...  
+    if(data.query.count > 0){
+      results = data.query.results.p[1].a
+      for(i in results){
+        //Filter Results down to airport codes
+        if(results[i].content.length<4 && results[i].content != undefined){
+          //Seems like an airport code
+          originAirports.push(results[i].content);
+        }
+      }
       
-        $('#flightresult .summary').append("<li>Flight Origin Airport<div>"+originAirport+"</div></li>");
-        $('#flightresult .summary').append("<li>Flight Destination Airport<div>"+destAirport+"</div></li>");
-        $('#flightresult .summary').append("<li>Oneway Flight Cost<div>"+formatCurrency(flightcost)+"</div></li>");
-        $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Total<div>"+formatCurrency(flightcost)+"</div></li>");
-        $('#flightresult .cost').html(formatCurrency(flightcost*2));
-        $('#flightresult .time').html(formatTime(trip.traveltime));
-        $('#flightresult .distance').html(Math.round(flightdistance*2) + " mi");
-        $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
-      } else{
-        //No results
-        $('#flightresult').hide();
+      $.getJSON(destAirport, cbfunc2);  
+      function cbfunc2(data) {
+        // If we have something to work with...  
+        if(data.query.count > 0){
+          results = data.query.results.p[1].a
+          for(i in results){
+            //Filter Results down to airport codes
+            if(results[i].content.length<4 && results[i].content != undefined){
+              //Seems like an airport code
+              destAirports.push(results[i].content);
+            }
+          }
+          var originAirportString = '';
+           var destAirportString = '';
+           //Prep airports for search syntax
+           for(i in originAirports){
+             originAirportString += originAirports[i] + '|';
+           }
+
+           for(i in destAirports){
+             destAirportString += destAirports[i] + '|';
+           }
+
+           //Kayak via YQL
+           //select * from html where url="http://www.kayak.com/flights/SFO-RNO/2011-02-11/2011-02-18" and xpath='//div[@id="content_div"]/div/div/div/div/span/a[@class="actionlink"]'
+
+           //Hotwire Historical Flight Search
+           //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=? 
+           var startdate = new Date();
+           startdate.setDate(trip.departuredate.getDate()-20)
+           startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDay() + "/" + startdate.getFullYear();
+           
+           console.log('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted);
+           $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
+             function(data) {
+               console.log(data);
+               if(data != null){
+                 flightcost = data.Result.AirPricing.AveragePrice;
+                 originAirport = data.Result.AirPricing.OrigAirportCode;
+                 destAirport = data.Result.AirPricing.DestinationAirportCode;
+                 flightdistance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
+
+                 $('#flightresult .summary').append("<li>Flight Origin Airport<div>"+originAirport+"</div></li>");
+                 $('#flightresult .summary').append("<li>Flight Destination Airport<div>"+destAirport+"</div></li>");
+                 $('#flightresult .summary').append("<li>Oneway Flight Cost<div>"+formatCurrency(flightcost)+"</div></li>");
+                 $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Total<div>"+formatCurrency(flightcost)+"</div></li>");
+                 $('#flightresult .cost').html(formatCurrency(flightcost*2));
+                 $('#flightresult .time').html(formatTime(trip.traveltime));
+                 $('#flightresult .distance').html(formatDistance(flightdistance*2));
+                 $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
+               } else{
+                 //No results
+                 $('#flightresult').hide();
+               }
+             }
+           );
+        }
       }
     }
-  );
+  } 
 }
 
 function recalc(){
@@ -1197,7 +1257,8 @@ function toggleTraffic(){
 
 function resizeWindow(e) {
   var newWindowHeight = $(window).height();
-  var resultsWrapperHeight = 2 +parseInt($("#resultsWrapper").height()) +parseInt($("#resultsWrapper").css("margin-top")) +parseInt($("#resultsWrapper").css("margin-bottom") +parseInt($("#resultsWrapper").css("padding-top")) +parseInt($("#resultsWrapper").css("padding-bottom")) +parseInt($("#resultsWrapper").css("border-top-width")) +parseInt($("#resultsWrapper").css("border-bottom-width")));
+  var resultsWrapperHeight = newWindowHeight - parseInt($("#titlebar").height());
+  $("#resultsWrapper").css("height", resultsWrapperHeight);
   $("#map_wrapper").css("height", newWindowHeight);
   $("#map_canvas").css("height", newWindowHeight);
 }
