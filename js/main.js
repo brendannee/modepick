@@ -348,20 +348,32 @@ function calculateTrip(response) {
   if(calculateDistance(sf.lat,sf.lng,response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng())<15){
     //Add CCS as a mode, add locations
     estimateCCSCost();
+    $('#ccsresult').show();
     
     addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
     
-    //Add Uber as a mode
-    estimateUberCost();
-    
-    //Show these modes results
-    $('#ccsresult').show();
-    $('#uberresult').show();
+    //Only show uber for trips less than 75 miles (it gets expensive!)
+    if(trip.onewaydistance<75){
+      estimateUberCost();
+      $('#uberresult').show();
+    } else {
+      $('#uberresult').hide();
+    }
+
   } else{
     //If not in SF, hide SF modes
     $('#ccsresult').hide();
     $('#uberresult').hide();
   }
+  
+  //Only show taxis if distance is less than 150 miles
+  if(trip.onewaydistance<150){
+    estimateTaxiCost();
+    $('#taxiresult').show();
+  } else{
+    $('#taxiresult').hide();
+  }
+  
   
   //Only show flights if distance is greater than 150 miles
   if(trip.onewaydistance>150){
@@ -374,7 +386,6 @@ function calculateTrip(response) {
   
   //Estimate costs
   estimateZipcarCost();
-  estimateTaxiCost();
   
   //Add zipcar locations
   addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
@@ -1016,6 +1027,8 @@ function estimateUberCost(){
 }
 
 function estimateFlightCost(response){ 
+  
+  $("#flightresult .summary").html('');
   var flightcost = 0;
   var originAirport ='';
   var destAirport = '';
