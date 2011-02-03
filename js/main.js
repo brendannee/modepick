@@ -1118,10 +1118,10 @@ function estimateFlightCost(response){
                  
                  //Show Flight Line when hovered over biking button
                  $.getJSON('http://api.simplegeo.com/1.0/context/address.json?address=SFO',function(data){console.log(data);});
-                 path = {
+                 path = [
                    new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
                    new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                   }
+                   ]
                  flightline = new google.maps.Polyline({
                    path: path,
                    strokeColor: "#0000CC",
