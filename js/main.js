@@ -1106,8 +1106,8 @@ function calculateFlight(response){
                  flightdistance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
                  
                  $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
-                 $('#flightresult .summary').append("<li>Flight Origin Airport: <strong>" + originAirport + "</strong></li>");
-                 $('#flightresult .summary').append("<li>Flight Destination Airport: <strong>" + destAirport + "</strong></li>");
+                 $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + originAirport + "</span></strong></li>");
+                 $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + destAirport + "</span></strong></li>");
                  $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
                  $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
                  $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
@@ -1118,10 +1118,15 @@ function calculateFlight(response){
                  //Get airport info from freebase
                   $.getJSON('http://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+originAirport+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+destAirport+'%22,%22/common/topic/webpage%22:[{}]}]}}&callback=?', function(data){
                     console.log(data);
+                    if(data.q0.code=='/api/status/ok'){
+                      $('#originAirport').html('<a href="http://www.freebase.com/view' + data.q0.result[0].id + '">' + data.q0.result[0].name + '</a>');
+                    }
+                    if(data.q1.code=='/api/status/ok'){
+                      $('#destAirport').html('<a href="http://www.freebase.com/view' + data.q1.result[0].id + '">' + data.q1.result[0].name + '</a>');
+                    }
                   });
                  
-                 
-                 //Show Flight Line when hovered over biking button
+                 //Show Flight Line when hovered over flight button
                 
                  path = [
                    new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
