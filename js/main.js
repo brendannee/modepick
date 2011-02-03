@@ -308,11 +308,9 @@ function addCarshareLocations(map, lat, lon, type){
 }
 
 function calculateTrip(response) {
-  //Clear old warnings and trip
+  //Clear old warnings and trips
   $('#warnings_panel').html('');
-  
-  //Clear existing directions
-  $("#driving .summary").html('');
+  $('.mode .summary').html('');
   
   //clear markers
   clearOverlays()
@@ -333,12 +331,12 @@ function calculateTrip(response) {
   trip = {};
   trip.departuredate=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
   trip.returndate=dates.convert(""+$('#returndate').val()+" "+$('#returntime').val());
-  trip.time = (trip.returndate-trip.departuredate)/(1000*60)
+  trip.time = (trip.returndate-trip.departuredate)/(1000*60); //Total trip time in minutes
   trip.distance = Math.round(onewaydistance*2*10)/10;
   trip.onewaydistance = Math.round(onewaydistance*10)/10;
   trip.extramiles = Number($('#extramiles').val());
   trip.passengers = Number($('#passengers').val());
-  trip.traveltime = onewaytime*2/60
+  trip.traveltime = onewaytime*2; //Traveling time by driving in minutes
   
   //Allow City Carshare and Uber if within 15 miles of San Francisco
   //San Francisco Area lat lon
@@ -348,14 +346,14 @@ function calculateTrip(response) {
   };
   if(calculateDistance(sf.lat,sf.lng,response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng())<15){
     //Add CCS as a mode, add locations
-    estimateCCSCost();
+    calculateCCS();
     $('#ccsresult').show();
     
     addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
     
     //Only show uber for trips less than 75 miles (it gets expensive!)
     if(trip.onewaydistance<75){
-      estimateUberCost();
+      calculateUber();
       $('#uberresult').show();
     } else {
       $('#uberresult').hide();
@@ -369,16 +367,15 @@ function calculateTrip(response) {
   
   //Only show taxis if distance is less than 150 miles
   if(trip.onewaydistance<150){
-    estimateTaxiCost();
+    calculateTaxi();
     $('#taxiresult').show();
   } else{
     $('#taxiresult').hide();
   }
   
-  
   //Only show flights if distance is greater than 150 miles
   if(trip.onewaydistance>150){
-    estimateFlightCost(response);
+    calculateFlight(response);
     //Show Flight mode
     $('#flightresult').show();
   } else {
@@ -386,36 +383,11 @@ function calculateTrip(response) {
   }
   
   //Estimate costs
-  estimateZipcarCost();
+  calculateZipcar();
+  calculateDriving(response);
   
   //Add zipcar locations
   addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
-  
-  if(trip.extramiles!=0){
-    drivingdistance = trip.distance+trip.extramiles;
-  } else {
-    drivingdistance = trip.distance;
-  }
-  
-  $("#driving .distance").html(formatDistance(drivingdistance));
-  $("#driving .summary").append("<li>" + formatDistance(trip.onewaydistance) + " each way</li>");
-  $("#driving .summary").append("<li>Gas Cost: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["gas"]/100) + "</strong></li>");
-  $("#driving .summary").append("<li>Maintenence Cost: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["maintenance"]/100) + "</strong></li>");
-  $("#driving .summary").append("<li>Tires: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["tires"]/100) + "</strong></li>");
-  $("#driving .summary").append("<li>Ownership Costs: <strong>" + formatCurrency(drivingdistance * (drivingcosts["medium sedan"]["15000"] - drivingcosts["medium sedan"]["operatingcosts"])/100) + "</strong></li>");
-  $("#driving .summary").append("<li>Costs based on medium sedan driving 15,000 mi/year, gas at $2.60/gallon and <a href='http://www.fuelcostcalculator.aaa.com'>assumptions from AAA</a></li>");
-  
-  $("#driving .time").html(formatTimeDecimal(trip.traveltime));
-  $("#driving .cost").html(formatCurrency(drivingdistance * drivingcosts["medium sedan"]["15000"]/100))
-  
-  $("#driving .summary").append("<li><a id='traffic' href='' onClick='toggleTraffic();return false;' title='Show Current Traffic Conditions'>Show Current Traffic Conditions</a></li>");
-  
-  $("#driving .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=d' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Driving directions on Google Maps</a>");
-  
-  //Check if estimated driving time exceeds trip time
-  if(trip.time<(onewaytime*2/60)){
-    $('#warnings_panel').append("<li>Your estimated driving time exceeds your reservation time.</li>");
-  }
   
   //Calculate Waypoints to add to walking, biking routes.
   var waypoints = new Array;
@@ -435,7 +407,7 @@ function calculateTrip(response) {
   };
   DirectionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
-      calculateWalkTrip(response);
+      calculateWalk(response);
     }
   });
    
@@ -448,7 +420,7 @@ function calculateTrip(response) {
   };
   DirectionsService.route(request, function(response, status) {
     if (status == google.maps.DirectionsStatus.OK) {
-      calculateBikeTrip(response);
+      calculateBike(response);
     }
   });
     
@@ -464,7 +436,31 @@ function calculateTrip(response) {
   setTimeout(resizeWindow(),500);
 }
 
-function calculateWalkTrip(response){
+function calculateDriving(response){
+  if(trip.extramiles!=0){
+     drivingdistance = trip.distance+trip.extramiles;
+   } else {
+     drivingdistance = trip.distance;
+   }
+
+   $("#driving .distance").html(formatDistance(drivingdistance));
+   $("#driving .summary").append("<li>" + formatDistance(trip.onewaydistance) + " each way</li>");
+   $("#driving .summary").append("<li>Gas Cost: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["gas"]/100) + "</strong></li>");
+   $("#driving .summary").append("<li>Maintenence Cost: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["maintenance"]/100) + "</strong></li>");
+   $("#driving .summary").append("<li>Tires: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["tires"]/100) + "</strong></li>");
+   $("#driving .summary").append("<li>Ownership Costs: <strong>" + formatCurrency(drivingdistance * (drivingcosts["medium sedan"]["15000"] - drivingcosts["medium sedan"]["operatingcosts"])/100) + "</strong></li>");
+   $("#driving .summary").append("<li><strong>Total Cost for " + formatDistance(drivingdistance) + ": <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["15000"]/100) + "</strong></li>");
+   $("#driving .summary").append("<li>Costs based on medium sedan driving 15,000 mi/year, gas at $2.60/gallon and <a href='http://www.fuelcostcalculator.aaa.com'>assumptions from AAA</a></li>");
+
+   $("#driving .time").html(formatTimeDecimal(trip.traveltime/60));
+   $("#driving .cost").html(formatCurrency(drivingdistance * drivingcosts["medium sedan"]["15000"]/100))
+
+   $("#driving .summary").append("<li><a id='traffic' href='' onClick='toggleTraffic();return false;' title='Show Current Traffic Conditions'>Show Current Traffic Conditions</a></li>");
+
+   $("#driving .modeLink").html("<a href='http://maps.google.com/maps?saddr="+encodeURIComponent(response.routes[0].legs[0].start_address)+"&daddr="+encodeURIComponent(response.routes[0].legs[response.routes[0].legs.length-1].end_address)+"&dirflg=d' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Driving directions on Google Maps</a>");
+}
+
+function calculateWalk(response){
   //Clear existing directions
   $("#walking .summary").html('');
   
@@ -485,10 +481,10 @@ function calculateWalkTrip(response){
   
   if(trip.extramiles!=0){
     $("#walking .distance").html(formatDistance(tripdist+trip.extramiles));
-    $("#walking .summary").append("<li>" + formatDistance(onewaydistance) + " each way plus "+ trip.extramiles + " additional</li>");
+    $("#walking .summary").append("<li><strong>" + formatDistance(onewaydistance) + "</strong> each way plus <strong>"+ trip.extramiles + "</string> additional</li>");
   } else {
     $("#walking .distance").html(formatDistance(tripdist));
-    $("#walking .summary").append("<li>" + formatDistance(onewaydistance) + " mi each way");
+    $("#walking .summary").append("<li><strong>" + formatDistance(onewaydistance) + "</strong> each way");
   }
   $("#walking .time").html(timetext);
   $("#walking .cost").html("$0.00");
@@ -506,10 +502,7 @@ function calculateWalkTrip(response){
     });
 }
 
-function calculateBikeTrip(response){
-  //Clear existing directions
-  $("#biking .summary").html('');
-  
+function calculateBike(response){
   //Assign bike directions response to display renderer
   directionsDisplayBike.setDirections(response);
 
@@ -527,10 +520,10 @@ function calculateBikeTrip(response){
   
   if(trip.extramiles!=0){
     $("#biking .distance").html(formatDistance(tripdist+trip.extramiles));
-    $("#biking .summary").append("<li>" + formatDistance(onewaydistance) + " each way plus "+ trip.extramiles + " additional</li>");
+    $("#biking .summary").append("<li><strong>" + formatDistance(onewaydistance) + "</strong> each way plus "+ trip.extramiles + " additional</li>");
   } else {
     $("#biking .distance").html(formatDistance(tripdist));
-    $("#biking .summary").append("<li>" + formatDistance(onewaydistance) + " each way</li>");
+    $("#biking .summary").append("<li><strong>" + formatDistance(onewaydistance) + "</strong> each way</li>");
   }
   $("#biking .time").html(timetext);
   $("#biking .cost").html("$0.00");
@@ -552,7 +545,6 @@ function calculateTransitTrip(start,end){
   //Use YQL to scrape google maps for screenreader to get transit directions
   
   //Clear existing directions
-  $("#transit .summary").html('');
   $("#transit .cost").html('');
   $("#transit .time").html('');
   
@@ -601,17 +593,18 @@ function calculateTransitTrip(start,end){
         transitTime = 24*60 - (parseTime(startTime) - parseTime(endTime))/(1000*60)*2;
       }
       
-      $("#transit .summary").append("<li>Wait time <div>" + formatTimeDecimal(waitingTime) + "</div></li>");
-      $("#transit .summary").append("<li>Depart at <div>" + startTime + "</div></li>");
-      $("#transit .summary").append("<li>Arrive at <div>" + endTime + "</div></li>");
+      $("#transit .summary").append("<li>Wait time: <strong>" + formatTimeDecimal(waitingTime) + "</strong></li>");
+      $("#transit .summary").append("<li>Depart at: <strong>" + startTime + "</strong></li>");
+      $("#transit .summary").append("<li>Arrive at: <strong>" + endTime + "</strong></li>");
       $("#transit .time").html(formatTimeDecimal(transitTime));
+      $("#transit .distance").html("N/A");
       if(typeof data.query.results.p[2] == 'string' && data.query.results.p[2].substr(0,1)=='$'){
         //Fare info is provided
-        $("#transit .summary").append("<li>Roundtrip fare per person <div>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</div></li>");
-        $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+" <div>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) + "</div></li>");
+        $("#transit .summary").append("<li>Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong></li>");
+        $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) + "</strong></li>");
         $("#transit .cost").html( formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) );
       } else {
-        $("#transit .cost").html("?");
+        $("#transit .cost").html("No Info");
         $("#transit .summary").append("<li>No fare info available</li>");
       }
       $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Transit Directions on Google Transit</a>");
@@ -621,7 +614,7 @@ function calculateTransitTrip(start,end){
   }
 }
 
-function estimateCCSCost(){
+function calculateCCS(){
   ccs = {};
   ccs.plan = ccsplans[$('#ccsplan').val()];
   ccs.cost=0;
@@ -809,45 +802,50 @@ function estimateCCSCost(){
     }
   }
 
-  $('#ccsresult .summary').html("");
   if($('#ccsplan').val()=='sharealittle'){
     //Share a little doesn't havce late night hours so use CCS2 time
     ccs.cost+= ccs.plan.weekdayhourly*((trip.time-ccs.weekendtime2)/60)+ccs.plan.weekendhourly*(ccs.weekendtime2/60);
     if((trip.time-ccs.weekendtime2)>0){
-      $('#ccsresult .summary').append("<li>" + formatTimeDecimal(trip.time-ccs.weekendtime2) + " x " + formatCurrency(ccs.plan.weekdayhourly) + "/hr wkday<div>" +  formatCurrency(ccs.plan.weekdayhourly*((trip.time-ccs.weekendtime2)/60)) + "</div></li>");
+      $('#ccsresult .summary').append("<li>" + formatTimeDecimal(trip.time-ccs.weekendtime2) + " x " + formatCurrency(ccs.plan.weekdayhourly) + "/hr wkday: <strong>" +  formatCurrency(ccs.plan.weekdayhourly*((trip.time-ccs.weekendtime2)/60)) + "</strong></li>");
     }
     if(ccs.weekendtime2>0){
-      $('#ccsresult .summary').append("<li>" + formatTimeDecimal(ccs.weekendtime2) + " x " + formatCurrency(ccs.plan.weekendhourly) + "/hr wkend<div>" + formatCurrency(ccs.plan.weekendhourly*(ccs.weekendtime2/60)) + "</div></li>");
+      $('#ccsresult .summary').append("<li>" + formatTimeDecimal(ccs.weekendtime2) + " x " + formatCurrency(ccs.plan.weekendhourly) + "/hr wkend: <strong>" + formatCurrency(ccs.plan.weekendhourly*(ccs.weekendtime2/60)) + "</strong></li>");
     }
   } else {
     //Other plans have late night hours, so use CCS time
      ccs.cost+= ccs.plan.weekdayhourly*((trip.time-ccs.weekendtime-ccs.latenighttime)/60)+ccs.plan.weekendhourly*(ccs.weekendtime/60)+ccs.plan.latenighthourly*(ccs.latenighttime/60);
     if((trip.time-ccs.weekendtime-ccs.latenighttime)>0){
-     $('#ccsresult .summary').append("<li>" + formatTimeDecimal(trip.time-ccs.weekendtime-ccs.latenighttime) + " x " + formatCurrency(ccs.plan.weekdayhourly) + "/hr wkday<div>" + formatCurrency(ccs.plan.weekdayhourly*((trip.time-ccs.weekendtime-ccs.latenighttime)/60)) + "</div></li>");
+     $('#ccsresult .summary').append("<li>" + formatTimeDecimal(trip.time-ccs.weekendtime-ccs.latenighttime) + " x " + formatCurrency(ccs.plan.weekdayhourly) + "/hr wkday: <strong>" + formatCurrency(ccs.plan.weekdayhourly*((trip.time-ccs.weekendtime-ccs.latenighttime)/60)) + "</strong></li>");
     }
     if(ccs.weekendtime>0){
-      $('#ccsresult .summary').append("<li>" + formatTimeDecimal(ccs.weekendtime) + " x " + formatCurrency(ccs.plan.weekendhourly) + "/hr wkend<div>" + formatCurrency(ccs.plan.weekendhourly*(ccs.weekendtime/60)) + "</div></li>");
+      $('#ccsresult .summary').append("<li>" + formatTimeDecimal(ccs.weekendtime) + " x " + formatCurrency(ccs.plan.weekendhourly) + "/hr wkend: <strong>" + formatCurrency(ccs.plan.weekendhourly*(ccs.weekendtime/60)) + "</strong></li>");
     }
     if(ccs.latenighttime>0){
-      $('#ccsresult .summary').append("<li>" + formatTimeDecimal(ccs.latenighttime) + " x " + formatCurrency(ccs.plan.latenighthourly) + "/hr latenight<div>" + formatCurrency(ccs.plan.latenighthourly*(ccs.latenighttime/60)) + "</div></li>");
+      $('#ccsresult .summary').append("<li>" + formatTimeDecimal(ccs.latenighttime) + " x " + formatCurrency(ccs.plan.latenighthourly) + "/hr latenight: <strong>" + formatCurrency(ccs.plan.latenighthourly*(ccs.latenighttime/60)) + "</strong></li>");
     }
   }
   //Add in Mileage
   if(trip.extramiles!=0){
     ccs.cost+= (trip.distance+trip.extramiles)*ccs.plan.mileagehourly;
-    $('#ccsresult .summary').append("<li>" + (trip.distance+trip.extramiles) + " mi x " + formatCurrency(ccs.plan.mileagehourly) + " per mi<div>" + formatCurrency((trip.distance+trip.extramiles)*ccs.plan.mileagehourly) + "</div></li>");
+    $('#ccsresult .summary').append("<li>" + (trip.distance+trip.extramiles) + " mi x " + formatCurrency(ccs.plan.mileagehourly) + " per mi: <strong>" + formatCurrency((trip.distance+trip.extramiles)*ccs.plan.mileagehourly) + "</strong></li>");
   } else {
     ccs.cost+= trip.distance*ccs.plan.mileagehourly;
-    $('#ccsresult .summary').append("<li>" + trip.distance + " mi x " + formatCurrency(ccs.plan.mileagehourly) + " per mi<div>" + formatCurrency(trip.distance*ccs.plan.mileagehourly) + "</div></li>");
+    $('#ccsresult .summary').append("<li>" + trip.distance + " mi x " + formatCurrency(ccs.plan.mileagehourly) + " per mi: <strong>" + formatCurrency(trip.distance*ccs.plan.mileagehourly) + "</strong></li>");
   }
   
   $('#ccsresult .cost').html(formatCurrency(ccs.cost));
-  $('#ccsresult .time').html(formatTimeDecimal(trip.traveltime));
+  $('#ccsresult .time').html(formatTimeDecimal(trip.traveltime/60));
   $('#ccsresult .distance').html(formatDistance(trip.distance));
-  $('#ccsresult .summary').append("<li class='total'>City Carshare Total<div>" + formatCurrency(ccs.cost) + "</div></li>");
+  $('#ccsresult .summary').append("<li class='total'>City Carshare Total: <strong>" + formatCurrency(ccs.cost) + "</strong></li>");
+  
+  //Check if estimated driving time exceeds trip time
+  if(trip.time<(trip.traveltime)){
+    $('#ccsresult .summary').prepend("<li class='warning'>Your estimated driving time exceeds your reservation time.</li>");
+    $('#ccsresult').addClass('warning');
+  }
 }
 
-function estimateZipcarCost(){
+function calculateZipcar(){
   zipcar = {}
   zipcar.plan = zipcarplans[$('#zipcarplan').val()];
   zipcar.cost = 0;
@@ -900,20 +898,25 @@ function estimateZipcarCost(){
   //Do cost estimations
   estimateZipcarDayCost(trip.time);
   
-  $('#zipcarresult .summary').html("");
   if(zipcar.days>0){
     //Daily Rate
-    $('#zipcarresult .summary').append("<li>" + zipcar.days + " day x " + formatCurrency(parseFloat(zipcar.rates.daily)) + "/day<div>" + formatCurrency(parseFloat(zipcar.rates.daily)*(zipcar.days)) + "</div></li>");
+    $('#zipcarresult .summary').append("<li>" + zipcar.days + " day x " + formatCurrency(parseFloat(zipcar.rates.daily)) + "/day <strong>" + formatCurrency(parseFloat(zipcar.rates.daily)*(zipcar.days)) + "</strong></li>");
   }
   if(zipcar.hours.time>0){
     //Hourly Rate
-    $('#zipcarresult .summary').append("<li>" + formatTimeDecimal(zipcar.hours.time) + " x " + formatCurrency(parseFloat(zipcar.hours.rate)) + "/hr<div>" + formatCurrency(parseFloat(zipcar.hours.rate)*(zipcar.hours.time/60)) + "</div></li>");
+    $('#zipcarresult .summary').append("<li>" + formatTimeDecimal(zipcar.hours.time) + " x " + formatCurrency(parseFloat(zipcar.hours.rate)) + "/hr <strong>" + formatCurrency(parseFloat(zipcar.hours.rate)*(zipcar.hours.time/60)) + "</strong></li>");
   }
   
   $('#zipcarresult .cost').html(formatCurrency(zipcar.cost));
-  $('#zipcarresult .time').html(formatTimeDecimal(trip.traveltime));
+  $('#zipcarresult .time').html(formatTimeDecimal(trip.traveltime/60));
   $('#zipcarresult .distance').html(formatDistance(trip.distance));
-  $('#zipcarresult .summary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcar.cost) + "</div></li>");
+  $('#zipcarresult .summary').append("<li class='total'>Zipcar Total <strong>" + formatCurrency(zipcar.cost) + "</strong></li>");
+  
+  //Check if estimated driving time exceeds trip time
+  if(trip.time<(trip.traveltime)){
+    $('#zipcarresult .summary').prepend("<li class='warning'>Your estimated driving time exceeds your reservation time.</li>");
+    $('#zipcarresult').addClass('warning');
+  }
 }
 
 function estimateZipcarHourCost(triptime){  
@@ -981,55 +984,53 @@ function estimateZipcarDayCost(triptime){
   return zipcar;
 }
 
-function estimateTaxiCost(){ 
+function calculateTaxi(){ 
   taxicost = 0;
   
   //Taxi (assume 1.5 minute of waiting per mile)
   var taxitrafficpermile = 1.5;
   
-  $('#taxiresult .summary').html("");
   taxicost+= cabfares.firstfifth*2 + (cabfares.additionalfifth*((trip.distance-0.2)*5)) + cabfares.waitingminute*(trip.distance*taxitrafficpermile);
   //add tip
   var tipamount = taxicost*(cabfares.tippercent/100);
   taxicost = taxicost*(1+(cabfares.tippercent/100));
 
-  $('#taxiresult .summary').append("<li>Flag Drop x 2<div>"+formatCurrency(cabfares.firstfifth*2)+"</div></li>");
-  $('#taxiresult .summary').append("<li>"+formatDistance(trip.distance)+" x $2.25 per mi<div>"+formatCurrency((cabfares.additionalfifth*((trip.distance-0.2)*5)))+"</div></li>");
-  $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*taxitrafficpermile*10)/10)+" min)<div>"+formatCurrency(cabfares.waitingminute*(trip.distance*taxitrafficpermile))+"</div></li>");
-  $('#taxiresult .summary').append("<li>10% Tip<div>"+formatCurrency(tipamount)+"</div></li>");
-  $('#taxiresult .summary').append("<li class='total'>Taxi Total<div>"+formatCurrency(taxicost)+"</div></li>");
+  $('#taxiresult .summary').append("<li>Flag Drop x 2: <strong>"+formatCurrency(cabfares.firstfifth*2)+"</strong></li>");
+  $('#taxiresult .summary').append("<li>"+formatDistance(trip.distance)+" x $2.25 per mi: <strong>"+formatCurrency((cabfares.additionalfifth*((trip.distance-0.2)*5)))+"</strong></li>");
+  $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*taxitrafficpermile*10)/10)+" min): <strong>"+formatCurrency(cabfares.waitingminute*(trip.distance*taxitrafficpermile))+"</strong></li>");
+  $('#taxiresult .summary').append("<li>10% Tip: <strong>"+formatCurrency(tipamount)+"</strong></li>");
+  $('#taxiresult .summary').append("<li class='total'>Taxi Total: <strong>"+formatCurrency(taxicost)+"</strong></li>");
   
   $('#taxiresult .cost').html(formatCurrency(taxicost));
-  $('#taxiresult .time').html(formatTimeDecimal(trip.traveltime));
+  $('#taxiresult .time').html(formatTimeDecimal(trip.traveltime/60));
   $('#taxiresult .distance').html(formatDistance(trip.distance));
 }  
 
-function estimateUberCost(){ 
+function calculateUber(){ 
   ubercost = 0;
   
   //Uber (assume 1.5 minute of waiting per mile)
   var ubertrafficpermile = 1.5;
-  $('#uberresult .summary').html("");
+  
   ubercost+= uberfares.flag*2 + (uberfares.mileage*trip.distance) + uberfares.idleminute*(trip.distance*ubertrafficpermile);
   if(ubercost<30){
     //Minimum fare is $15 each way
     ubercost = 30;
-    $('#uberresult .summary').append("<li>Minimum Fare $15 x 2<div>$30.00</div></li>");
-    $('#uberresult .summary').append("<li class='total'>Uber Total<div>$30.00</div></li>");
+    $('#uberresult .summary').append("<li>Minimum Fare $15 x 2: <strong>$30.00</strong></li>");
+    $('#uberresult .summary').append("<li class='total'>Uber Total: <strong>$30.00</strong></li>");
   } else {
-    $('#uberresult .summary').append("<li>Flag Drop x 2<div>"+formatCurrency(uberfares.flag*2)+"</div></li>");
-    $('#uberresult .summary').append("<li>"+formatDistance(trip.distance)+" x " + formatCurrency(uberfares.mileage) + " per mi<div>"+formatCurrency(uberfares.mileage*trip.distance)+"</div></li>");
-    $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*ubertrafficpermile*10)/10)+" min)<div>"+formatCurrency(uberfares.idleminute*(trip.distance*ubertrafficpermile))+"</div></li>");
-    $('#uberresult .summary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
+    $('#uberresult .summary').append("<li>Flag Drop x 2: <strong>"+formatCurrency(uberfares.flag*2)+"</strong></li>");
+    $('#uberresult .summary').append("<li>"+formatDistance(trip.distance)+" x " + formatCurrency(uberfares.mileage) + " per mi: <strong>"+formatCurrency(uberfares.mileage*trip.distance)+"</strong></li>");
+    $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*ubertrafficpermile*10)/10)+" min): <strong>"+formatCurrency(uberfares.idleminute*(trip.distance*ubertrafficpermile))+"</strong></li>");
+    $('#uberresult .summary').append("<li class='total'>Uber Total: <strong>"+formatCurrency(ubercost)+"</strong></li>");
   }
   $('#uberresult .cost').html(formatCurrency(ubercost));
-  $('#uberresult .time').html(formatTimeDecimal(trip.traveltime));
+  $('#uberresult .time').html(formatTimeDecimal(trip.traveltime/60));
   $('#uberresult .distance').html(formatDistance(trip.distance));
 }
 
-function estimateFlightCost(response){ 
+function calculateFlight(response){ 
   
-  $("#flightresult .summary").html('');
   var flightcost = 0;
   var originAirport ='';
   var destAirport = '';
@@ -1100,13 +1101,13 @@ function estimateFlightCost(response){
                  destAirport = data.Result.AirPricing.DestinationAirportCode;
                  flightdistance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
                  
-                 $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of "+startdateformatted+"</li>");
-                 $('#flightresult .summary').append("<li>Flight Origin Airport<div>"+originAirport+"</div></li>");
-                 $('#flightresult .summary').append("<li>Flight Destination Airport<div>"+destAirport+"</div></li>");
-                 $('#flightresult .summary').append("<li>Oneway Flight Cost per person<div>"+formatCurrency(flightcost)+"</div></li>");
-                 $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for "+trip.passengers+" <div>"+formatCurrency(flightcost*2*trip.passengers)+"</div></li>");
-                 $('#flightresult .cost').html(formatCurrency(flightcost*2));
-                 $('#flightresult .time').html(formatTimeDecimal(trip.traveltime));
+                 $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
+                 $('#flightresult .summary').append("<li>Flight Origin Airport: <strong>" + originAirport + "</strong></li>");
+                 $('#flightresult .summary').append("<li>Flight Destination Airport: <strong>" + destAirport + "</strong></li>");
+                 $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
+                 $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
+                 $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
+                 $('#flightresult .time').html(formatTimeDecimal(trip.traveltime/60));
                  $('#flightresult .distance').html(formatDistance(flightdistance*2));
                  $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
                  
@@ -1117,7 +1118,7 @@ function estimateFlightCost(response){
                  
                  
                  //Show Flight Line when hovered over biking button
-                 $.getJSON('http://api.simplegeo.com/1.0/context/address.json?address=SFO',function(data){console.log(data);});
+                
                  path = [
                    new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
                    new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
@@ -1301,12 +1302,13 @@ function toggleTraffic(){
   }
 }
 
-function resizeWindow(e) {
+function resizeWindow() {
   var newWindowHeight = $(window).height();
-  var resultsWrapperHeight = newWindowHeight - parseInt($("#titlebar").height());
-  $("#resultsWrapper").css("height", resultsWrapperHeight);
-  $("#map_wrapper").css("height", newWindowHeight);
-  $("#map_canvas").css("height", newWindowHeight);
+  var resultsWrapperHeight = newWindowHeight - parseInt($(".titlebar").height());
+  $("#resultsWrapper").css("max-height", resultsWrapperHeight+"px");
+  $("#resultsWrapper").css("height", resultsWrapperHeight+"px");
+  $("#map_wrapper").css("height", newWindowHeight+"px");
+  $("#map_canvas").css("height", newWindowHeight+"px");
 }
     
 google.setOnLoadCallback(function(){

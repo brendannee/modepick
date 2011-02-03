@@ -120,6 +120,8 @@ ul.input_boxes li .textbox{
   display:block;
   color:#333;
   padding:2px 5px;
+  font-size:10px;
+  margin-top:-8px;
 }
 
 #show_options:hover{
@@ -174,19 +176,33 @@ ul.input_boxes li .textbox{
 }
 
 .mode {
-  padding: 10px 10px 15px 10px;
+  padding: 5px 10px;
   background:#d2dCd7;
   margin:10px 0;
   -moz-border-radius: 5px;
   -webkit-border-radius: 5px;
   overflow:hidden;
-  position:relative;
-  min-height:27px;
 }
 
 .mode:hover{
   background:#E2ECE7;
 }
+
+.warning {
+  background:#dcbec4;
+}
+
+.warning:hover {
+  background:#f2d1d8;
+}
+
+.warning .warning {
+  color:#dc6b6b;
+  padding:5px;
+  font-weight:bold;
+}
+
+
 
 .mode a:hover{
   border-bottom:1px dashed #999;
@@ -225,7 +241,7 @@ ul.input_boxes li .textbox{
 
 .summary li div{
   float:right;
-margin-left: 20px;
+  margin-left: 20px;
 }
 
 .time{
@@ -260,13 +276,13 @@ margin-left: 20px;
 }
 
 .mode .expand{
-  height:20px;
-  text-align:center;
-  position:absolute;
-  bottom:3px;
-  right:50%;
+  float:right;
+  width:20px;
   cursor:pointer;
   font-size:20px;
+  line-height:20px;
+  height:20px;
+  overflow:hidden;
 }
 
 .mode .expand:hover{
