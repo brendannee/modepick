@@ -71,11 +71,15 @@ function formatTime(mins){
 
 function formatTimeDecimal(mins){
   if(mins>59){
-    minshours = mins/60;
+    minshours = Math.round(mins/60*10)/10;
     if(minshours==1){
-      return "1 hour";
+      return "1 hr";
     }else{
-      return minshours+" hours";
+      if(minshours<50){
+        return minshours+" hrs";
+      } else {
+        return Math.round(minshours)+" hrs";
+      }
     }
   } else {
     return Math.floor(mins) + " mins";

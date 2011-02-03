@@ -404,7 +404,7 @@ function calculateTrip(response) {
   $("#driving .summary").append("<li>Ownership Costs: <strong>" + formatCurrency(drivingdistance * (drivingcosts["medium sedan"]["15000"] - drivingcosts["medium sedan"]["operatingcosts"])/100) + "</strong></li>");
   $("#driving .summary").append("<li>Costs based on medium sedan driving 15,000 mi/year, gas at $2.60/gallon and <a href='http://www.fuelcostcalculator.aaa.com'>assumptions from AAA</a></li>");
   
-  $("#driving .time").html(formatTime(trip.traveltime));
+  $("#driving .time").html(formatTimeDecimal(trip.traveltime));
   $("#driving .cost").html(formatCurrency(drivingdistance * drivingcosts["medium sedan"]["15000"]/100))
   
   $("#driving .summary").append("<li><a id='traffic' href='' onClick='toggleTraffic();return false;' title='Show Current Traffic Conditions'>Show Current Traffic Conditions</a></li>");
@@ -478,7 +478,7 @@ function calculateWalkTrip(response){
     onewaytime += response.routes[0].legs[i].duration.value;
   }
   //Convert to hours minutes
-  timetext = formatTime(onewaytime*2/60);
+  timetext = formatTimeDecimal(onewaytime*2/60);
   
   tripdist = Math.round(onewaydistance*2*10)/10;
   
@@ -520,7 +520,7 @@ function calculateBikeTrip(response){
     onewaytime += response.routes[0].legs[i].duration.value;
   }
   //Convert to hours minutes
-  timetext = formatTime(onewaytime*2/60);
+  timetext = formatTimeDecimal(onewaytime*2/60);
   
   tripdist = Math.round(onewaydistance*2*10)/10;
   
@@ -600,10 +600,10 @@ function calculateTransitTrip(start,end){
         transitTime = 24*60 - (parseTime(startTime) - parseTime(endTime))/(1000*60)*2;
       }
       
-      $("#transit .summary").append("<li>Wait time <div>" + formatTime(waitingTime) + "</div></li>");
+      $("#transit .summary").append("<li>Wait time <div>" + formatTimeDecimal(waitingTime) + "</div></li>");
       $("#transit .summary").append("<li>Depart at <div>" + startTime + "</div></li>");
       $("#transit .summary").append("<li>Arrive at <div>" + endTime + "</div></li>");
-      $("#transit .time").html(formatTime(transitTime));
+      $("#transit .time").html(formatTimeDecimal(transitTime));
       if(typeof data.query.results.p[2] == 'string' && data.query.results.p[2].substr(0,1)=='$'){
         //Fare info is provided
         $("#transit .summary").append("<li>Roundtrip fare per person <div>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</div></li>");
@@ -841,7 +841,7 @@ function estimateCCSCost(){
   }
   
   $('#ccsresult .cost').html(formatCurrency(ccs.cost));
-  $('#ccsresult .time').html(formatTime(trip.traveltime));
+  $('#ccsresult .time').html(formatTimeDecimal(trip.traveltime));
   $('#ccsresult .distance').html(formatDistance(trip.distance));
   $('#ccsresult .summary').append("<li class='total'>City Carshare Total<div>" + formatCurrency(ccs.cost) + "</div></li>");
 }
@@ -910,7 +910,7 @@ function estimateZipcarCost(){
   }
   
   $('#zipcarresult .cost').html(formatCurrency(zipcar.cost));
-  $('#zipcarresult .time').html(formatTime(trip.traveltime));
+  $('#zipcarresult .time').html(formatTimeDecimal(trip.traveltime));
   $('#zipcarresult .distance').html(formatDistance(trip.distance));
   $('#zipcarresult .summary').append("<li class='total'>Zipcar Total<div>" + formatCurrency(zipcar.cost) + "</div></li>");
 }
@@ -999,7 +999,7 @@ function estimateTaxiCost(){
   $('#taxiresult .summary').append("<li class='total'>Taxi Total<div>"+formatCurrency(taxicost)+"</div></li>");
   
   $('#taxiresult .cost').html(formatCurrency(taxicost));
-  $('#taxiresult .time').html(formatTime(trip.traveltime));
+  $('#taxiresult .time').html(formatTimeDecimal(trip.traveltime));
   $('#taxiresult .distance').html(formatDistance(trip.distance));
 }  
 
@@ -1022,7 +1022,7 @@ function estimateUberCost(){
     $('#uberresult .summary').append("<li class='total'>Uber Total<div>"+formatCurrency(ubercost)+"</div></li>");
   }
   $('#uberresult .cost').html(formatCurrency(ubercost));
-  $('#uberresult .time').html(formatTime(trip.traveltime));
+  $('#uberresult .time').html(formatTimeDecimal(trip.traveltime));
   $('#uberresult .distance').html(formatDistance(trip.distance));
 }
 
@@ -1104,15 +1104,15 @@ function estimateFlightCost(response){
                  $('#flightresult .summary').append("<li>Oneway Flight Cost per person<div>"+formatCurrency(flightcost)+"</div></li>");
                  $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for "+trip.passengers+" <div>"+formatCurrency(flightcost*2*trip.passengers)+"</div></li>");
                  $('#flightresult .cost').html(formatCurrency(flightcost*2));
-                 $('#flightresult .time').html(formatTime(trip.traveltime));
+                 $('#flightresult .time').html(formatTimeDecimal(trip.traveltime));
                  $('#flightresult .distance').html(formatDistance(flightdistance*2));
                  $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
                  
                  //Show Bike Directions when hovered over biking button
                  var flightline = new google.maps.Polyline({
                    path: [
-                    new google.map.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
-                    new google.map.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
+                    new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
+                    new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
                    ],
                    strokeColor: "FF0000",
                    strokeOpacity: 1.0,
