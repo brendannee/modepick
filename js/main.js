@@ -1092,7 +1092,8 @@ function estimateFlightCost(response){
     
            $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
              function(data) {
-               if(data != null){
+               console.log(data);
+               if(data.Result.AirPricing != undefined){
                  flightcost = data.Result.AirPricing.AveragePrice;
                  originAirport = data.Result.AirPricing.OrigAirportCode;
                  destAirport = data.Result.AirPricing.DestinationAirportCode;
@@ -1113,10 +1114,7 @@ function estimateFlightCost(response){
                    path: [
                     new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
                     new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                   ],
-                   strokeColor: "FF0000",
-                   strokeOpacity: 1.0,
-                  strokeWeight: 2
+                   ]
                    });
                  
                  $("#flightresult").hover(
