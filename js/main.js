@@ -1034,7 +1034,7 @@ function calculateUber(){
 }
 
 function calculateFlight(response){ 
-  
+  flightline.setMap(null);
   var flightcost = 0;
   var originAirport ='';
   var destAirport = '';
@@ -1108,10 +1108,13 @@ function calculateFlight(response){
                  $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
                  $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + originAirport + "</span></strong></li>");
                  $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + destAirport + "</span></strong></li>");
+                 $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(flightdistance/550+0.75) + "</strong></li>");
                  $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
                  $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
                  $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
-                 $('#flightresult .time').html(formatTimeDecimal(trip.drivingtime));
+                 //Flight Time equation hours = .75 * dist/550
+                 
+                 $('#flightresult .time').html(formatTimeDecimal(flightdistance/550+0.75));
                  $('#flightresult .distance').html(formatDistance(flightdistance*2));
                  $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
                  
@@ -1127,15 +1130,13 @@ function calculateFlight(response){
                   });
                  
                  //Show Flight Line when hovered over flight button
-                
-                 path = [
-                   new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
-                   new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                   ]
                  flightline = new google.maps.Polyline({
-                   path: path,
-                   strokeColor: "#0000CC",
-                   strokeOpacity: 0.8,
+                   path: [
+                      new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
+                      new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
+                      ],
+                   strokeColor: "#3300CC",
+                   strokeOpacity: 0.6,
                    strokeWeight: 4
                    });
                  
