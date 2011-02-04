@@ -1108,13 +1108,13 @@ function calculateFlight(response){
                  $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
                  $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + originAirport + "</span></strong></li>");
                  $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + destAirport + "</span></strong></li>");
-                 $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(flightdistance/550+0.75) + "</strong></li>");
+                 $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(flightdistance/(550/60)+45) + "</strong></li>");
                  $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
                  $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
                  $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
                  //Flight Time equation hours = .75 * dist/550
                  
-                 $('#flightresult .time').html(formatTimeDecimal(flightdistance/550+0.75));
+                 $('#flightresult .time').html(formatTimeDecimal(flightdistance/(550/60)+45));
                  $('#flightresult .distance').html(formatDistance(flightdistance*2));
                  $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
                  
@@ -1135,9 +1135,9 @@ function calculateFlight(response){
                       new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
                       new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
                       ],
-                   strokeColor: "#3300CC",
-                   strokeOpacity: 0.6,
-                   strokeWeight: 4
+                   strokeColor: "#9900CC",
+                   strokeOpacity: 0.5,
+                   strokeWeight: 5
                    });
                  
                  $("#flightresult").hover(
