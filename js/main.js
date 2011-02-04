@@ -1130,7 +1130,18 @@ function calculateFlight(response){
                     }
                   }
                 );
-                 
+                
+                //Create flight polyline
+                flightline = new google.maps.Polyline({
+                   path: [
+                      new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
+                      new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
+                      ],
+                   strokeColor: "#9900CC",
+                   strokeOpacity: 0.5,
+                   strokeWeight: 5
+                });
+                
                 //Show Flight Line when hovered over flight button
                 $("#flightresult").hover(
                   function(){
@@ -1230,10 +1241,7 @@ function mapSetup(){
   
   //Create flight polyline
   flightline = new google.maps.Polyline({
-     path: [
-        new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
-        new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-        ],
+     path: [],
      strokeColor: "#9900CC",
      strokeOpacity: 0.5,
      strokeWeight: 5
