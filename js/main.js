@@ -1077,49 +1077,50 @@ function calculateFlight(response){
             }
           }
           var originAirportString = '';
-           var destAirportString = '';
-           //Prep airports for search syntax
-           for(i in originAirports){
-             originAirportString += originAirports[i] + '|';
-           }
+          var destAirportString = '';
+          //Prep airports for search syntax
+          for(i in originAirports){
+            originAirportString += originAirports[i] + '|';
+          }
 
-           for(i in destAirports){
-             destAirportString += destAirports[i] + '|';
-           }
+          for(i in destAirports){
+            destAirportString += destAirports[i] + '|';
+          }
 
-           //Kayak via YQL
-           //select * from html where url="http://www.kayak.com/flights/SFO-RNO/2011-02-11/2011-02-18" and xpath='//div[@id="content_div"]/div/div/div/div/span/a[@class="actionlink"]'
+          //Kayak via YQL
+          //select * from html where url="http://www.kayak.com/flights/SFO-RNO/2011-02-11/2011-02-18" and xpath='//div[@id="content_div"]/div/div/div/div/span/a[@class="actionlink"]'
 
-           //Hotwire Historical Flight Search
-           //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=? 
-           var startdate = new Date();
-           startdate.setDate(trip.departuredate.getDate()-20)
-           var startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDay() + "/" + startdate.getFullYear();
+          //Hotwire Historical Flight Search
+          //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=? 
+          var startdate = new Date();
+          startdate.setDate(trip.departuredate.getDate()-20)
+          var startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDay() + "/" + startdate.getFullYear();
     
-           $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
-             function(data) {
-               console.log(data);
-               if(data.Result.AirPricing != undefined){
-                 flightcost = data.Result.AirPricing.AveragePrice;
-                 originAirport = data.Result.AirPricing.OrigAirportCode;
-                 destAirport = data.Result.AirPricing.DestinationAirportCode;
-                 flightdistance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
+          $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
+            function(data) {
+              console.log(data);
+              if(data.Result.AirPricing != undefined){
+                flightcost = data.Result.AirPricing.AveragePrice;
+                originAirport = data.Result.AirPricing.OrigAirportCode;
+                destAirport = data.Result.AirPricing.DestinationAirportCode;
+                flightdistance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
                  
-                 $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
-                 $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + originAirport + "</span></strong></li>");
-                 $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + destAirport + "</span></strong></li>");
-                 $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(flightdistance/(550/60)+45) + "</strong></li>");
-                 $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
-                 $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
-                 $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
-                 //Flight Time equation hours = .75 * dist/550
-                 
-                 $('#flightresult .time').html(formatTimeDecimal(flightdistance/(550/60)+45));
-                 $('#flightresult .distance').html(formatDistance(flightdistance*2));
-                 $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
-                 
-                 //Get airport info from freebase
-                  $.getJSON('http://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+originAirport+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+destAirport+'%22,%22/common/topic/webpage%22:[{}]}]}}&callback=?', function(data){
+                $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
+                $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + originAirport + "</span></strong></li>");
+                $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + destAirport + "</span></strong></li>");
+                $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(flightdistance/(550/60)+45) + "</strong></li>");
+                $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
+                $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
+                $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
+                //Flight Time equation hours = .75 * dist/550
+                
+                $('#flightresult .time').html(formatTimeDecimal(flightdistance/(550/60)+45));
+                $('#flightresult .distance').html(formatDistance(flightdistance*2));
+                $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
+                
+                //Get airport info from freebase
+                      $.getJSON('http://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+originAirport+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+destAirport+'%22,%22/common/topic/webpage%22:[{}]}]}}&callback=?',   
+                  function(data){
                     console.log(data);
                     if(data.q0.code=='/api/status/ok'){
                       $('#originAirport').html('<a href="http://www.freebase.com/view' + data.q0.result[0].id + '">' + data.q0.result[0].name + '</a>');
@@ -1127,37 +1128,26 @@ function calculateFlight(response){
                     if(data.q1.code=='/api/status/ok'){
                       $('#destAirport').html('<a href="http://www.freebase.com/view' + data.q1.result[0].id + '">' + data.q1.result[0].name + '</a>');
                     }
-                  });
-                 
-                 //Show Flight Line when hovered over flight button
-                 flightline = new google.maps.Polyline({
-                   path: [
-                      new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
-                      new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                      ],
-                   strokeColor: "#9900CC",
-                   strokeOpacity: 0.5,
-                   strokeWeight: 5
-                   });
-                 
-                 $("#flightresult").hover(
-                   function(){
-                     directionsDisplay.setMap(null);
-                     flightline.setMap(map)
-                   }, 
-                   function(){
-                     flightline.setMap(null);
-                     directionsDisplay.setMap(map);
-                   }
+                  }
                 );
                  
-                 
-               } else{
-                 //No results
-                 $('#flightresult').hide();
-               }
-             }
-           );
+                //Show Flight Line when hovered over flight button
+                $("#flightresult").hover(
+                  function(){
+                    directionsDisplay.setMap(null);
+                    flightline.setMap(map)
+                  }, 
+                  function(){
+                    flightline.setMap(null);
+                    directionsDisplay.setMap(map);
+                  }
+                );
+              } else{
+                //No results
+                $('#flightresult').hide();
+              }
+            }
+          );
         }
       }
     }
@@ -1237,6 +1227,17 @@ function mapSetup(){
     zIndex: 100
     }
   };
+  
+  //Create flight polyline
+  flightline = new google.maps.Polyline({
+     path: [
+        new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
+        new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
+        ],
+     strokeColor: "#9900CC",
+     strokeOpacity: 0.5,
+     strokeWeight: 5
+  });
 
   // Create a renderer for directions and bind it to the map.
   directionsDisplay = new google.maps.DirectionsRenderer(directionsOptions);
