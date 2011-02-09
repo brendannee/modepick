@@ -376,8 +376,6 @@ function calculateTrip(response) {
   //Only show flights if distance is greater than 150 miles
   if(trip.onewaydistance>150){
     calculateFlight(response);
-    //Show Flight mode
-    $('#flightresult').show();
   } else {
     $('#flightresult').hide();
   }
@@ -1094,7 +1092,6 @@ function calculateFlight(response){
           var startdate = new Date();
          startdate.setDate(trip.departuredate.getDate()-20)
          var startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDate() + "/" + startdate.getFullYear();
-
          $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
            function(data) {
              if(data != null){
@@ -1150,29 +1147,35 @@ function calculateFlight(response){
                      directionsDisplay.setMap(map);
                    }
                  );
+                 //Create flight polyline
+                 flightline = new google.maps.Polyline({
+                    path: [
+                       new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
+                       new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
+                       ],
+                    strokeColor: "#5500CC",
+                    strokeOpacity: 0.5,
+                    strokeWeight: 5
+                 });
+                 
+                 //Show flight results
+                 $('#flightresult').show();
+                 
+                 //Show Flight Line when hovered over flight button
+                 $("#flightresult").hover(
+                   function(){
+                     directionsDisplay.setMap(null);
+                     flightline.setMap(map)
+                   }, 
+                   function(){
+                     flightline.setMap(null);
+                     directionsDisplay.setMap(map);
+                   }
+                 );
+               } else{
+                 //No results
+                 $('#flightresult').hide();
                }
-               //Create flight polyline
-               flightline = new google.maps.Polyline({
-                  path: [
-                     new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
-                     new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                     ],
-                  strokeColor: "#5500CC",
-                  strokeOpacity: 0.5,
-                  strokeWeight: 5
-               });
-
-               //Show Flight Line when hovered over flight button
-               $("#flightresult").hover(
-                 function(){
-                   directionsDisplay.setMap(null);
-                   flightline.setMap(map)
-                 }, 
-                 function(){
-                   flightline.setMap(null);
-                   directionsDisplay.setMap(map);
-                 }
-               );
              } else{
                //No results
                $('#flightresult').hide();
