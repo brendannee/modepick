@@ -1098,72 +1098,76 @@ function calculateFlight(response){
          $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
            function(data) {
              if(data != null){
-               if(data.Result.AirPricing != undefined){
-                 flightcost = data.Result.AirPricing.AveragePrice;
-                 originAirport = data.Result.AirPricing.OrigAirportCode;
-                 destAirport = data.Result.AirPricing.DestinationAirportCode;
+               if(data.Result != undefined)
+                 if(data.Result.AirPricing != undefined){
+                   flightcost = data.Result.AirPricing.AveragePrice;
+                   originAirport = data.Result.AirPricing.OrigAirportCode;
+                   destAirport = data.Result.AirPricing.DestinationAirportCode;
 
-                 $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
-                 $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + originAirport + "</span></strong></li>");
-                 $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + destAirport + "</span></strong></li>");
-                 $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(flightdistance/(550/60)+45) + "</strong></li>");
-                 $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
-                 $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
-                 $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
-                 //Flight Time equation hours = .75 * dist/550
+                   $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
+                   $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + originAirport + "</span></strong></li>");
+                   $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + destAirport + "</span></strong></li>");
+                   $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(flightdistance/(550/60)+45) + "</strong></li>");
+                   $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
+                   $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
+                   $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
+                   //Flight Time equation hours = .75 * dist/550
 
-                 $('#flightresult .time').html(formatTimeDecimal(flightdistance/(550/60)+45));
-                 $('#flightresult .distance').html(formatDistance(flightdistance*2));
-                 $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
+                   $('#flightresult .time').html(formatTimeDecimal(flightdistance/(550/60)+45));
+                   $('#flightresult .distance').html(formatDistance(flightdistance*2));
+                   $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
 
-                 //Get airport info from freebase
-                       $.getJSON('http://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+originAirport+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+destAirport+'%22,%22/common/topic/webpage%22:[{}]}]}}&callback=?',   
-                   function(data){
-                     if(data.q0.code=='/api/status/ok'){
-                       $('#originAirport').html('<a href="http://www.freebase.com/view' + data.q0.result[0].id + '">' + data.q0.result[0].name + '</a>');
-                     }
-                     if(data.q1.code=='/api/status/ok'){
-                       $('#destAirport').html('<a href="http://www.freebase.com/view' + data.q1.result[0].id + '">' + data.q1.result[0].name + '</a>');
-                     }
-                   }
-                 );
+                   //Get airport info from freebase
+                                        $.getJSON('http://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+originAirport+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+destAirport+'%22,%22/common/topic/webpage%22:[{}]}]}}&callback=?',   
+                      function(data){
+                        if(data.q0.code=='/api/status/ok'){
+                          $('#originAirport').html('<a href="http://www.freebase.com/view' + data.q0.result[0].id + '">' + data.q0.result[0].name + '</a>');
+                        }
+                        if(data.q1.code=='/api/status/ok'){
+                          $('#destAirport').html('<a href="http://www.freebase.com/view' + data.q1.result[0].id + '">' + data.q1.result[0].name + '</a>');
+                        }
+                      }
+                    );
 
-                 //Create flight polyline
-                 flightline = new google.maps.Polyline({
-                    path: [
-                       new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
-                       new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                       ],
-                    strokeColor: "#5500CC",
-                    strokeOpacity: 0.5,
-                    strokeWeight: 5
-                 });
+                    //Create flight polyline
+                    flightline = new google.maps.Polyline({
+                      path: [
+                        new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
+                        new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
+                        ],
+                      strokeColor: "#5500CC",
+                      strokeOpacity: 0.5,
+                      strokeWeight: 5
+                    });
 
-                 //Show Flight Line when hovered over flight button
-                 $("#flightresult").hover(
-                   function(){
-                     directionsDisplay.setMap(null);
-                     flightline.setMap(map)
-                   }, 
-                   function(){
-                     flightline.setMap(null);
-                     directionsDisplay.setMap(map);
-                   }
-                 );
-                 
-                 //Show flight results
-                 $('#flightresult').show();
-                 
-               } else{
-                 //No results
-                 $('#flightresult').hide();
-               }
-             } else{
-               //No results
-               $('#flightresult').hide();
-             }
-           }
-         );
+                    //Show Flight Line when hovered over flight button
+                    $("#flightresult").hover(
+                      function(){
+                        directionsDisplay.setMap(null);
+                        flightline.setMap(map)
+                      }, 
+                      function(){
+                        flightline.setMap(null);
+                        directionsDisplay.setMap(map);
+                      }
+                    );
+                    
+                    //Show flight results
+                    $('#flightresult').show();
+                  } else{
+                    //No results
+                    $('#flightresult').hide();
+                  }
+                } else{
+                  //No results
+                  $('#flightresult').hide();
+                }
+              } else{
+                //No results
+                $('#flightresult').hide();
+              }
+            }
+          );
         }
       }
     }
