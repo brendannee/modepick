@@ -1130,15 +1130,10 @@ function calculateFlight(response){
                     );
 
                     //Create flight polyline
-                    flightline = new google.maps.Polyline({
-                      path: [
+                    flightline.setPath([
                         new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
                         new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                        ],
-                      strokeColor: "#5500CC",
-                      strokeOpacity: 0.5,
-                      strokeWeight: 5
-                    });
+                    ]);
 
                     //Show Flight Line when hovered over flight button
                     $("#flightresult").hover(
@@ -1249,7 +1244,11 @@ function mapSetup(){
   };
   
   //Create flight polyline
-  flightline = new google.maps.Polyline();
+  flightline = new google.maps.Polyline({
+    strokeColor: "#5500CC",
+    strokeOpacity: 0.5,
+    strokeWeight: 5
+  });
 
   // Create a renderer for directions and bind it to the map.
   directionsDisplay = new google.maps.DirectionsRenderer(directionsOptions);
