@@ -1098,7 +1098,7 @@ function calculateFlight(response){
          $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
            function(data) {
              if(data != null){
-               if(data.Result != undefined)
+               if(data.Result != undefined){
                  if(data.Result.AirPricing != undefined){
                    flightcost = data.Result.AirPricing.AveragePrice;
                    originAirport = data.Result.AirPricing.OrigAirportCode;
