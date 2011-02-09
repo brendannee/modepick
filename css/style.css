@@ -235,6 +235,10 @@ ul.input_boxes li .textbox{
   padding:0;
 }
 
+.summary li.divider{
+  border-top:2px solid #666;
+}
+
 .summary .total{
   font-weight:bold;
 }

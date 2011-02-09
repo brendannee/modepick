@@ -586,32 +586,34 @@ function calculateTransitTrip(start,end){
       //Maybe we scraped a result
       $("#transit .summary").append("<li>"+data.query.results.p[0]+"</li>");
       
-      startTime = data.query.results.p[1].a.content.replace(/\s-\s.*$/g,'');
-      endTime = data.query.results.p[1].a.content.replace(/^.*\s-\s/,'');
+      //Loop through all transit possibilities
+      for(i=1;i<(data.query.results.p.length-1);i++){
+        startTime = data.query.results.p[i].a.content.replace(/\s-\s.*$/g,'');
+        endTime = data.query.results.p[i].a.content.replace(/^.*\s-\s/,'');
       
-      var d = new Date();
-      if((parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(startTime))>0){
-        waitingTime = (parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(startTime))/(1000*60);
-      } else {
-        waitingTime = (parseTime(startTime) - (parseTime(d.getHours()+":"+d.getMinutes())))/(1000*60);
+        var d = new Date();
+        if((parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(startTime))>0){
+          waitingTime = (parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(startTime))/(1000*60);
+        } else {
+          waitingTime = (parseTime(startTime) - (parseTime(d.getHours()+":"+d.getMinutes())))/(1000*60);
+        }
+      
+        transitTime = data.query.results.p[i].content.match(/\(([^}]+)\)/)[1];
+        $("#transit .summary").append("<li class='divider'><strong>Option " + i + ":</strong></li>");
+        $("#transit .summary").append("<li>Wait time: <strong>" + formatTimeDecimal(waitingTime) + "</strong></li>");
+        $("#transit .summary").append("<li>Depart/Arrive: <strong>" + startTime + "/" + endTime + "</strong></li>");
+        if(typeof data.query.results.p[i] == 'string' && data.query.results.p[i].substr(0,1)=='$'){
+          //Fare info is provided
+          $("#transit .summary").append("<li>Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[i].replace(/\$/g,''))*2) + "</strong></li>");
+          $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[i].replace(/\$/g,''))*2*trip.passengers) + "</strong></li>");
+          $("#transit .cost").html( formatCurrency(parseFloat(data.query.results.p[i].replace(/\$/g,''))*2*trip.passengers) );
+        } else {
+          $("#transit .cost").html("No Info");
+          $("#transit .summary").append("<li>No fare info available</li>");
+        }
       }
-      
-      transitTime = data.query.results.p[2].content.match(/\(([^}]+)\)/)[1];
-      
-      $("#transit .summary").append("<li>Wait time: <strong>" + formatTimeDecimal(waitingTime) + "</strong></li>");
-      $("#transit .summary").append("<li>Depart at: <strong>" + startTime + "</strong></li>");
-      $("#transit .summary").append("<li>Arrive at: <strong>" + endTime + "</strong></li>");
       $("#transit .time").html(transitTime);
       $("#transit .distance").html("N/A");
-      if(typeof data.query.results.p[2] == 'string' && data.query.results.p[2].substr(0,1)=='$'){
-        //Fare info is provided
-        $("#transit .summary").append("<li>Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2) + "</strong></li>");
-        $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) + "</strong></li>");
-        $("#transit .cost").html( formatCurrency(parseFloat(data.query.results.p[2].replace(/\$/g,''))*2*trip.passengers) );
-      } else {
-        $("#transit .cost").html("No Info");
-        $("#transit .summary").append("<li>No fare info available</li>");
-      }
       $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Transit Directions on Google Transit</a>");
     } else{
       $("#transit .summary").append("<li>No transit information available</li>");
