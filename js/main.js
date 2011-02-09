@@ -345,11 +345,16 @@ function calculateTrip(response) {
     lng:-122.33
   };
   if(calculateDistance(sf.lat,sf.lng,response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng())<15){
-    //Add CCS as a mode, add locations
-    calculateCCS();
-    $('#ccsresult').show();
+    //Only show CCS for trips less than 700 miles
+    if(trip.onewaydistance<350){
+      //Add CCS as a mode, add locations
+      calculateCCS();
+      $('#ccsresult').show();
     
-    addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
+      addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'ccs');
+    } else {
+      $('#ccsresult').hide();
+    }
     
     //Only show uber for trips less than 75 miles (it gets expensive!)
     if(trip.onewaydistance<75){
@@ -380,12 +385,18 @@ function calculateTrip(response) {
     $('#flightresult').hide();
   }
   
-  //Estimate costs
-  calculateZipcar();
-  calculateDriving(response);
+  //Only show Zipcar for trips less than 700 miles
+  if(trip.onewaydistance<350){
+    calculateZipcar();
+    //Add zipcar locations
+    addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
+     $('#zipcarresult').show();
+  } else {
+    $('#zipcarresult').hide();
+  }
   
-  //Add zipcar locations
-  addCarshareLocations(map, response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng(), 'zipcar');
+  //Estimate driving costs
+  calculateDriving(response);
   
   //Calculate Waypoints to add to walking, biking routes.
   var waypoints = new Array;
@@ -565,7 +576,7 @@ function calculateTransitTrip(start,end){
   
   //Get URL ready
   var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
-  var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'') + '&format=json';  
+  var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'') + '&format=json';
   
    // Request that YSQL string, and run a callback function.  
   $.getJSON( yql, cbfunc );  
@@ -585,16 +596,12 @@ function calculateTransitTrip(start,end){
         waitingTime = (parseTime(startTime) - (parseTime(d.getHours()+":"+d.getMinutes())))/(1000*60);
       }
       
-      if((parseTime(endTime) - parseTime(startTime))>0){
-        transitTime = (parseTime(endTime) - parseTime(startTime))/(1000*60)*2;
-      } else {
-        transitTime = 24*60 - (parseTime(startTime) - parseTime(endTime))/(1000*60)*2;
-      }
+      transitTime = data.query.results.p[2].content.match(/\(([^}]+)\)/)[1];
       
       $("#transit .summary").append("<li>Wait time: <strong>" + formatTimeDecimal(waitingTime) + "</strong></li>");
       $("#transit .summary").append("<li>Depart at: <strong>" + startTime + "</strong></li>");
       $("#transit .summary").append("<li>Arrive at: <strong>" + endTime + "</strong></li>");
-      $("#transit .time").html(formatTimeDecimal(transitTime));
+      $("#transit .time").html(transitTime);
       $("#transit .distance").html("N/A");
       if(typeof data.query.results.p[2] == 'string' && data.query.results.p[2].substr(0,1)=='$'){
         //Fare info is provided
