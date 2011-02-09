@@ -441,6 +441,15 @@ function calculateTrip(response) {
   //We've got everything we need, show results
   $("#results").show(); 
   
+  //Create Permalink URL
+	linkURL = "?saddr=" + $('#startlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&daddr=" + $('#destinationlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&stime=" + $("#departuretime").val() + "&sdate="  + $("#departuredate").val() + "&etime=" + $("#returntime").val() + "&edate="  + $("#returndate").val() + "&ccsplan=" + $("#ccsplan").val() + "&zipcarplan=" + $("#zipcarplan").val() + "&extramiles=" + $("#extramiles").val() + "&zipcarrate=" + $("#zipcarrate").val() + "&zipcardailyrate=" + $("#zipcardailyrate").val() + "&passengers=" + $("#passengers").val();
+	
+  //Add Permalink Control on top of map
+	$("#permalink").html("<a href='" + linkURL + "' title='Direct Link to this trip'><img src='images/link.png'> Permalink to Route</a>");
+	
+	//Add Twitter Control on top of map
+	$("#twitter a").attr("href","http://www.addtoany.com/add_to/twitter?linkurl=" + encodeURIComponent("http://modepick.com"+linkURL) + "&linkname=" + encodeURIComponent("The best way from " + $('#startlocation').val().replace(/\+/g, " ").replace(/&/g, "and") + " to " + $('#destinationlocation').val().replace(/\+/g, " ").replace(/&/g, "and")));
+  
   //Resize window
   setTimeout(resizeWindow(),500);
 }
@@ -1216,15 +1225,6 @@ function recalc(){
     });
   }
   
-  //Create Permalink URL
-	linkURL = "?saddr=" + $('#startlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&daddr=" + $('#destinationlocation').val().replace(/&/g, "and").replace(/ /g, "+") + "&stime=" + $("#departuretime").val() + "&sdate="  + $("#departuredate").val() + "&etime=" + $("#returntime").val() + "&edate="  + $("#returndate").val() + "&ccsplan=" + $("#ccsplan").val() + "&zipcarplan=" + $("#zipcarplan").val() + "&extramiles=" + $("#extramiles").val() + "&zipcarrate=" + $("#zipcarrate").val() + "&zipcardailyrate=" + $("#zipcardailyrate").val() + "&passengers=" + $("#passengers").val();
-	
-  //Add Permalink Control on top of map
-	$("#permalink").html("<a href='" + linkURL + "' title='Direct Link to this trip'><img src='images/link.png'> Permalink to Route</a>");
-	
-	//Add Twitter Control on top of map
-	$("#twitter a").attr("href","http://www.addtoany.com/add_to/twitter?linkurl=" + encodeURIComponent("http://modepick.com"+linkURL) + "&linkname=" + encodeURIComponent("The best way from " + $('#startlocation').val().replace(/\+/g, " ").replace(/&/g, "and") + " to " + $('#destinationlocation').val().replace(/\+/g, " ").replace(/&/g, "and")));
-  
   //Show Results
   $("#resultsWrapper").fadeIn();
 }
@@ -1274,14 +1274,14 @@ function mapSetup(){
 
   //Bind recalc function to 'directions_changed' event
   google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
+    //Put new addresses in input box
+    $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
+    $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
+    
     calculateTrip(directionsDisplay.directions);
 
     //Highlight results box on change
     $('#resultsWrapper').effect("highlight", {color:"#f1f1f1"}, 3000);
-
-    //Put new addresses in input box
-    $('#startlocation').val(directionsDisplay.directions.routes[0].legs[0].start_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
-    $('#destinationlocation').val(directionsDisplay.directions.routes[0].legs[0].end_address.replace(/, CA \d+, USA/g, "").replace(/, USA/g, ""));
   });
 
   //Process trip
