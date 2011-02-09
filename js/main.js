@@ -1032,6 +1032,9 @@ function calculateUber(){
 }
 
 function calculateFlight(response){ 
+  $('#flightresult .cost').html('');
+  $('#flightresult .distance').html('');
+  $('#flightresult .time').html('');
   flightline.setMap(null);
   var flightcost = 0;
   var originAirport ='';
@@ -1147,31 +1150,10 @@ function calculateFlight(response){
                      directionsDisplay.setMap(map);
                    }
                  );
-                 //Create flight polyline
-                 flightline = new google.maps.Polyline({
-                    path: [
-                       new google.maps.LatLng(response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng()),
-                       new google.maps.LatLng(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng())
-                       ],
-                    strokeColor: "#5500CC",
-                    strokeOpacity: 0.5,
-                    strokeWeight: 5
-                 });
                  
                  //Show flight results
                  $('#flightresult').show();
                  
-                 //Show Flight Line when hovered over flight button
-                 $("#flightresult").hover(
-                   function(){
-                     directionsDisplay.setMap(null);
-                     flightline.setMap(map)
-                   }, 
-                   function(){
-                     flightline.setMap(null);
-                     directionsDisplay.setMap(map);
-                   }
-                 );
                } else{
                  //No results
                  $('#flightresult').hide();
