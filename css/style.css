@@ -31,12 +31,6 @@ h1{
   color:#333;
 }
 
-legend{
-  color:#333;
-  font-weight:bold;
-  font-family: 'PT Sans Caption', arial, serif;
-}
-
 ul.input_boxes{
   padding:0;
   margin:0;
@@ -73,8 +67,10 @@ ul.input_boxes li.geolocation a{
 }
 
 ul.input_boxes li .textbox{
-  width: 210px;
-  margin:0;
+  width: 360px;
+  margin:0 0 5px 0;
+  font-size:20px;
+  padding:5px;
 }
 
 .icon{
@@ -135,11 +131,18 @@ ul.input_boxes li .textbox{
   clear:both;
 }
 
+#inputs legend{
+  color:#333;
+  margin-top:10px;
+  margin-left:23px;
+  padding:0;
+  font-family: 'PT Sans Caption', arial, serif;
+  font-size:11px;
+  height:12px;
+}
+
 #inputs fieldset{
-  border-top:auto;
-  border-right:none;
-  border-left:none;
-  border-bottom:none;
+  border:none;
 }
 
 #trip_submit{
@@ -201,8 +204,6 @@ ul.input_boxes li .textbox{
   padding:5px;
   font-weight:bold;
 }
-
-
 
 .mode a:hover{
   border-bottom:1px dashed #999;
