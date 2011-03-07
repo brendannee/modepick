@@ -625,7 +625,8 @@ function calculateTransitTrip(start,end){
       $("#transit .distance").html("N/A");
       $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Transit Directions on Google Transit</a>");
     } else{
-      $("#transit .summary").append("<li>No transit information available</li>");
+      //No transit info available
+      $("#transit").hide();
     }
   }
 }
@@ -895,7 +896,6 @@ function calculateZipcar(){
   
   //Weekend calculation Zipcar
   //Assume no reservtions over 7 days length
-  
   if(departurecode<=(5*24*60) && returncode<=(5*24*60)){
     //trip entirely weekday
     zipcar.weekendtime = 0;
@@ -914,50 +914,6 @@ function calculateZipcar(){
   }
   
   //Do cost estimations
-  estimateZipcarDayCost();
-  
-  if(zipcar.days>0){
-    //Daily Rate
-    $('#zipcarresult .summary').append("<li>" + zipcar.days + " day x " + formatCurrency(parseFloat(zipcar.rates.daily)) + "/day <strong>" + formatCurrency(parseFloat(zipcar.rates.daily)*(zipcar.days)) + "</strong></li>");
-  }
-  if(zipcar.hours.time>0){
-    //Hourly Rate
-    $('#zipcarresult .summary').append("<li>" + formatTimeDecimal(zipcar.hours.time) + " x " + formatCurrency(parseFloat(zipcar.hours.rate)) + "/hr <strong>" + formatCurrency(parseFloat(zipcar.hours.rate)*(zipcar.hours.time/60)) + "</strong></li>");
-  }
-  
-  $('#zipcarresult .cost').html(formatCurrency(zipcar.cost));
-  $('#zipcarresult .time').html(formatTimeDecimal(trip.drivingtime));
-  $('#zipcarresult .distance').html(formatDistance(trip.distance));
-  $('#zipcarresult .summary').append("<li class='total'>Zipcar Total <strong>" + formatCurrency(zipcar.cost) + "</strong></li>");
-  
-  //Check if estimated driving time exceeds trip time
-  if(trip.totaltime<trip.drivingtime){
-    $('#zipcarresult .summary').prepend("<li class='warning'>Your estimated driving time exceeds your reservation time.</li>");
-    $('#zipcarresult').addClass('warning');
-  } else {
-    $('#zipcarresult').removeClass('warning');
-  }
-}
-
-function estimateZipcarHourCost(){  
-  zipcarhour = {};
-  zipcarhour.cost = 0;
-  zipcarhour.time = trip.totaltime % (24*60);
-  
-  if(isNaN(zipcar.rates.customHourly) || zipcar.rates.customHourly==''){
-    //Use default zipcar hourly rates
-    zipcarhour.rate = zipcar.plan.weekdayhourly;
-  } else{
-    //Use custom zipcar hourly rate entered by user
-    zipcarhour.rate = zipcar.rates.customHourly;
-  }
-  
-  zipcarhour.cost += zipcarhour.rate * ((zipcarhour.time - zipcar.weekendtime)/60) + zipcarhour.rate * (zipcar.weekendtime/60);
-  
-  return zipcarhour;
-}
-
-function estimateZipcarDayCost(){  
   zipcar.cost = 0;
   
   if(isNaN(zipcar.rates.customDaily) || zipcar.rates.customDaily==''){
@@ -998,10 +954,67 @@ function estimateZipcarDayCost(){
     zipcar.cheapest = "ceiling";
     zipcar.cost = zipcar.ceiling.cost;
     zipcar.days = zipcar.ceiling.days;
-    zipcar.hours = 0;
+    zipcar.hours = zipcar.ceiling.hours;
   }
   
-  return zipcar;
+  //Add in mileage charge if over daily mileage limit
+  zipcar.extramiles = {}
+  zipcar.includedmiles = (zipcar.days<1) ? zipcar.plan.dailymileagecap : (zipcar.plan.dailymileagecap*zipcar.days + (((zipcar.hours.time/60)*20<zipcar.plan.dailymileagecap) ? (zipcar.hours.time/60)*20 : zipcar.plan.dailymileagecap));
+  if(trip.distance+trip.extramiles > zipcar.includedmiles){
+    zipcar.extramiles.mileage = Math.round((trip.distance+trip.extramiles) - (zipcar.includedmiles));
+    zipcar.extramiles.cost = zipcar.extramiles.mileage*zipcar.plan.mileageoverage;
+  } else {
+    zipcar.extramiles.mileage = 0;
+    zipcar.extramiles.cost = 0;
+  }
+  //Add extra mileage cost to total cost
+  zipcar.cost += zipcar.extramiles.cost;
+  
+  //Print results to screen
+  if(zipcar.days>0){
+    //Daily Rate
+    $('#zipcarresult .summary').append("<li>" + zipcar.days + " day x " + formatCurrency(parseFloat(zipcar.rates.daily)) + "/day <strong>" + formatCurrency(parseFloat(zipcar.rates.daily)*(zipcar.days)) + "</strong></li>");
+  }
+  if(zipcar.hours.time>0){
+    //Hourly Rate
+    $('#zipcarresult .summary').append("<li>" + formatTimeDecimal(zipcar.hours.time) + " x " + formatCurrency(parseFloat(zipcar.hours.rate)) + "/hr <strong>" + formatCurrency(parseFloat(zipcar.hours.rate)*(zipcar.hours.time/60)) + "</strong></li>");
+  }
+  
+  if(zipcar.extramiles.mileage>0){
+    //Display extra milage charge
+    $('#zipcarresult .summary').append("<li>" + zipcar.extramiles.mileage + " mi extra x " + formatCurrency(parseFloat(zipcar.plan.mileageoverage)) + "/mi <strong>" + formatCurrency(parseFloat(zipcar.extramiles.cost)) + "</strong></li>");
+  }
+  
+  $('#zipcarresult .cost').html(formatCurrency(zipcar.cost));
+  $('#zipcarresult .time').html(formatTimeDecimal(trip.drivingtime));
+  $('#zipcarresult .distance').html(formatDistance(trip.distance));
+  $('#zipcarresult .summary').append("<li class='total'>Zipcar Total <strong>" + formatCurrency(zipcar.cost) + "</strong></li>");
+  
+  //Check if estimated driving time exceeds trip time
+  if(trip.totaltime<trip.drivingtime){
+    $('#zipcarresult .summary').prepend("<li class='warning'>Your estimated driving time exceeds your reservation time.</li>");
+    $('#zipcarresult').addClass('warning');
+  } else {
+    $('#zipcarresult').removeClass('warning');
+  }
+}
+
+function estimateZipcarHourCost(){  
+  zipcarhour = {};
+  zipcarhour.cost = 0;
+  zipcarhour.time = trip.totaltime % (24*60);
+  
+  if(isNaN(zipcar.rates.customHourly) || zipcar.rates.customHourly==''){
+    //Use default zipcar hourly rates
+    zipcarhour.rate = zipcar.plan.weekdayhourly;
+  } else{
+    //Use custom zipcar hourly rate entered by user
+    zipcarhour.rate = zipcar.rates.customHourly;
+  }
+  
+  zipcarhour.cost += zipcarhour.rate * ((zipcarhour.time - zipcar.weekendtime)/60) + zipcarhour.rate * (zipcar.weekendtime/60);
+  
+  return zipcarhour;
 }
 
 function calculateTaxi(){ 
@@ -1351,10 +1364,10 @@ google.setOnLoadCallback(function(){
   urlVars = getUrlVars();
   if('saddr' in urlVars && 'daddr' in urlVars && 'stime' in urlVars && 'sdate' in urlVars && 'etime' in urlVars && 'edate' in urlVars){
     //We have all the variables needed to process a trip
-    $("#startlocation").val(urlVars['saddr']);
+    $("#startlocation").val(urlVars['saddr'].replace(/\+/g,' '));
     $("#departuretime").val(urlVars['stime']);
     $("#departuredate").val(urlVars['sdate']);
-    $("#destinationlocation").val(urlVars['daddr']);
+    $("#destinationlocation").val(urlVars['daddr'].replace(/\+/g,' '));
     $("#returntime").val(urlVars['etime']);
     $("#returndate").val(urlVars['edate']);
     //Get non-required variables if present
