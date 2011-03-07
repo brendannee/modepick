@@ -592,6 +592,7 @@ function calculateTransitTrip(start,end){
   function cbfunc(data) {
     // If we have something to work with...  
     if(data.query.count > 0){
+      $("#transit").fadeIn();
       //Maybe we scraped a result
       $("#transit .summary").append("<li>"+data.query.results.p[0]+"</li>");
       
@@ -626,7 +627,7 @@ function calculateTransitTrip(start,end){
       $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Transit Directions on Google Transit</a>");
     } else{
       //No transit info available
-      $("#transit").hide();
+      $("#transit").fadeOut();
     }
   }
 }
