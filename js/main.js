@@ -914,7 +914,7 @@ function calculateZipcar(){
   }
   
   //Do cost estimations
-  estimateZipcarDayCost(trip.totaltime);
+  estimateZipcarDayCost();
   
   if(zipcar.days>0){
     //Daily Rate
@@ -939,10 +939,10 @@ function calculateZipcar(){
   }
 }
 
-function estimateZipcarHourCost(triptime){  
+function estimateZipcarHourCost(){  
   zipcarhour = {};
   zipcarhour.cost = 0;
-  zipcarhour.time = triptime;
+  zipcarhour.time = trip.totaltime % (24*60);
   
   if(isNaN(zipcar.rates.customHourly) || zipcar.rates.customHourly==''){
     //Use default zipcar hourly rates
@@ -952,12 +952,12 @@ function estimateZipcarHourCost(triptime){
     zipcarhour.rate = zipcar.rates.customHourly;
   }
   
-  zipcarhour.cost += zipcarhour.rate * ((triptime - zipcar.weekendtime)/60) + zipcarhour.rate * (zipcar.weekendtime/60);
+  zipcarhour.cost += zipcarhour.rate * ((zipcarhour.time - zipcar.weekendtime)/60) + zipcarhour.rate * (zipcar.weekendtime/60);
   
   return zipcarhour;
 }
 
-function estimateZipcarDayCost(triptime){  
+function estimateZipcarDayCost(){  
   zipcar.cost = 0;
   
   if(isNaN(zipcar.rates.customDaily) || zipcar.rates.customDaily==''){
@@ -976,14 +976,14 @@ function estimateZipcarDayCost(triptime){
   
   //First try a rate that is a number of days that exceeds the reservation time
   zipcar.ceiling = {}
-  zipcar.ceiling.days = Math.ceil(triptime / (24*60));
+  zipcar.ceiling.days = Math.ceil(trip.totaltime / (24*60));
   zipcar.ceiling.hours = 0;
   zipcar.ceiling.cost = zipcar.ceiling.days * parseFloat(zipcar.rates.daily);
   
   //Now try a rate that is a number of days with a few trailing hours
   zipcar.floor = {}
-  zipcar.floor.days = Math.floor(triptime / (24*60));
-  zipcar.floor.hours = estimateZipcarHourCost(triptime % (24*60));
+  zipcar.floor.days = Math.floor(trip.totaltime / (24*60));
+  zipcar.floor.hours = estimateZipcarHourCost();
   zipcar.floor.cost = zipcar.floor.days * parseFloat(zipcar.rates.daily) + zipcar.floor.hours.cost;
   
   //See which day option is least expensive
