@@ -423,6 +423,9 @@ function calculateTrip(response) {
   //Use lat lon coordinates to avoid issues with start/end names - need space between coordinates
   calculateTransitTrip(response.routes[0].legs[0].start_location.lat()+", "+response.routes[0].legs[0].start_location.lng(),
   response.routes[0].legs[leg_count-1].end_location.lat()+", "+response.routes[0].legs[leg_count-1].end_location.lng());
+  
+  //Rename "Transit" to "Amtrak" if more than 60 miles
+  $('#transit h3').html((trip.onewaydistance>60) ? "Amtrak" : "Transit");
 
   //We've got everything we need, show results
   $("#results").show(); 
