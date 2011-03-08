@@ -558,11 +558,14 @@ function calculateBike(response){
 }
 
 function calculateTransitTrip(start,end){
+  trip.transit = {};
+  trip.transit.routes=[];
   //Use YQL to scrape google maps for screenreader to get transit directions
   
   //Clear existing directions
   $("#transit .cost").html('');
   $("#transit .time").html('');
+  $("#transit .distance").html('');
   
   //Get departure date and time
   var day;
@@ -586,49 +589,113 @@ function calculateTransitTrip(start,end){
   var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'') + '&format=json';
   
    // Request that YSQL string, and run a callback function.  
-  $.getJSON( yql, cbfunc );  
-  function cbfunc(data) {
-    console.log(data);
+  $.getJSON( yql, function(data) {
     // If we have something to work with...  
     if(data.query.count > 0){
       $("#transit").fadeIn();
       //Maybe we scraped a result
-      $("#transit .summary").append("<li>"+data.query.results.p[0]+"</li>");
+      var d = new Date();
+      trip.transit.summaryText = data.query.results.p[0];
       
-      //Loop through all transit possibilities
+      var option = 1;
       for(i=1;i<(data.query.results.p.length-1);i++){
-        startTime = data.query.results.p[i].a.content.replace(/\s-\s.*$/g,'');
-        endTime = data.query.results.p[i].a.content.replace(/^.*\s-\s/,'');
-      
-        var d = new Date();
-        if((parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(startTime))>0){
-          waitingTime = (parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(startTime))/(1000*60);
-        } else {
-          waitingTime = (parseTime(startTime) - (parseTime(d.getHours()+":"+d.getMinutes())))/(1000*60);
-        }
-      
-        transitTime = data.query.results.p[i].content.match(/\(([^}]+)\)/)[1];
-        $("#transit .summary").append("<li class='divider'><strong>Option " + i + ":</strong></li>");
-        $("#transit .summary").append("<li>Wait time: <strong>" + formatTimeDecimal(waitingTime) + "</strong></li>");
-        $("#transit .summary").append("<li>Depart/Arrive: <strong>" + startTime + "/" + endTime + "</strong></li>");
-        if(typeof data.query.results.p[i] == 'string' && data.query.results.p[i].substr(0,1)=='$'){
-          //Fare info is provided
-          $("#transit .summary").append("<li>Roundtrip fare per person: <strong>" + formatCurrency(parseFloat(data.query.results.p[i].replace(/\$/g,''))*2) + "</strong></li>");
-          $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(parseFloat(data.query.results.p[i].replace(/\$/g,''))*2*trip.passengers) + "</strong></li>");
-          $("#transit .cost").html( formatCurrency(parseFloat(data.query.results.p[i].replace(/\$/g,''))*2*trip.passengers) );
-        } else {
-          $("#transit .cost").html("No Info");
-          $("#transit .summary").append("<li>No fare info available</li>");
+        if(typeof(data.query.results.p[i].a)!='undefined'){
+          trip.transit.routes[option] = {
+            'startTime': data.query.results.p[i].a.content.replace(/\s-\s.*$/g,''),
+            'endTime' : data.query.results.p[i].a.content.replace(/^.*\s-\s/,''),
+            'fare' : (typeof data.query.results.p[i+1] == 'string' && data.query.results.p[i+1].substr(0,1)=='$') ? parseFloat(data.query.results.p[i+1].replace(/\$/g,''))*2 : "No Info",
+            'transitTime' : data.query.results.p[i].content.match(/\(([^}]+)\)/)[1]
+          };
+          trip.transit.routes[option].waitingTime = formatTimeDecimal(((parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(trip.transit.routes[option].startTime))>0) ? (parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(trip.transit.routes[option].startTime))/(1000*60) : (parseTime(trip.transit.routes[option].startTime) - (parseTime(d.getHours()+":"+d.getMinutes())))/(1000*60));
+        
+          trip.transit.cost = (trip.transit.cost > trip.transit.routes[option].fare || typeof(trip.transit.cost) == 'undefined') ? trip.transit.routes[option].fare : trip.transit.cost;
+        
+          if(option==1){
+            trip.transit.transitTime =  trip.transit.routes[option].transitTime;
+          }
+          
+          //Follow link for page with more info
+          yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com'+data.query.results.p[i].a.href+'" and xpath=\'//div/div\'') + '&format=json&diagnostics=true';
+ 
+          //Wrap in function so that each option gets its own call
+          function getResult(option){
+            $.getJSON(yql, function(data){
+              var directions = '';
+              $(data.query.results.div).each(function(i,element){
+                htmlimg=(typeof(element.img) != 'undefined') ? '<img src="'+element.img.src+'" alt="'+element.img.alt+'">' : '';
+                switch(typeof(element.p)){
+                  case 'undefined':
+                    htmlp = '';
+                    break;
+                  case 'string':
+                    if(element.p == 'Alternative routes:'){
+                      //end looping
+                      return false;
+                    }
+                    htmlp = '<p>' + element.p + '</p>';
+                    break;
+                  case 'object':
+                    function showhtmlp(element){
+                      var s = '';
+                      if(typeof(element.content != 'undefined')){
+                        s += element.content;
+                      }
+                      if(typeof(element.a) != 'undefined'){
+                        s += element.a.content;
+                      }
+                      if(typeof(element.br) != 'undefined'){
+                        s+='<br>';
+                      }
+                      return s
+                    }
+                  
+                    htmlp = '<p>';
+                    if(typeof(element.p[0]) != 'undefined'){
+                      $(element.p).each(function(i, data){
+                        htmlp += showhtmlp(data);
+                      });
+                    } else {
+                      htmlp += showhtmlp(element.p);
+                    }
+                    htmlp += '</p>';
+                    break;
+                }
+                directions += '<div>'+htmlimg+htmlp+'</div>';
+              });
+              directions += '<div><a href="' + data.query.diagnostics.url.content + '" title="See on Google Maps"><img src="images/link.png" alt="Link" class="smallicon">View trip on Google Transit</a></div>';
+              trip.transit.routes[option].directions = directions;
+              $('#transitoption'+option).html(directions);
+            });
+          }
+          getResult(option);
+        
+          //Increment option number
+          option++;
         }
       }
-      $("#transit .time").html(transitTime);
+      
+      //Print results
+      $("#transit .summary").append("<li>"+trip.transit.summaryText+"</li>");
+      
+      $(trip.transit.routes).each(function(i, data){
+        if(typeof(data)!='undefined'){
+          $("#transit .summary").append("<li class='transitoption'><strong>" + i + ":</strong> &nbsp; Wait time: <strong>" + data.waitingTime + "</strong><br> Depart/Arrive: <strong>" + data.startTime + "/" + data.endTime + "</strong><br> <div id='transitoption"+i+"' class='transitdetail'></div><a href='#' class='infolink'>More Info &#9660;</a></li>");
+          if(data.fare != "No Info"){
+            $("#transit .summary").append("<li>Roundtrip fare per person: <strong>" + formatCurrency(data.fare) + "</strong></li>");
+            $("#transit .summary").append("<li>Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(data.fare*trip.passengers) + "</strong></li>");
+          }
+        }
+      });
+      
+      $("#transit .time").html(trip.transit.transitTime);
+      $("#transit .cost").html((trip.transit.cost != "No Info") ? formatCurrency(parseFloat(trip.transit.cost*trip.passengers)) : "No Info");
       $("#transit .distance").html("N/A");
       $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Transit Directions on Google Transit</a>");
     } else{
       //No transit info available
       $("#transit").fadeOut();
     }
-  }
+  });
 }
 
 function calculateCCS(){
@@ -1070,7 +1137,6 @@ function calculateFlight(response){
   $('#flightresult .time').html('');
   flightline.setMap(null);
   trip.flight = {};
-  trip.flight.cost = 0;
   
   //YQL to travelmath.com for closest airports
   //https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22http%3A%2F%2Fwww.travelmath.com%2Fclosest-airport%2F37.766618%2C-122.41676%22%20and%20xpath%3D'%2F%2Fa%5B%40name%3D%22international-airports%22%5D%2F..%2Fp'&format=json&diagnostics=true&callback=cbfunc
@@ -1502,17 +1568,25 @@ google.setOnLoadCallback(function(){
     recalc();
   });
   
-  //Expand each mode
-  $('#results .mode .expand').click(function(){
-    if($('.additionalinfo',$(this).parent()).is(":visible")){
-      $(this).html('&#9660;');
-    } else {
-      $(this).html('&#9650;');
+  //Transit option click handler
+  $('li.transitoption').live('click', function(){
+    if($('.transitdetail',this).is(":hidden")){
+      $('.infolink',this).html("Less Info &#9650;");
+      $('div.transitdetail',this).show('medium');
     }
-    
-    $('.additionalinfo',$(this).parent()).toggle('fast', function(){});
+  });
+  $('li.transitoption .infolink').live('click', function(){
+    if($('.transitdetail', $(this).parent()).is(":visible")){
+      $(this).html("More Info &#9660;");
+      $('div.transitdetail',$(this).parent()).hide('medium');
+    }
   });
   
+  //Expand each mode
+  $('#results .mode .expand').click(function(){
+    $(this).html($('.additionalinfo',$(this).parent()).is(":visible") ? '&#9660;' : '&#9650;');
+    $('.additionalinfo',$(this).parent()).toggle('fast', function(){});
+  });
   
   //Initial form submit click handler
   $("#start_submit").click(function(){

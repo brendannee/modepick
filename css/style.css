@@ -236,17 +236,25 @@ ul.input_boxes li .textbox{
   padding:0;
 }
 
-.summary li.divider{
+.summary li.transitoption{
   border-top:2px solid #666;
+}
+
+.summary li .transitdetail{
+  display:none;
+}
+
+.summary li .transitdetail div img{
+  padding:0 5px;
+}
+
+.summary li .transitdetail div p{
+  display:inline;
+  margin:0;
 }
 
 .summary .total{
   font-weight:bold;
-}
-
-.summary li div{
-  float:right;
-  margin-left: 20px;
 }
 
 .time{
