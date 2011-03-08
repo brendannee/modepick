@@ -234,13 +234,7 @@ function addCarshareLocations(map, lat, lon, type){
       }
     }
     //List closest CCS location in results
-    if(trip.ccs.closestMarker.distance<.2){
-      //Within 1000 feet, display feet
-      trip.ccs.closestMarker.distanceformatted = Math.round(trip.ccs.closestMarker.distance*5280) + " ft";
-    } else{
-      //Use miles
-      trip.ccs.closestMarker.distanceformatted = Math.round(trip.ccs.closestMarker.distance*10)/10 + " mi";
-    }
+    trip.ccs.closestMarker.distanceformatted = (trip.ccs.closestMarker.distance<.2) ? Math.round(trip.ccs.closestMarker.distance*5280) + " ft" : Math.round(trip.ccs.closestMarker.distance*10)/10 + " mi";
     if(typeof trip.ccs.closestMarker.name !== "undefined"){
       $('#ccsclosest').html("Nearest car: <strong>" + trip.ccs.closestMarker.distanceformatted + "</strong> (" + trip.ccs.closestMarker.name + " - <a href='"+trip.ccs.closestMarker.url+"' target='_blank'>View Details</a>)");
     }
@@ -289,13 +283,7 @@ function addCarshareLocations(map, lat, lon, type){
       }
     }
     //List closest Zipcar location in results
-    if(trip.zipcar.closestMarker.distance<.2){
-      //Within 1000 feet, display feet
-      trip.zipcar.closestMarker.distanceformatted = Math.round(trip.zipcar.closestMarker.distance*5280) + " ft";
-    } else{
-      //Use miles
-      trip.zipcar.closestMarker.distanceformatted = Math.round(trip.zipcar.closestMarker.distance*10)/10 + " mi";
-    }
+    trip.zipcar.closestMarker.distanceformatted = (trip.zipcar.closestMarker.distance<.2) ? Math.round(trip.zipcar.closestMarker.distance*5280) + " ft" : Math.round(trip.zipcar.closestMarker.distance*10)/10 + " mi";
     if(typeof trip.zipcar.closestMarker.name !== "undefined"){
       $('#zipcarclosest').html("Nearest car: <strong>" + trip.zipcar.closestMarker.distanceformatted + "</strong> (" + decodeURIComponent(trip.zipcar.closestMarker.name.replace(/\+/g,' ')) + ")");
     }
@@ -453,11 +441,7 @@ function calculateTrip(response) {
 }
 
 function calculateDriving(response){
-  if(trip.extramiles!=0){
-     drivingdistance = trip.distance+trip.extramiles;
-   } else {
-     drivingdistance = trip.distance;
-   }
+  drivingdistance = (trip.extramiles!=0) ? trip.distance+trip.extramiles : trip.distance;
 
    $("#driving .distance").html(formatDistance(drivingdistance));
    $("#driving .summary").append("<li>" + formatDistance(trip.onewaydistance) + " each way</li>");
@@ -571,16 +555,8 @@ function calculateTransitTrip(start,end){
   var day;
   var month;
   var d=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
-  if (d.getDate()<10) {
-    day="0"+d.getDate();
-  } else {
-    day=d.getDate();
-  }
-  if ((d.getMonth()+1)<10) {
-    month="0"+(d.getMonth()+1);
-  } else {
-    month=(d.getMonth()+1);
-  }
+  day = (d.getDate()<10) ? "0"+d.getDate() : d.getDate();
+  month = ((d.getMonth()+1)<10) ? "0"+(d.getMonth()+1) : (d.getMonth()+1);
   var date = d.getFullYear() + '-' + month + '-' + day;
   var time = d.getHours() + ':' + d.getMinutes();
   
@@ -708,18 +684,10 @@ function calculateCCS(){
   
   //Calculate number of minutes from midnight Monday
   //Shift getDay function by one day
-  if(trip.departuredate.getDay()==0){
-    startday = 6;
-  } else {
-    startday = trip.departuredate.getDay()-1;
-  }
+  startday = (trip.departuredate.getDay()==0) ? 6 : trip.departuredate.getDay()-1;
   departurecode = startday*(24*60) + trip.departuredate.getHours()*60 + trip.departuredate.getMinutes();
-  
-  if(trip.returndate.getDay()==0){
-    endday = 6;
-  } else {
-    endday = trip.returndate.getDay()-1;
-  }
+  endday = (trip.returndate.getDay()==0) ? 6 : trip.returndate.getDay()-1;
+
   returncode = endday*(24*60) + trip.returndate.getHours()*60 + trip.returndate.getMinutes();
   
   if(returncode<departurecode){
@@ -942,18 +910,10 @@ function calculateZipcar(){
   
   //Calculate number of minutes from midnight Monday
   //Shift getDay function by one day
-  if(trip.departuredate.getDay()==0){
-    startday = 6;
-  } else {
-    startday = trip.departuredate.getDay()-1;
-  }
+  startday = (trip.departuredate.getDay()==0) ? 6 : trip.departuredate.getDay()-1;
   departurecode = startday*(24*60) + trip.departuredate.getHours()*60 + trip.departuredate.getMinutes();
-  
-  if(trip.returndate.getDay()==0){
-    endday = 6;
-  } else {
-    endday = trip.returndate.getDay()-1;
-  }
+  endday = (trip.returndate.getDay()==0) ? 6 : trip.returndate.getDay()-1;
+
   returncode = endday*(24*60) + trip.returndate.getHours()*60 + trip.returndate.getMinutes();
   
   if(returncode<departurecode){
@@ -985,13 +945,7 @@ function calculateZipcar(){
   
   if(isNaN(trip.zipcar.rates.customDaily) || trip.zipcar.rates.customDaily==''){
     //Use default zipcar daily rates of $73/weekday and $78/weekend
-    if(trip.zipcar.weekendtime>0){
-      //Trip touches a weekend, so use daily avg rates for weekend
-      trip.zipcar.rates.daily = trip.zipcar.plan.weekenddaily;
-    } else {
-      //Use daily avg rates for weekday
-      trip.zipcar.rates.daily = trip.zipcar.plan.weekdaydaily;
-    }
+    trip.zipcar.rates.daily = (trip.zipcar.weekendtime>0) ? trip.zipcar.plan.weekenddaily : trip.zipcar.plan.weekdaydaily;
   } else {
     //Use custom zipcar daily rate entered by user
     trip.zipcar.rates.daily = trip.zipcar.rates.customDaily;
@@ -1070,14 +1024,7 @@ function estimateZipcarHourCost(){
   zipcarhour = {};
   zipcarhour.cost = 0;
   zipcarhour.time = trip.totaltime % (24*60);
-  
-  if(isNaN(trip.zipcar.rates.customHourly) || trip.zipcar.rates.customHourly==''){
-    //Use default zipcar hourly rates
-    zipcarhour.rate = trip.zipcar.plan.weekdayhourly;
-  } else{
-    //Use custom zipcar hourly rate entered by user
-    zipcarhour.rate = trip.zipcar.rates.customHourly;
-  }
+  zipcarhour.rate = (isNaN(trip.zipcar.rates.customHourly) || trip.zipcar.rates.customHourly=='') ? trip.zipcar.plan.weekdayhourly : trip.zipcar.rates.customHourly;
   
   zipcarhour.cost += zipcarhour.rate * ((zipcarhour.time - trip.zipcar.weekendtime)/60) + zipcarhour.rate * (trip.zipcar.weekendtime/60);
   
