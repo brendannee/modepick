@@ -1069,25 +1069,27 @@ function calculateFlight(response){
   $('#flightresult .distance').html('');
   $('#flightresult .time').html('');
   flightline.setMap(null);
-  var flightcost = 0;
-  var originAirport ='';
-  var destAirport = '';
+  trip.flight = {};
+  trip.flight.cost = 0;
   
   //YQL to travelmath.com for closest airports
   //https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22http%3A%2F%2Fwww.travelmath.com%2Fclosest-airport%2F37.766618%2C-122.41676%22%20and%20xpath%3D'%2F%2Fa%5B%40name%3D%22international-airports%22%5D%2F..%2Fp'&format=json&diagnostics=true&callback=cbfunc
   
   //Get URL ready
   var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
-  var originAirport = BASE_URI + encodeURIComponent('select * from html where url="http://www.travelmath.com/closest-airport/'+response.routes[0].legs[0].start_location.lat()+','+response.routes[0].legs[0].start_location.lng()+'" and xpath=\'//a[@name="international-airports"]/../p\'') + '&format=json';
-  var destAirport = BASE_URI + encodeURIComponent('select * from html where url="http://www.travelmath.com/closest-airport/'+response.routes[0].legs[0].end_location.lat()+','+response.routes[0].legs[0].end_location.lng()+'" and xpath=\'//a[@name="international-airports"]/../p\'') + '&format=json';
+  var originAirportURL = BASE_URI + encodeURIComponent('select * from html where url="http://www.travelmath.com/closest-airport/'+response.routes[0].legs[0].start_location.lat()+','+response.routes[0].legs[0].start_location.lng()+'" and xpath=\'//a[@name="international-airports"]/../p\'') + '&format=json';
+  var destAirportURL = BASE_URI + encodeURIComponent('select * from html where url="http://www.travelmath.com/closest-airport/'+response.routes[0].legs[0].end_location.lat()+','+response.routes[0].legs[0].end_location.lng()+'" and xpath=\'//a[@name="international-airports"]/../p\'') + '&format=json';
   
-  var originAirports = [];
-  var destAirports = [];
+  trip.flight.origin = {};
+  trip.flight.dest = {};
+  trip.flight.origin.airports = [];
+  trip.flight.dest.airports = [];
   
-  flightdistance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
+  
+  trip.flight.distance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
   
    // Request that YSQL string, and run a callback function.  
-  $.getJSON(originAirport, cbfunc1);  
+  $.getJSON(originAirportURL, cbfunc1);  
   function cbfunc1(data) {
     // If we have something to work with...  
     if(data.query.count > 0){
@@ -1096,11 +1098,11 @@ function calculateFlight(response){
         //Filter Results down to airport codes
         if(results[i].content.length<4 && results[i].content != undefined){
           //Seems like an airport code
-          originAirports.push(results[i].content);
+          trip.flight.origin.airports.push(results[i].content);
         }
       }
       
-      $.getJSON(destAirport, cbfunc2);  
+      $.getJSON(destAirportURL, cbfunc2);  
       function cbfunc2(data) {
         // If we have something to work with...  
         if(data.query.count > 0){
@@ -1109,49 +1111,39 @@ function calculateFlight(response){
             //Filter Results down to airport codes
             if(results[i].content.length<4 && results[i].content != undefined){
               //Seems like an airport code
-              destAirports.push(results[i].content);
+              trip.flight.dest.airports.push(results[i].content);
             }
-          }
-          var originAirportString = '';
-          var destAirportString = '';
-          //Prep airports for search syntax
-          for(i in originAirports){
-            originAirportString += originAirports[i] + '|';
-          }
-
-          for(i in destAirports){
-            destAirportString += destAirports[i] + '|';
           }
 
           //Try hotwire API for Historical Flight Search
          //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=? 
-          var startdate = new Date();
+         var startdate = new Date();
          startdate.setDate(trip.departuredate.getDate()-20)
          var startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDate() + "/" + startdate.getFullYear();
-         $.getJSON('../php/hotwire.php?origin='+originAirportString.slice(0, -1)+'&dest='+destAirportString.slice(0, -1)+'&startdate='+startdateformatted,
+         $.getJSON('../php/hotwire.php?origin='+trip.flight.origin.airports.join('|')+'&dest='+trip.flight.dest.airports.join('|')+'&startdate='+startdateformatted,
            function(data) {
              if(data != null){
                if(data.Result != undefined){
                  if(data.Result.AirPricing != undefined){
-                   flightcost = data.Result.AirPricing.AveragePrice;
-                   originAirport = data.Result.AirPricing.OrigAirportCode;
-                   destAirport = data.Result.AirPricing.DestinationAirportCode;
+                   trip.flight.cost = data.Result.AirPricing.AveragePrice;
+                   trip.flight.origin.airportCode = data.Result.AirPricing.OrigAirportCode;
+                   trip.flight.dest.airportCode = data.Result.AirPricing.DestinationAirportCode;
 
                    $('#flightresult .summary').append("<li>Based on Hotwire's historical average flight prices for week of " + startdateformatted + "</li>");
-                   $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + originAirport + "</span></strong></li>");
-                   $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + destAirport + "</span></strong></li>");
-                   $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(flightdistance/(550/60)+45) + "</strong></li>");
-                   $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(flightcost) + "</strong></li>");
-                   $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(flightcost*2*trip.passengers) + "</strong></li>");
-                   $('#flightresult .cost').html(formatCurrency(flightcost*2*trip.passengers));
+                   $('#flightresult .summary').append("<li>Origin Airport: <strong><span id='originAirport'>" + trip.flight.origin.airportCode + "</span></strong></li>");
+                   $('#flightresult .summary').append("<li>Destination Airport: <strong><span id='destAirport'>" + trip.flight.dest.airportCode + "</span></strong></li>");
+                   $('#flightresult .summary').append("<li>Direct Flight duration: <strong>" + formatTimeDecimal(trip.flight.distance/(550/60)+45) + "</strong></li>");
+                   $('#flightresult .summary').append("<li>Oneway Flight Cost per person: <strong>" + formatCurrency(trip.flight.cost) + "</strong></li>");
+                   $('#flightresult .summary').append("<li class='total'>Roundtrip Flight Cost for " + trip.passengers + ": <strong>" + formatCurrency(trip.flight.cost*2*trip.passengers) + "</strong></li>");
+                   $('#flightresult .cost').html(formatCurrency(trip.flight.cost*2*trip.passengers));
                    //Flight Time equation hours = .75 * dist/550
 
-                   $('#flightresult .time').html(formatTimeDecimal(flightdistance/(550/60)+45));
-                   $('#flightresult .distance').html(formatDistance(flightdistance*2));
+                   $('#flightresult .time').html(formatTimeDecimal(trip.flight.distance/(550/60)+45));
+                   $('#flightresult .distance').html(formatDistance(trip.flight.distance*2));
                    $('#flightresult .modeLink a').attr('href',data.Result.AirPricing.Url);
 
                    //Get airport info from freebase
-                                        $.getJSON('http://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+originAirport+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+destAirport+'%22,%22/common/topic/webpage%22:[{}]}]}}&callback=?',   
+                                        $.getJSON('http://api.freebase.com/api/service/mqlread?queries={%22q0%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+trip.flight.origin.airportCode+'%22,%22/common/topic/webpage%22:[{}]}]},%22q1%22:{%22query%22:[{%22id%22:null,%22name%22:null,%22type%22:%22/aviation/airport%22,%22/aviation/airport/iata%22:%22'+trip.flight.dest.airportCode+'%22,%22/common/topic/webpage%22:[{}]}]}}&callback=?',   
                       function(data){
                         if(data.q0.code=='/api/status/ok'){
                           $('#originAirport').html('<a href="http://www.freebase.com/view' + data.q0.result[0].id + '">' + data.q0.result[0].name + '</a>');
