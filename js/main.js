@@ -1133,7 +1133,7 @@ function calculateFlight(response){
          var startdate = new Date();
          startdate.setDate(trip.departuredate.getDate()-20)
          var startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDate() + "/" + startdate.getFullYear();
-         $.getJSON('../php/hotwire.php?origin='+trip.flight.origin.airports.join('|')+'&dest='+trip.flight.dest.airports.join('|')+'&startdate='+startdateformatted,
+         $.getJSON('../php/hotwire_historical_flight.php?origin='+trip.flight.origin.airports.join('|')+'&dest='+trip.flight.dest.airports.join('|')+'&startdate='+startdateformatted,
            function(data) {
              if(data != null){
                if(data.Result != undefined){
