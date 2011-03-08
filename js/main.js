@@ -7,8 +7,6 @@ var popup;
 var trip = {};
 var ccs = {};
 var zipcar = {};
-var taxicost = 0;
-var ubercost = 0;
 var ccsplans = {
   "sharealittle": {
     "title":"Share-a-Little",
@@ -590,6 +588,7 @@ function calculateTransitTrip(start,end){
    // Request that YSQL string, and run a callback function.  
   $.getJSON( yql, cbfunc );  
   function cbfunc(data) {
+    console.log(data);
     // If we have something to work with...  
     if(data.query.count > 0){
       $("#transit").fadeIn();
@@ -1019,46 +1018,48 @@ function estimateZipcarHourCost(){
 }
 
 function calculateTaxi(){ 
-  taxicost = 0;
+  trip.taxi = {};
+  trip.taxi.totalcost = 0;
   
   //Taxi (assume 1.5 minute of waiting per mile)
-  var taxitrafficpermile = 1.5;
+  trip.taxi.trafficpermile = 1.5;
   
-  taxicost+= cabfares.firstfifth*2 + (cabfares.additionalfifth*((trip.distance-0.2)*5)) + cabfares.waitingminute*(trip.distance*taxitrafficpermile);
+  trip.taxi.totalcost+= cabfares.firstfifth*2 + (cabfares.additionalfifth*((trip.distance-0.2)*5)) + cabfares.waitingminute*(trip.distance*trip.taxi.trafficpermile);
   //add tip
-  var tipamount = taxicost*(cabfares.tippercent/100);
-  taxicost = taxicost*(1+(cabfares.tippercent/100));
+  trip.taxi.tipamount = trip.taxi.totalcost*(cabfares.tippercent/100);
+  trip.taxi.totalcost = trip.taxi.totalcost*(1+(cabfares.tippercent/100));
 
   $('#taxiresult .summary').append("<li>Flag Drop x 2: <strong>"+formatCurrency(cabfares.firstfifth*2)+"</strong></li>");
   $('#taxiresult .summary').append("<li>"+formatDistance(trip.distance)+" x $2.25 per mi: <strong>"+formatCurrency((cabfares.additionalfifth*((trip.distance-0.2)*5)))+"</strong></li>");
-  $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*taxitrafficpermile*10)/10)+" min): <strong>"+formatCurrency(cabfares.waitingminute*(trip.distance*taxitrafficpermile))+"</strong></li>");
-  $('#taxiresult .summary').append("<li>10% Tip: <strong>"+formatCurrency(tipamount)+"</strong></li>");
-  $('#taxiresult .summary').append("<li class='total'>Taxi Total: <strong>"+formatCurrency(taxicost)+"</strong></li>");
+  $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*trip.taxi.trafficpermile*10)/10)+" min): <strong>"+formatCurrency(cabfares.waitingminute*(trip.distance*trip.taxi.trafficpermile))+"</strong></li>");
+  $('#taxiresult .summary').append("<li>10% Tip: <strong>"+formatCurrency(trip.taxi.tipamount)+"</strong></li>");
+  $('#taxiresult .summary').append("<li class='total'>Taxi Total: <strong>"+formatCurrency(trip.taxi.totalcost)+"</strong></li>");
   
-  $('#taxiresult .cost').html(formatCurrency(taxicost));
+  $('#taxiresult .cost').html(formatCurrency(trip.taxi.totalcost));
   $('#taxiresult .time').html(formatTimeDecimal(trip.drivingtime));
   $('#taxiresult .distance').html(formatDistance(trip.distance));
 }  
 
 function calculateUber(){ 
-  ubercost = 0;
+  trip.uber = {};
+  trip.uber.totalcost = 0;
   
   //Uber (assume 1.5 minute of waiting per mile)
-  var ubertrafficpermile = 1.5;
+  trip.uber.trafficpermile = 1.5;
   
-  ubercost+= uberfares.flag*2 + (uberfares.mileage*trip.distance) + uberfares.idleminute*(trip.distance*ubertrafficpermile);
-  if(ubercost<30){
+  trip.uber.totalcost+= uberfares.flag*2 + (uberfares.mileage*trip.distance) + uberfares.idleminute*(trip.distance*trip.uber.trafficpermile);
+  if(trip.uber.totalcost<30){
     //Minimum fare is $15 each way
-    ubercost = 30;
+    trip.uber.totalcost = 30;
     $('#uberresult .summary').append("<li>Minimum Fare $15 x 2: <strong>$30.00</strong></li>");
     $('#uberresult .summary').append("<li class='total'>Uber Total: <strong>$30.00</strong></li>");
   } else {
     $('#uberresult .summary').append("<li>Flag Drop x 2: <strong>"+formatCurrency(uberfares.flag*2)+"</strong></li>");
     $('#uberresult .summary').append("<li>"+formatDistance(trip.distance)+" x " + formatCurrency(uberfares.mileage) + " per mi: <strong>"+formatCurrency(uberfares.mileage*trip.distance)+"</strong></li>");
-    $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*ubertrafficpermile*10)/10)+" min): <strong>"+formatCurrency(uberfares.idleminute*(trip.distance*ubertrafficpermile))+"</strong></li>");
-    $('#uberresult .summary').append("<li class='total'>Uber Total: <strong>"+formatCurrency(ubercost)+"</strong></li>");
+    $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*ubertrafficpermile*10)/10)+" min): <strong>"+formatCurrency(uberfares.idleminute*(trip.distance*trip.uber.trafficpermile))+"</strong></li>");
+    $('#uberresult .summary').append("<li class='total'>Uber Total: <strong>"+formatCurrency(trip.uber.totalcost)+"</strong></li>");
   }
-  $('#uberresult .cost').html(formatCurrency(ubercost));
+  $('#uberresult .cost').html(formatCurrency(trip.uber.totalcost));
   $('#uberresult .time').html(formatTimeDecimal(trip.drivingtime));
   $('#uberresult .distance').html(formatDistance(trip.distance));
 }
