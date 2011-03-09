@@ -1479,7 +1479,7 @@ google.setOnLoadCallback(function(){
   });
   
   //Secondary form submit click handler
-  $("#trip_submit").click(function(){
+  $("#inputs").submit(function(){
     recalc();
     return false;
   });
@@ -1535,7 +1535,7 @@ google.setOnLoadCallback(function(){
   });
   
   //Initial form submit click handler
-  $("#start_submit").click(function(){
+  $("#start_inputs").submit(function(){
     if($("#start_startlocation").val() == ''){
       $("#start_startlocation").css('border','2px solid red');
     }
@@ -1556,10 +1556,11 @@ google.setOnLoadCallback(function(){
       $("#zipcarrate").val($("#start_zipcarrate").val());
       $("#zipcardailyrate").val($("#start_zipcardailyrate").val());
       $("#passengers").val($("#start_passengers").val());
-      
+
       //Do initial map setup
       mapSetup();
     }
+    return false;
   });
  
 });
