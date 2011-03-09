@@ -567,9 +567,16 @@ function calculateTransitTrip(start,end){
           trip.transit.routes[option] = {
             'startTime': data.query.results.p[i].a.content.replace(/\s-\s.*$/g,''),
             'endTime' : data.query.results.p[i].a.content.replace(/^.*\s-\s/,''),
-            'fare' : (typeof data.query.results.p[i+1] == 'string' && data.query.results.p[i+1].substr(0,1)=='$') ? parseFloat(data.query.results.p[i+1].replace(/\$/g,''))*2 : "No Info",
-            'transitTime' : data.query.results.p[i].content.match(/\(([^}]+)\)/)[1]
+            'fare' : (typeof data.query.results.p[i+1] == 'string' && data.query.results.p[i+1].substr(0,1)=='$') ? parseFloat(data.query.results.p[i+1].replace(/\$/g,''))*2 : "No Info"
           };
+          //Convert Transit Time to minutes
+          var d = data.query.results.p[i].content.match(/\(([^}]+)\)/)[1].split(' ');
+          if(d[1].indexOf('hour') != -1){
+            trip.transit.routes[option].transitTime = (60*parseInt(d[0]) + parseInt(d[2]))*2;
+          } else if(d[1].indexOf('min') != -1){
+            trip.transit.routes[option].transitTime = parseInt(d[0])*2;
+          }
+          
           var waitingTime = (Date.parse(dates.convert(trip.departure.dateFormattedSlashed+" "+time24(trip.transit.routes[option].startTime))) - Date.parse(trip.departuredate))/(60*1000);
           //If negative that means the trip departs the next day, so add a day
           waitingTime = (waitingTime<0) ? (waitingTime + 24*60) : waitingTime;
@@ -654,7 +661,7 @@ function calculateTransitTrip(start,end){
         }
       });
       
-      $("#transit .time").html(trip.transit.transitTime);
+      $("#transit .time").html(formatTimeDecimal(trip.transit.transitTime));
       $("#transit .cost").html((trip.transit.cost != "No Info") ? formatCurrency(parseFloat(trip.transit.cost*trip.passengers)) : "No Info");
       $("#transit .distance").html("N/A");
       $("#transit .modeLink").html("<a href='http://maps.google.com/maps" + data.query.results.p[1].a.href.substr(13) + "' title='See on Google Maps'><img src='images/link.png' alt='Link' class='smallicon'>Transit Directions on Google Transit</a>");
