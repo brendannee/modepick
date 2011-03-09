@@ -349,12 +349,7 @@ function calculateTrip(response) {
     }
     
     //Only show uber for trips less than 75 miles (it gets expensive!)
-    if(trip.onewaydistance<75){
-      calculateUber();
-      $('#uberresult').show();
-    } else {
-      $('#uberresult').hide();
-    }
+    (trip.onewaydistance<75) ? calculateUber() : $('#uberresult').hide();
 
   } else{
     //If not in SF, hide SF modes
@@ -363,19 +358,13 @@ function calculateTrip(response) {
   }
   
   //Only show taxis if distance is less than 150 miles
-  if(trip.onewaydistance<150){
-    calculateTaxi();
-    $('#taxiresult').show();
-  } else{
-    $('#taxiresult').hide();
-  }
+  (trip.onewaydistance<150) ? calculateTaxi() : $('#taxiresult').hide();
   
   //Only show flights if distance is greater than 150 miles
-  if(trip.onewaydistance>150){
-    calculateFlight(response);
-  } else {
-    $('#flightresult').hide();
-  }
+  (trip.onewaydistance>150) ? calculateFlight(response) : $('#flightresult').hide();
+  
+  //Only show greyhound if distance is greater than 40 miles
+  (trip.onewaydistance>40) ? calculateGreyhound() : $('#greyhound').hide();
   
   //Only show Zipcar for trips less than 700 miles
   if(trip.onewaydistance<350){
@@ -640,7 +629,7 @@ function calculateTransitTrip(start,end){
                 }
                 directions += '<div>'+htmlimg+htmlp+'</div>';
               });
-              directions += '<div><a href="' + data.query.diagnostics.url.content + '" title="See on Google Maps"><img src="images/link.png" alt="Link" class="smallicon">View trip on Google Transit</a></div>';
+              directions += '<div><a href="' + data.query.diagnostics.url.content + '" target="_blank" title="See on Google Maps"><img src="images/link.png" alt="Link" class="smallicon">View trip on Google Transit</a></div>';
               trip.transit.routes[option].directions = directions;
               $('#transitoption'+option).html(directions);
             });
@@ -1054,6 +1043,9 @@ function calculateTaxi(){
   $('#taxiresult .cost').html(formatCurrency(trip.taxi.totalcost));
   $('#taxiresult .time').html(formatTimeDecimal(trip.drivingtime));
   $('#taxiresult .distance').html(formatDistance(trip.distance));
+  
+  //Show taxis
+  $('#taxiresult').show();
 }  
 
 function calculateUber(){ 
@@ -1078,6 +1070,8 @@ function calculateUber(){
   $('#uberresult .cost').html(formatCurrency(trip.uber.totalcost));
   $('#uberresult .time').html(formatTimeDecimal(trip.drivingtime));
   $('#uberresult .distance').html(formatDistance(trip.distance));
+  
+  $('#uberresult').show();
 }
 
 function calculateFlight(response){ 
@@ -1205,6 +1199,33 @@ function calculateFlight(response){
     }
   } 
 }
+
+function calculateGreyhound(){ 
+  trip.greyhound = {};
+  trip.greyhound.totalcost = 0;
+  
+  //Greyhound (costs range from $0.1/mile to $0.2/mile topping out around 2000 miles)
+  trip.greyhound.costpermile = (trip.onewaydistance < 2000) ? (1 - trip.onewaydistance/2000)*0.1+0.1 : 0.1
+  trip.greyhound.totalcost+= trip.greyhound.costpermile * trip.onewaydistance * 2;
+  //Greyhound (speeds range from 25mph to 45mph topping out around 500 miles)
+  trip.greyhound.speed = (trip.onewaydistance < 500) ? (trip.onewaydistance/500)*20+25 : 45; 
+  trip.greyhound.totaltime = ((trip.onewaydistance*2)/trip.greyhound.speed)*60; 
+
+  $('#greyhound .summary').append("<li>Estimated cost per mile: <strong>"+formatCurrency(trip.greyhound.costpermile)+"</strong></li>");
+  $('#greyhound .summary').append("<li>"+formatDistance(trip.onewaydistance)+" x "+formatCurrency(trip.greyhound.costpermile)+" per mi: <strong>"+formatCurrency(trip.onewaydistance*trip.greyhound.costpermile)+"</strong></li>");
+  $('#greyhound .summary').append("<li class='total'>Greyhound Total: <strong>"+formatCurrency(trip.greyhound.totalcost)+"</strong></li>");
+    $('#greyhound .summary').append("<li>Note that this is only an estimate, consult the <a href='http://greyhound.com' target='_blank'>Greyhound website</a> for current fares.</li>");
+  
+  $('#greyhound .cost').html(formatCurrency(trip.greyhound.totalcost));
+  $('#greyhound .time').html(formatTimeDecimal(trip.greyhound.totaltime));
+  $('#greyhound .distance').html(formatDistance(trip.distance));
+  
+  $("#greyhound .modeLink").html("<a href='http://greyhound.com' title='Visit Greyhound Website' target='_blank'><img src='images/link.png' alt='Link' class='smallicon'>Greyhound Website</a>");
+  
+  //Show greyhound
+  $('#greyhound').show();
+}  
+
 
 function recalc(){
   //Called after mapSetup to recalculate trip
