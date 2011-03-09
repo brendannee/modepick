@@ -18,12 +18,14 @@ modepick is very San Francisco focused at the moment, at some point it could be 
 - Transit
 - Walking
 - Biking
-	
-### Future Modes
-	
 - Amtrak
 - Greyhound
 - Drive/Carpool
+
+### Future Modes
+- Better Flight search (currently using Hotwire historical flight API)
+- Car Rental
+- Taxi rates in other cities
 
 ### Credits
 

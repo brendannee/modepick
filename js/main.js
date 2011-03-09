@@ -1213,14 +1213,16 @@ function calculateGreyhound(){
   
   //Greyhound (costs range from $0.1/mile to $0.2/mile topping out around 2000 miles)
   trip.greyhound.costpermile = (trip.onewaydistance < 2000) ? (1 - trip.onewaydistance/2000)*0.1+0.1 : 0.1
-  trip.greyhound.totalcost+= trip.greyhound.costpermile * trip.onewaydistance * 2;
+  trip.greyhound.onewaycost = trip.greyhound.costpermile * trip.onewaydistance;
   //Greyhound (speeds range from 25mph to 45mph topping out around 500 miles)
   trip.greyhound.speed = (trip.onewaydistance < 500) ? (trip.onewaydistance/500)*20+25 : 45; 
-  trip.greyhound.totaltime = ((trip.onewaydistance*2)/trip.greyhound.speed)*60; 
+  trip.greyhound.totaltime = ((trip.onewaydistance*2)/trip.greyhound.speed)*60;
+  trip.greyhound.totalcost = trip.greyhound.onewaycost*2*trip.passengers;
 
   $('#greyhound .summary').append("<li>Estimated cost per mile: <strong>"+formatCurrency(trip.greyhound.costpermile)+"</strong></li>");
-  $('#greyhound .summary').append("<li>"+formatDistance(trip.onewaydistance)+" x "+formatCurrency(trip.greyhound.costpermile)+" per mi: <strong>"+formatCurrency(trip.onewaydistance*trip.greyhound.costpermile)+"</strong></li>");
-  $('#greyhound .summary').append("<li class='total'>Greyhound Total: <strong>"+formatCurrency(trip.greyhound.totalcost)+"</strong></li>");
+  $('#greyhound .summary').append("<li>"+formatDistance(trip.onewaydistance)+" x "+formatCurrency(trip.greyhound.costpermile)+" per mi: <strong>"+formatCurrency(trip.greyhound.onewaycost)+"</strong></li>");
+  $("#greyhound .summary").append("<li>Est. Roundtrip fare per person: <strong>" + formatCurrency(trip.greyhound.onewaycost*2) + "</strong></li>");
+  $("#greyhound .summary").append("<li>Est. Roundtrip fare for "+trip.passengers+": <strong>" + formatCurrency(trip.greyhound.totalcost) + "</strong></li>");
     $('#greyhound .summary').append("<li>Note that this is only an estimate, consult the <a href='http://greyhound.com' target='_blank'>Greyhound website</a> for current fares.</li>");
   
   $('#greyhound .cost').html(formatCurrency(trip.greyhound.totalcost));
