@@ -1,9 +1,9 @@
-[submodule "nodejs/support/express"]
-	path = nodejs/support/express
+[submodule "support/express"]
+	path = support/express
 	url = git://github.com/visionmedia/express.git
-[submodule "nodejs/support/jade"]
-	path = nodejs/support/jade
+[submodule "support/jade"]
+	path = support/jade
 	url = git://github.com/visionmedia/jade.git
-[submodule "nodejs/support/mongoose"]
-	path = nodejs/support/mongoose
+[submodule "support/mongoose"]
+	path = support/mongoose
 	url = git://github.com/LearnBoost/mongoose.git
