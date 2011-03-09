@@ -123,9 +123,16 @@ function formatDistance(length) {
   return s;
 }
 
-function parseTime(str) {
-  var t = str.split(':')
-  return new Date(2007,0,1,  ((str.toLowerCase().indexOf('pm')!=-1)?(12+parseInt(t[0],10)):t[0]),parseInt(t[1],10),00).getTime();
+function time24(str) {
+  var hour = str.substring(0, str.indexOf(':'));
+  var minute = str.substr(str.indexOf(':') + 1, 2);
+  if(str.indexOf('pm') > 0){
+    hour = parseInt(hour) + 12;
+  }
+  if(str.indexOf('am') > 0 && parseInt(hour) == 12){
+    hour = 0;
+  }
+  return ((hour < 12) ? "0" : "") + hour + ":" + minute;
 }
 
 function getUrlVars() {

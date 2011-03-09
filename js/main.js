@@ -315,8 +315,14 @@ function calculateTrip(response) {
   trip.markerArray = [];
   
   //Get basic trip stats
-  trip.departuredate=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
-  trip.returndate=dates.convert(""+$('#returndate').val()+" "+$('#returntime').val());
+  trip.departuredate=dates.convert($('#departuredate').val()+" "+$('#departuretime').val());
+  trip.departure = {};
+  trip.departure.day = (trip.departuredate.getDate()<10) ? "0"+trip.departuredate.getDate() : trip.departuredate.getDate();
+  trip.departure.month = ((trip.departuredate.getMonth()+1)<10) ? "0"+(trip.departuredate.getMonth()+1) : (trip.departuredate.getMonth()+1);
+  trip.departure.dateFormattedDashed = trip.departuredate.getFullYear() + '-' + trip.departure.month + '-' + trip.departure.day;
+  trip.departure.dateFormattedSlashed = trip.departure.month + '/' + trip.departure.day + '/' + trip.departuredate.getFullYear();
+  trip.departure.timeFormatted = trip.departuredate.getHours() + ':' + trip.departuredate.getMinutes();
+  trip.returndate=dates.convert($('#returndate').val()+" "+$('#returntime').val());
   trip.totaltime = (trip.returndate-trip.departuredate)/(1000*60); //Total trip time in minutes
   trip.distance = Math.round(onewaydistance*2*10)/10;
   trip.onewaydistance = Math.round(onewaydistance*10)/10;
@@ -554,18 +560,9 @@ function calculateTransitTrip(start,end){
   $("#transit .time").html('');
   $("#transit .distance").html('');
   
-  //Get departure date and time
-  var day;
-  var month;
-  var d=dates.convert(""+$('#departuredate').val()+" "+$('#departuretime').val());
-  day = (d.getDate()<10) ? "0"+d.getDate() : d.getDate();
-  month = ((d.getMonth()+1)<10) ? "0"+(d.getMonth()+1) : (d.getMonth()+1);
-  var date = d.getFullYear() + '-' + month + '-' + day;
-  var time = d.getHours() + ':' + d.getMinutes();
-  
   //Get URL ready
   var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
-  var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+date+'&time='+time+'" and xpath=\'//div[2]/div/p\'') + '&format=json';
+  var yql = BASE_URI + encodeURIComponent('select * from html where url="http://maps.google.com/m/directions?dirflg=r&saddr='+start.replace(/&/g,"%26").replace(/ /g,'+')+'&daddr='+end.replace(/&/g,"%26").replace(/ /g,'+')+'&date='+trip.departure.dateFormattedDashed+'&time='+trip.departure.timeFormatted+'" and xpath=\'//div[2]/div/p\'') + '&format=json';
   
    // Request that YSQL string, and run a callback function.  
   $.getJSON( yql, function(data) {
@@ -573,7 +570,6 @@ function calculateTransitTrip(start,end){
     if(data.query.count > 0){
       $("#transit").fadeIn();
       //Maybe we scraped a result
-      var d = new Date();
       trip.transit.summaryText = data.query.results.p[0];
       
       var option = 1;
@@ -585,7 +581,10 @@ function calculateTransitTrip(start,end){
             'fare' : (typeof data.query.results.p[i+1] == 'string' && data.query.results.p[i+1].substr(0,1)=='$') ? parseFloat(data.query.results.p[i+1].replace(/\$/g,''))*2 : "No Info",
             'transitTime' : data.query.results.p[i].content.match(/\(([^}]+)\)/)[1]
           };
-          trip.transit.routes[option].waitingTime = formatTimeDecimal(((parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(trip.transit.routes[option].startTime))>0) ? (parseTime(d.getHours()+":"+d.getMinutes()) - parseTime(trip.transit.routes[option].startTime))/(1000*60) : (parseTime(trip.transit.routes[option].startTime) - (parseTime(d.getHours()+":"+d.getMinutes())))/(1000*60));
+          var waitingTime = (Date.parse(dates.convert(trip.departure.dateFormattedSlashed+" "+time24(trip.transit.routes[option].startTime))) - Date.parse(trip.departuredate))/(60*1000);
+          //If negative that means the trip departs the next day, so add a day
+          waitingTime = (waitingTime<0) ? (waitingTime + 24*60) : waitingTime;
+          trip.transit.routes[option].waitingTime = formatTimeDecimal(waitingTime);
         
           trip.transit.cost = (trip.transit.cost > trip.transit.routes[option].fare || typeof(trip.transit.cost) == 'undefined') ? trip.transit.routes[option].fare : trip.transit.cost;
         
@@ -1133,10 +1132,7 @@ function calculateFlight(response){
 
           //Try hotwire API for Historical Flight Search
          //http://api.hotwire.com/v1/tripstarter/hotel?apikey='+hotwireAPIkey+'&price=*~75&sort=date&limit=1&format=json&jsoncallback=? 
-         var startdate = new Date();
-         startdate.setDate(trip.departuredate.getDate()-20)
-         var startdateformatted = (startdate.getMonth()+1) + "/" + startdate.getDate() + "/" + startdate.getFullYear();
-         $.getJSON('../php/hotwire_historical_flight.php?origin='+trip.flight.origin.airports.join('|')+'&dest='+trip.flight.dest.airports.join('|')+'&startdate='+startdateformatted,
+         $.getJSON('../php/hotwire_historical_flight.php?origin='+trip.flight.origin.airports.join('|')+'&dest='+trip.flight.dest.airports.join('|')+'&startdate='+trip.departure.dateFomattedSlashed,
            function(data) {
              if(data != null){
                if(data.Result != undefined){
