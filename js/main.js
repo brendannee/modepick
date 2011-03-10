@@ -4,170 +4,10 @@ var flightline;
 var trafficLayer;
 var popup;
 var trip = {};
-var ccsplans = {
-  "sharealittle": {
-    "title":"Share-a-Little",
-    "weekdayhourly":6.5,
-    "weekendhourly":7.5,
-    "mileagehourly":0.4,
-    "latenighthourly":6.5,
-    "weekdaydaily":54,
-    "weekenddaily":58,
-    "mileagedaily":0.1,
-    "dailymileagecap":200,
-    "mileageoverage":0.4
-  },
-  "sharelocal": {
-    "title":"ShareLocal",
-    "weekdayhourly":5.5,
-    "weekendhourly":6,
-    "mileagehourly":0.35,
-    "latenighthourly":1.5,
-    "weekdaydaily":48,
-    "weekenddaily":52,
-    "mileagedaily":0.1,
-    "dailymileagecap":200,
-    "mileageoverage":0.35
-  },
-  "shareplus": {
-    "title":"SharePlus",
-    "weekdayhourly":5.5,
-    "weekendhourly":6,
-    "mileagehourly":0.35,
-    "latenighthourly":0,
-    "weekdaydaily":48,
-    "weekenddaily":52,
-    "mileagedaily":0.1,
-    "dailymileagecap":200,
-    "mileageoverage":0.35
-  }
-}
-
-var zipcarplans = {
-  "occasional": {
-    "title":"Occasional",
-    "weekdayhourly":10,
-    "weekendhourly":10,
-    "mileagehourly":0,
-    "latenighthourly":10,
-    "weekdaydaily":81,
-    "weekenddaily":86,
-    "mileagedaily":0,
-    "dailymileagecap":180,
-    "mileageoverage":0.45,
-    "percentdiscount":0
-  },
-  "evp50": {
-    "title":"EVP $50",
-    "weekdayhourly":9,
-    "weekendhourly":9,
-    "mileagehourly":0,
-    "latenighthourly":9,
-    "weekdaydaily":72,
-    "weekenddaily":76,
-    "mileagedaily":0,
-    "dailymileagecap":180,
-    "mileageoverage":0.45,
-    "percentdiscount":10
-  },
-  "evp75": {
-    "title":"EVP $75",
-    "weekdayhourly":9,
-    "weekendhourly":9,
-    "mileagehourly":0,
-    "latenighthourly":9,
-    "weekdaydaily":72,
-    "weekenddaily":76,
-    "mileagedaily":0,
-    "dailymileagecap":180,
-    "mileageoverage":0.45,
-    "percentdiscount":10
-  },
-  "evp125": {
-    "title":"EVP $125",
-    "weekdayhourly":9,
-    "weekendhourly":9,
-    "mileagehourly":0,
-    "latenighthourly":9,
-    "weekdaydaily":72,
-    "weekenddaily":76,
-    "mileagedaily":0,
-    "dailymileagecap":180,
-    "mileageoverage":0.45,
-    "percentdiscount":10
-  },
-  "evp250": {
-    "title":"EVP $250",
-    "weekdayhourly":8.5,
-    "weekendhourly":8.5,
-    "mileagehourly":0,
-    "latenighthourly":5.95,
-    "weekdaydaily":68,
-    "weekenddaily":73,
-    "mileagedaily":0,
-    "dailymileagecap":180,
-    "mileageoverage":0.45,
-    "percentdiscount":15
-  }
-}
-var drivingcosts = {
-  "small sedan":{
-    "gas": 9.24,
-    "maintenance": 4.21,
-    "tires": 0.65,
-    "operatingcosts": 14.1,
-    "10000": 56.4,
-    "15000": 43.3,
-    "20000": 36.6
-  },
-  "medium sedan":{
-    "gas": 11.97,
-    "maintenance": 4.42,
-    "tires": 0.91,
-    "operatingcosts": 17.3,
-    "10000": 72.9,
-    "15000": 56.2,
-    "20000": 47.6
-  },
-  "large sedan":{
-    "gas": 12.88,
-    "maintenance": 5.0,
-    "tires": 0.94,
-    "operatingcosts": 18.82,
-    "10000": 92.6,
-    "15000": 70.2,
-    "20000": 58.6
-  },
-  "4wd sport utlity vehicle":{
-    "gas": 16.38,
-    "maintenance": 4.95,
-    "tires": 0.98,
-    "operatingcosts": 22.31,
-    "10000": 96.9,
-    "15000": 73.9,
-    "20000": 62.1
-  },
-  "minivan":{
-    "gas": 19.31,
-    "maintenance": 4.86,
-    "tires": 0.75,
-    "operatingcosts": 19.31,
-    "10000": 80.6,
-    "15000": 62.0,
-    "20000": 52.4
-  }
-}
-var cabfares = {
-  firstfifth:3.1,
-  additionalfifth:0.45,
-  waitingminute:.45,
-  tippercent:10
-}
-var uberfares = {
-  flag:8,
-  mileage:4.9,
-  idleminute:1.25
-}
+var costs = {};
+$.getJSON('js/costs.json', function(data){
+  costs = data;
+});
 
 function clearOverlays() {
   if (trip.markerArray) {
@@ -441,15 +281,15 @@ function calculateDriving(response){
 
    $("#driving .distance").html(formatDistance(drivingdistance));
    $("#driving .summary").append("<li>" + formatDistance(trip.onewaydistance) + " each way</li>");
-   $("#driving .summary").append("<li>Gas Cost: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["gas"]/100) + "</strong></li>");
-   $("#driving .summary").append("<li>Maintenence Cost: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["maintenance"]/100) + "</strong></li>");
-   $("#driving .summary").append("<li>Tires: <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["tires"]/100) + "</strong></li>");
-   $("#driving .summary").append("<li>Ownership Costs: <strong>" + formatCurrency(drivingdistance * (drivingcosts["medium sedan"]["15000"] - drivingcosts["medium sedan"]["operatingcosts"])/100) + "</strong></li>");
-   $("#driving .summary").append("<li><strong>Total Cost for " + formatDistance(drivingdistance) + ": <strong>" + formatCurrency(drivingdistance * drivingcosts["medium sedan"]["15000"]/100) + "</strong></li>");
+   $("#driving .summary").append("<li>Gas Cost: <strong>" + formatCurrency(drivingdistance * costs.driving["medium sedan"]["gas"]/100) + "</strong></li>");
+   $("#driving .summary").append("<li>Maintenence Cost: <strong>" + formatCurrency(drivingdistance * costs.driving["medium sedan"]["maintenance"]/100) + "</strong></li>");
+   $("#driving .summary").append("<li>Tires: <strong>" + formatCurrency(drivingdistance * costs.driving["medium sedan"]["tires"]/100) + "</strong></li>");
+   $("#driving .summary").append("<li>Ownership Costs: <strong>" + formatCurrency(drivingdistance * (costs.driving["medium sedan"]["15000"] - costs.driving["medium sedan"]["operatingcosts"])/100) + "</strong></li>");
+   $("#driving .summary").append("<li><strong>Total Cost for " + formatDistance(drivingdistance) + ": <strong>" + formatCurrency(drivingdistance * costs.driving["medium sedan"]["15000"]/100) + "</strong></li>");
    $("#driving .summary").append("<li>Costs based on medium sedan driving 15,000 mi/year, gas at $2.60/gallon and <a href='http://www.fuelcostcalculator.aaa.com'>assumptions from AAA</a></li>");
 
    $("#driving .time").html(formatTime(trip.drivingtime));
-   $("#driving .cost").html(formatCurrency(drivingdistance * drivingcosts["medium sedan"]["15000"]/100))
+   $("#driving .cost").html(formatCurrency(drivingdistance * costs.driving["medium sedan"]["15000"]/100))
 
    $("#driving .summary").append("<li><a id='traffic' href='' onClick='toggleTraffic();return false;' title='Show Current Traffic Conditions'>Show Current Traffic Conditions</a></li>");
 
@@ -662,7 +502,7 @@ function calculateTransitTrip(start,end){
 
 function calculateCCS(){
   trip.ccs = {
-    plan : ccsplans[$('#ccsplan').val()],
+    plan : costs.ccs[$('#ccsplan').val()],
     cost : 0,
     latenighttime : 0,
     weekendtime : 0,
@@ -881,7 +721,7 @@ function calculateCCS(){
 
 function calculateZipcar(){
   trip.zipcar = {
-    plan : zipcarplans[$('#zipcarplan').val()],
+    plan : costs.zipcar[$('#zipcarplan').val()],
     cost : 0,
     rates : {
       customHourly : $('#zipcarrate').val(),
@@ -1022,14 +862,14 @@ function calculateTaxi(){
     trafficpermile : 1.5
   }
   
-  trip.taxi.totalcost+= cabfares.firstfifth*2 + (cabfares.additionalfifth*((trip.distance-0.2)*5)) + cabfares.waitingminute*(trip.distance*trip.taxi.trafficpermile);
+  trip.taxi.totalcost+= costs.cabfares.firstfifth*2 + (costs.cabfares.additionalfifth*((trip.distance-0.2)*5)) + costs.cabfares.waitingminute*(trip.distance*trip.taxi.trafficpermile);
   //add tip
-  trip.taxi.tipamount = trip.taxi.totalcost*(cabfares.tippercent/100);
-  trip.taxi.totalcost = trip.taxi.totalcost*(1+(cabfares.tippercent/100));
+  trip.taxi.tipamount = trip.taxi.totalcost*(costs.cabfares.tippercent/100);
+  trip.taxi.totalcost = trip.taxi.totalcost*(1+(costs.cabfares.tippercent/100));
 
-  $('#taxiresult .summary').append("<li>Flag Drop x 2: <strong>"+formatCurrency(cabfares.firstfifth*2)+"</strong></li>");
-  $('#taxiresult .summary').append("<li>"+formatDistance(trip.distance)+" x $2.25 per mi: <strong>"+formatCurrency((cabfares.additionalfifth*((trip.distance-0.2)*5)))+"</strong></li>");
-  $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*trip.taxi.trafficpermile*10)/10)+" min): <strong>"+formatCurrency(cabfares.waitingminute*(trip.distance*trip.taxi.trafficpermile))+"</strong></li>");
+  $('#taxiresult .summary').append("<li>Flag Drop x 2: <strong>"+formatCurrency(costs.cabfares.firstfifth*2)+"</strong></li>");
+  $('#taxiresult .summary').append("<li>"+formatDistance(trip.distance)+" x $2.25 per mi: <strong>"+formatCurrency((costs.cabfares.additionalfifth*((trip.distance-0.2)*5)))+"</strong></li>");
+  $('#taxiresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*trip.taxi.trafficpermile*10)/10)+" min): <strong>"+formatCurrency(costs.cabfares.waitingminute*(trip.distance*trip.taxi.trafficpermile))+"</strong></li>");
   $('#taxiresult .summary').append("<li>10% Tip: <strong>"+formatCurrency(trip.taxi.tipamount)+"</strong></li>");
   $('#taxiresult .summary').append("<li class='total'>Taxi Total: <strong>"+formatCurrency(trip.taxi.totalcost)+"</strong></li>");
   
@@ -1049,16 +889,16 @@ function calculateUber(){
     trafficpermile : 1.5
   }
   
-  trip.uber.totalcost+= uberfares.flag*2 + (uberfares.mileage*trip.distance) + uberfares.idleminute*(trip.distance*trip.uber.trafficpermile);
+  trip.uber.totalcost+= costs.uberfares.flag*2 + (costs.uberfares.mileage*trip.distance) + costs.uberfares.idleminute*(trip.distance*trip.uber.trafficpermile);
   if(trip.uber.totalcost<30){
     //Minimum fare is $15 each way
     trip.uber.totalcost = 30;
     $('#uberresult .summary').append("<li>Minimum Fare $15 x 2: <strong>$30.00</strong></li>");
     $('#uberresult .summary').append("<li class='total'>Uber Total: <strong>$30.00</strong></li>");
   } else {
-    $('#uberresult .summary').append("<li>Flag Drop x 2: <strong>"+formatCurrency(uberfares.flag*2)+"</strong></li>");
-    $('#uberresult .summary').append("<li>"+formatDistance(trip.distance)+" x " + formatCurrency(uberfares.mileage) + " per mi: <strong>"+formatCurrency(uberfares.mileage*trip.distance)+"</strong></li>");
-    $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*trip.uber.trafficpermile*10)/10)+" min): <strong>"+formatCurrency(uberfares.idleminute*(trip.distance*trip.uber.trafficpermile))+"</strong></li>");
+    $('#uberresult .summary').append("<li>Flag Drop x 2: <strong>"+formatCurrency(costs.uberfares.flag*2)+"</strong></li>");
+    $('#uberresult .summary').append("<li>"+formatDistance(trip.distance)+" x " + formatCurrency(costs.uberfares.mileage) + " per mi: <strong>"+formatCurrency(costs.uberfares.mileage*trip.distance)+"</strong></li>");
+    $('#uberresult .summary').append("<li>Waiting in Traffic (~"+(Math.round(trip.distance*trip.uber.trafficpermile*10)/10)+" min): <strong>"+formatCurrency(costs.uberfares.idleminute*(trip.distance*trip.uber.trafficpermile))+"</strong></li>");
     $('#uberresult .summary').append("<li class='total'>Uber Total: <strong>"+formatCurrency(trip.uber.totalcost)+"</strong></li>");
   }
   $('#uberresult .cost').html(formatCurrency(trip.uber.totalcost));

@@ -1,0 +1,165 @@
+{
+  "ccs" : {
+    "sharealittle": {
+      "title":"Share-a-Little",
+      "weekdayhourly":6.5,
+      "weekendhourly":7.5,
+      "mileagehourly":0.4,
+      "latenighthourly":6.5,
+      "weekdaydaily":54,
+      "weekenddaily":58,
+      "mileagedaily":0.1,
+      "dailymileagecap":200,
+      "mileageoverage":0.4
+    },
+    "sharelocal": {
+      "title":"ShareLocal",
+      "weekdayhourly":5.5,
+      "weekendhourly":6,
+      "mileagehourly":0.35,
+      "latenighthourly":1.5,
+      "weekdaydaily":48,
+      "weekenddaily":52,
+      "mileagedaily":0.1,
+      "dailymileagecap":200,
+      "mileageoverage":0.35
+    },
+    "shareplus": {
+      "title":"SharePlus",
+      "weekdayhourly":5.5,
+      "weekendhourly":6,
+      "mileagehourly":0.35,
+      "latenighthourly":0,
+      "weekdaydaily":48,
+      "weekenddaily":52,
+      "mileagedaily":0.1,
+      "dailymileagecap":200,
+      "mileageoverage":0.35
+    }
+  },
+  "zipcar" : {
+    "occasional": {
+      "title":"Occasional",
+      "weekdayhourly":10,
+      "weekendhourly":10,
+      "mileagehourly":0,
+      "latenighthourly":10,
+      "weekdaydaily":81,
+      "weekenddaily":86,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":0
+    },
+    "evp50": {
+      "title":"EVP $50",
+      "weekdayhourly":9,
+      "weekendhourly":9,
+      "mileagehourly":0,
+      "latenighthourly":9,
+      "weekdaydaily":72,
+      "weekenddaily":76,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":10
+    },
+    "evp75": {
+      "title":"EVP $75",
+      "weekdayhourly":9,
+      "weekendhourly":9,
+      "mileagehourly":0,
+      "latenighthourly":9,
+      "weekdaydaily":72,
+      "weekenddaily":76,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":10
+    },
+    "evp125": {
+      "title":"EVP $125",
+      "weekdayhourly":9,
+      "weekendhourly":9,
+      "mileagehourly":0,
+      "latenighthourly":9,
+      "weekdaydaily":72,
+      "weekenddaily":76,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":10
+    },
+    "evp250": {
+      "title":"EVP $250",
+      "weekdayhourly":8.5,
+      "weekendhourly":8.5,
+      "mileagehourly":0,
+      "latenighthourly":5.95,
+      "weekdaydaily":68,
+      "weekenddaily":73,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":15
+    }
+  },
+  "driving": {
+    "small sedan":{
+      "gas": 9.24,
+      "maintenance": 4.21,
+      "tires": 0.65,
+      "operatingcosts": 14.1,
+      "10000": 56.4,
+      "15000": 43.3,
+      "20000": 36.6
+    },
+    "medium sedan":{
+      "gas": 11.97,
+      "maintenance": 4.42,
+      "tires": 0.91,
+      "operatingcosts": 17.3,
+      "10000": 72.9,
+      "15000": 56.2,
+      "20000": 47.6
+    },
+    "large sedan":{
+      "gas": 12.88,
+      "maintenance": 5.0,
+      "tires": 0.94,
+      "operatingcosts": 18.82,
+      "10000": 92.6,
+      "15000": 70.2,
+      "20000": 58.6
+    },
+    "4wd sport utlity vehicle":{
+      "gas": 16.38,
+      "maintenance": 4.95,
+      "tires": 0.98,
+      "operatingcosts": 22.31,
+      "10000": 96.9,
+      "15000": 73.9,
+      "20000": 62.1
+    },
+    "minivan":{
+      "gas": 19.31,
+      "maintenance": 4.86,
+      "tires": 0.75,
+      "operatingcosts": 19.31,
+      "10000": 80.6,
+      "15000": 62.0,
+      "20000": 52.4
+    }
+  },
+  "cabfares": {
+    "firstfifth":3.1,
+    "additionalfifth":0.45,
+    "waitingminute":0.45,
+    "tippercent":10
+  },
+  "uberfares": {
+    "flag":8,
+    "mileage":4.9,
+    "idleminute":1.25
+  }
+}

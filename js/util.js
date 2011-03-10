@@ -1,3 +1,4 @@
+
 function calculateDistance(lat1, lon1, lat2, lon2) {
     var radius = 3959.0; //Earth Radius in mi
     var radianLat1 = ToRadians(lat1);
@@ -47,7 +48,7 @@ var dates = {
   }
 }
 
-function formatTime(mins){
+formatTime = function(mins){
   if(mins>59){
     minshours = Math.round(mins/60*10)/10;
     if(minshours==1){
@@ -76,7 +77,7 @@ function formatCurrency(amount) {
   return "$"+s;
 }
 
-function formatDistance(length) {
+formatDistance = function(length) {
   var i = parseFloat(length);
   if(isNaN(i)) { i = 0; }
   var minus = '';
@@ -111,4 +112,14 @@ function getUrlVars() {
 		map[key] = value;
 	});
 	return map;
+}
+
+if(typeof(exports) != 'undefined'){
+  exports.formatDistance = formatDistance;
+  exports.formatTime = formatTime;
+  exports.ccsplans = ccsplans;
+  exports.zipcarplans = zipcarplans;
+  exports.drivingcosts = drivingcosts;
+  exports.cabfares = cabfares;
+  exports.uberfares = uberfares;
 }
