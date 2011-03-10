@@ -300,34 +300,33 @@ function calculateTrip(response) {
   
   //Create popup window
   popup = new google.maps.InfoWindow({maxWidth:200});
-
-  var onewaydistance = 0;
-  var onewaytime = 0;
-  var leg_count = response.routes[0].legs.length;
-  for (i = 0; i < leg_count; i++) {
-    //Convert to miles
-    onewaydistance += (response.routes[0].legs[i].distance.value/ 1609.);
-    onewaytime += response.routes[0].legs[i].duration.value/60;
-  }
   
   //Reset Trip
-  trip = {};
-  trip.markerArray = [];
+  trip = {
+    markerArray : [],
+    departure_date : dates.convert($('#departure_date').val()+" "+$('#departure_time').val()),
+    end_date : dates.convert($('#end_date').val()+" "+$('#end_time').val()),
+    passengers : Number($('#passengers').val()),
+    onewaydistance : 0,
+    onewaytime : 0
+  }
   
-  //Get basic trip stats
-  trip.departure_date=dates.convert($('#departure_date').val()+" "+$('#departure_time').val());
+  for (i = 0; i < response.routes[0].legs.length; i++) {
+    //Convert to miles
+    trip.onewaydistance += (response.routes[0].legs[i].distance.value/ 1609.);
+    trip.onewaytime += response.routes[0].legs[i].duration.value/60;
+  }
+  
   trip.departure = {};
   trip.departure.day = (trip.departure_date.getDate()<10) ? "0"+trip.departure_date.getDate() : trip.departure_date.getDate();
   trip.departure.month = ((trip.departure_date.getMonth()+1)<10) ? "0"+(trip.departure_date.getMonth()+1) : (trip.departure_date.getMonth()+1);
   trip.departure.dateFormattedDashed = trip.departure_date.getFullYear() + '-' + trip.departure.month + '-' + trip.departure.day;
   trip.departure.dateFormattedSlashed = trip.departure.month + '/' + trip.departure.day + '/' + trip.departure_date.getFullYear();
   trip.departure.timeFormatted = trip.departure_date.getHours() + ':' + trip.departure_date.getMinutes();
-  trip.end_date=dates.convert($('#end_date').val()+" "+$('#end_time').val());
   trip.totaltime = (trip.end_date-trip.departure_date)/(1000*60); //Total trip time in minutes
-  trip.distance = Math.round(onewaydistance*2*10)/10;
-  trip.onewaydistance = Math.round(onewaydistance*10)/10;
-  trip.passengers = Number($('#passengers').val());
-  trip.drivingtime = onewaytime*2; //Traveling time by driving in minutes
+  trip.distance = Math.round(trip.onewaydistance*2*10)/10;
+  trip.onewaydistance = Math.round(trip.onewaydistance*10)/10;
+  trip.drivingtime = trip.onewaytime*2; //Traveling time by driving in minutes
   
   //Allow City Carshare and Uber if within 15 miles of San Francisco
   //San Francisco Area lat lon
@@ -390,7 +389,7 @@ function calculateTrip(response) {
   
   var request = {
     origin: response.routes[0].legs[0].start_address,
-    destination: response.routes[0].legs[leg_count-1].end_address,
+    destination: response.routes[0].legs[response.routes[0].legs.length-1].end_address,
     waypoints: waypoints,
     travelMode: google.maps.DirectionsTravelMode.WALKING
   };
@@ -403,7 +402,7 @@ function calculateTrip(response) {
   //Do Biking Directions
   var request = {
     origin: response.routes[0].legs[0].start_address,
-    destination: response.routes[0].legs[leg_count-1].end_address,
+    destination: response.routes[0].legs[response.routes[0].legs.length-1].end_address,
     waypoints: waypoints,
     travelMode: google.maps.DirectionsTravelMode.BICYCLING
   };
@@ -416,7 +415,7 @@ function calculateTrip(response) {
   //Do Transit Directions 
   //Use lat lon coordinates to avoid issues with start/end names - need space between coordinates
   calculateTransitTrip(response.routes[0].legs[0].start_location.lat()+", "+response.routes[0].legs[0].start_location.lng(),
-  response.routes[0].legs[leg_count-1].end_location.lat()+", "+response.routes[0].legs[leg_count-1].end_location.lng());
+  response.routes[0].legs[response.routes[0].legs.length-1].end_location.lat()+", "+response.routes[0].legs[response.routes[0].legs.length-1].end_location.lng());
   
   //Rename "Transit" to "Amtrak" if more than 60 miles
   $('#transit h3').html((trip.onewaydistance>60) ? "Amtrak" : "Transit");
@@ -662,13 +661,13 @@ function calculateTransitTrip(start,end){
 }
 
 function calculateCCS(){
-  trip.ccs = {};
-  trip.ccs.plan = ccsplans[$('#ccsplan').val()];
-  trip.ccs.cost=0;
-  trip.ccs.latenighttime = 0;
-  trip.ccs.weekendtime = 0;
-  trip.ccs.weekendtime2 = 0;
-  
+  trip.ccs = {
+    plan : ccsplans[$('#ccsplan').val()],
+    cost : 0,
+    latenighttime : 0,
+    weekendtime : 0,
+    weekendtime2 : 0
+  }
   //Calculate number of minutes from midnight Monday
   //Shift getDay function by one day
   startday = (trip.departure_date.getDay()==0) ? 6 : trip.departure_date.getDay()-1;
@@ -684,7 +683,6 @@ function calculateCCS(){
   
   //Calculate CCS Times
   //Assume no reservtions over 7 days length
-  
   
   //Calculate latenight time
   departuremidnight = new Date(trip.departure_date.getFullYear(),trip.departure_date.getMonth(),trip.departure_date.getDate());
@@ -1006,22 +1004,23 @@ function calculateZipcar(){
 }
 
 function estimateZipcarHourCost(){  
-  zipcarhour = {};
-  zipcarhour.cost = 0;
-  zipcarhour.time = trip.totaltime % (24*60);
-  zipcarhour.rate = (isNaN(trip.zipcar.rates.customHourly) || trip.zipcar.rates.customHourly=='') ? trip.zipcar.plan.weekdayhourly : trip.zipcar.rates.customHourly;
-  
+  zipcarhour = {
+    cost : 0,
+    time : trip.totaltime % (24*60),
+    rate : (isNaN(trip.zipcar.rates.customHourly) || trip.zipcar.rates.customHourly=='') ? trip.zipcar.plan.weekdayhourly : trip.zipcar.rates.customHourly
+  }
   zipcarhour.cost += zipcarhour.rate * ((zipcarhour.time - trip.zipcar.weekendtime)/60) + zipcarhour.rate * (trip.zipcar.weekendtime/60);
   
   return zipcarhour;
 }
 
 function calculateTaxi(){ 
-  trip.taxi = {};
-  trip.taxi.totalcost = 0;
   
   //Taxi (assume 1.5 minute of waiting per mile)
-  trip.taxi.trafficpermile = 1.5;
+  trip.taxi = {
+    totalcost : 0,
+    trafficpermile : 1.5
+  }
   
   trip.taxi.totalcost+= cabfares.firstfifth*2 + (cabfares.additionalfifth*((trip.distance-0.2)*5)) + cabfares.waitingminute*(trip.distance*trip.taxi.trafficpermile);
   //add tip
@@ -1043,11 +1042,12 @@ function calculateTaxi(){
 }  
 
 function calculateUber(){ 
-  trip.uber = {};
-  trip.uber.totalcost = 0;
   
   //Uber (assume 1.5 minute of waiting per mile)
-  trip.uber.trafficpermile = 1.5;
+  trip.uber = {
+    totalcost : 0,
+    trafficpermile : 1.5
+  }
   
   trip.uber.totalcost+= uberfares.flag*2 + (uberfares.mileage*trip.distance) + uberfares.idleminute*(trip.distance*trip.uber.trafficpermile);
   if(trip.uber.totalcost<30){
@@ -1073,7 +1073,15 @@ function calculateFlight(response){
   $('#flightresult .distance').html('');
   $('#flightresult .time').html('');
   flightline.setMap(null);
-  trip.flight = {};
+  trip.flight = {
+    origin : {
+      airports : []
+    },
+    dest : {
+      airports : []
+    },
+    distance : calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng())
+  }
   
   //YQL to travelmath.com for closest airports
   //https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22http%3A%2F%2Fwww.travelmath.com%2Fclosest-airport%2F37.766618%2C-122.41676%22%20and%20xpath%3D'%2F%2Fa%5B%40name%3D%22international-airports%22%5D%2F..%2Fp'&format=json&diagnostics=true&callback=cbfunc
@@ -1082,14 +1090,6 @@ function calculateFlight(response){
   var BASE_URI = 'http://query.yahooapis.com/v1/public/yql?q=';  
   var originAirportURL = BASE_URI + encodeURIComponent('select * from html where url="http://www.travelmath.com/closest-airport/'+response.routes[0].legs[0].start_location.lat()+','+response.routes[0].legs[0].start_location.lng()+'" and xpath=\'//a[@name="international-airports"]/../p\'') + '&format=json';
   var destAirportURL = BASE_URI + encodeURIComponent('select * from html where url="http://www.travelmath.com/closest-airport/'+response.routes[0].legs[0].end_location.lat()+','+response.routes[0].legs[0].end_location.lng()+'" and xpath=\'//a[@name="international-airports"]/../p\'') + '&format=json';
-  
-  trip.flight.origin = {};
-  trip.flight.dest = {};
-  trip.flight.origin.airports = [];
-  trip.flight.dest.airports = [];
-  
-  
-  trip.flight.distance = calculateDistance(response.routes[0].legs[0].end_location.lat(), response.routes[0].legs[0].end_location.lng(),response.routes[0].legs[0].start_location.lat(), response.routes[0].legs[0].start_location.lng());
   
    // Request that YSQL string, and run a callback function.  
   $.getJSON(originAirportURL, cbfunc1);  
