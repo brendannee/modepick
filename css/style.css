@@ -718,7 +718,7 @@ ul.ccs li#podAddy {
   font-size:14px;
 }
 
-#start_startlocation, #start_destinationlocation{
+#start_start_location, #start_end_location{
   width:470px;
   padding:10px;
   margin-bottom:5px;
