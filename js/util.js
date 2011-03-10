@@ -49,37 +49,11 @@ var dates = {
 
 function formatTime(mins){
   if(mins>59){
-    minshours = Math.floor(mins/60);
-    minsmins = Math.floor(mins%60);
-    if(minshours==1){
-      if(minsmins>0){
-        return "1 hour " + minsmins + " mins";
-      } else{
-        return "1 hour";
-      }
-    } else{
-      if(minsmins>0){
-        return minshours + " hours " + minsmins + " mins";
-      } else {
-        return minshours + " hours";
-      }
-    }
-  } else {
-    return Math.floor(mins) + " mins";
-  }
-}
-
-function formatTimeDecimal(mins){
-  if(mins>59){
     minshours = Math.round(mins/60*10)/10;
     if(minshours==1){
       return "1 hr";
     }else{
-      if(minshours<50){
-        return minshours+" hrs";
-      } else {
-        return Math.round(minshours)+" hrs";
-      }
+      return (minshours<50) ? minshours+" hrs" : Math.round(minshours)+" hrs"
     }
   } else {
     return Math.floor(mins) + " mins";
@@ -115,11 +89,7 @@ function formatDistance(length) {
   if(s.indexOf('.') == (s.length - 1)) { s += '0'; }
   if(i>100) { s = Math.round(s); }
   s = minus + s;
-  if(i<1) { 
-    s = Math.round(i*5280) + " ft"; 
-  } else {
-    s = s + " mi";
-  }
+  s = (i<1) ? Math.round(i*5280) + " ft" : s + " mi";
   return s;
 }
 
