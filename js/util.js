@@ -1,51 +1,49 @@
-
-function calculateDistance(lat1, lon1, lat2, lon2) {
-    var radius = 3959.0; //Earth Radius in mi
-    var radianLat1 = ToRadians(lat1);
-    var radianLon1 = ToRadians(lon1);
-    var radianLat2 = ToRadians(lat2);
-    var radianLon2 = ToRadians(lon2);
-    var radianDistanceLat = radianLat1 - radianLat2;
-    var radianDistanceLon = radianLon1 - radianLon2;
-    var sinLat = Math.sin(radianDistanceLat / 2.0);
-    var sinLon = Math.sin(radianDistanceLon / 2.0);
-    var a = Math.pow(sinLat, 2.0) + Math.cos(radianLat1) * Math.cos(radianLat2) * Math.pow(sinLon, 2.0);
-    var d = radius * 2 * Math.asin(Math.min(1, Math.sqrt(a)));
-    return d;
-}
-
-function ToRadians(degree) {
-  return (degree * (Math.PI / 180));
-}
-
-var dates = {
-  convert:function(d) {
-    return (
-      d.constructor === Date ? d :
-      d.constructor === Array ? new Date(d[0],d[1],d[2]) :
-      d.constructor === Number ? new Date(d) :
-      d.constructor === String ? new Date(d) :
-      typeof d === "object" ? new Date(d.year,d.month,d.date) :
-      NaN
-    );
-  },
-  compare:function(a,b) {
-    return (
-      isFinite(a=this.convert(a).valueOf()) &&
-      isFinite(b=this.convert(b).valueOf()) ?
-      (a>b)-(a<b) :
-      NaN
-    );
-  },
-  inRange:function(d,start,end) {
-    return (
-      isFinite(d=this.convert(d).valueOf()) &&
-      isFinite(start=this.convert(start).valueOf()) &&
-      isFinite(end=this.convert(end).valueOf()) ?
-      start <= d && d <= end :
-      NaN
-    );
+calculateDistance = function(lat1, lon1, lat2, lon2) {
+  function ToRadians(degree) {
+    return (degree * (Math.PI / 180));
   }
+  var radius = 3959.0; //Earth Radius in mi
+  var radianLat1 = ToRadians(lat1);
+  var radianLon1 = ToRadians(lon1);
+  var radianLat2 = ToRadians(lat2);
+  var radianLon2 = ToRadians(lon2);
+  var radianDistanceLat = radianLat1 - radianLat2;
+  var radianDistanceLon = radianLon1 - radianLon2;
+  var sinLat = Math.sin(radianDistanceLat / 2.0);
+  var sinLon = Math.sin(radianDistanceLon / 2.0);
+  var a = Math.pow(sinLat, 2.0) + Math.cos(radianLat1) * Math.cos(radianLat2) * Math.pow(sinLon, 2.0);
+  var d = radius * 2 * Math.asin(Math.min(1, Math.sqrt(a)));
+  return d;
+}
+
+convertDates = function(d) {
+  return (
+    d.constructor === Date ? d :
+    d.constructor === Array ? new Date(d[0],d[1],d[2]) :
+    d.constructor === Number ? new Date(d) :
+    d.constructor === String ? new Date(d) :
+    typeof d === "object" ? new Date(d.year,d.month,d.date) :
+    NaN
+  );
+}
+  
+compareDates = function(a,b) {
+  return (
+    isFinite(a=convertDates(a).valueOf()) &&
+    isFinite(b=convertDates(b).valueOf()) ?
+    (a>b)-(a<b) :
+    NaN
+  );
+}
+
+inRangeDates = function(d,start,end) {
+  return (
+    isFinite(d=convertDates(d).valueOf()) &&
+    isFinite(start=convertDates(start).valueOf()) &&
+    isFinite(end=convertDates(end).valueOf()) ?
+    start <= d && d <= end :
+    NaN
+  );
 }
 
 formatTime = function(mins){
@@ -61,7 +59,7 @@ formatTime = function(mins){
   }
 }
 
-function formatCurrency(amount) {
+formatCurrency = function(amount) {
   var i = parseFloat(amount);
   if(isNaN(i)) { i = 0.00; }
   var minus = '';
@@ -94,7 +92,7 @@ formatDistance = function(length) {
   return s;
 }
 
-function time24(str) {
+time24 = function(str) {
   var hour = str.substring(0, str.indexOf(':'));
   var minute = str.substr(str.indexOf(':') + 1, 2);
   if(str.indexOf('pm') > 0){
@@ -106,20 +104,13 @@ function time24(str) {
   return ((hour < 12) ? "0" : "") + hour + ":" + minute;
 }
 
-function getUrlVars() {
-	var map = {};
-	var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
-		map[key] = value;
-	});
-	return map;
-}
-
 if(typeof(exports) != 'undefined'){
-  exports.formatDistance = formatDistance;
+  exports.calculateDistance = calculateDistance;
+  exports.convertDates = convertDates;
+  exports.compareDates = compareDates;
+  exports.inRangeDates = inRangeDates;
   exports.formatTime = formatTime;
-  exports.ccsplans = ccsplans;
-  exports.zipcarplans = zipcarplans;
-  exports.drivingcosts = drivingcosts;
-  exports.cabfares = cabfares;
-  exports.uberfares = uberfares;
+  exports.formatDistance = formatDistance;
+  exports.formatCurrency = formatCurrency;
+  exports.time24 = time24;
 }

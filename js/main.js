@@ -5,9 +5,175 @@ var trafficLayer;
 var popup;
 var trip = {};
 var costs = {};
-$.getJSON('js/costs.json', function(data){
+/*$.getJSON('costs.json', function(data){
   costs = data;
-});
+});*/
+costs = {
+  "ccs" : {
+    "sharealittle": {
+      "title":"Share-a-Little",
+      "weekdayhourly":6.5,
+      "weekendhourly":7.5,
+      "mileagehourly":0.4,
+      "latenighthourly":6.5,
+      "weekdaydaily":54,
+      "weekenddaily":58,
+      "mileagedaily":0.1,
+      "dailymileagecap":200,
+      "mileageoverage":0.4
+    },
+    "sharelocal": {
+      "title":"ShareLocal",
+      "weekdayhourly":5.5,
+      "weekendhourly":6,
+      "mileagehourly":0.35,
+      "latenighthourly":1.5,
+      "weekdaydaily":48,
+      "weekenddaily":52,
+      "mileagedaily":0.1,
+      "dailymileagecap":200,
+      "mileageoverage":0.35
+    },
+    "shareplus": {
+      "title":"SharePlus",
+      "weekdayhourly":5.5,
+      "weekendhourly":6,
+      "mileagehourly":0.35,
+      "latenighthourly":0,
+      "weekdaydaily":48,
+      "weekenddaily":52,
+      "mileagedaily":0.1,
+      "dailymileagecap":200,
+      "mileageoverage":0.35
+    }
+  },
+  "zipcar" : {
+    "occasional": {
+      "title":"Occasional",
+      "weekdayhourly":10,
+      "weekendhourly":10,
+      "mileagehourly":0,
+      "latenighthourly":10,
+      "weekdaydaily":81,
+      "weekenddaily":86,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":0
+    },
+    "evp50": {
+      "title":"EVP $50",
+      "weekdayhourly":9,
+      "weekendhourly":9,
+      "mileagehourly":0,
+      "latenighthourly":9,
+      "weekdaydaily":72,
+      "weekenddaily":76,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":10
+    },
+    "evp75": {
+      "title":"EVP $75",
+      "weekdayhourly":9,
+      "weekendhourly":9,
+      "mileagehourly":0,
+      "latenighthourly":9,
+      "weekdaydaily":72,
+      "weekenddaily":76,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":10
+    },
+    "evp125": {
+      "title":"EVP $125",
+      "weekdayhourly":9,
+      "weekendhourly":9,
+      "mileagehourly":0,
+      "latenighthourly":9,
+      "weekdaydaily":72,
+      "weekenddaily":76,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":10
+    },
+    "evp250": {
+      "title":"EVP $250",
+      "weekdayhourly":8.5,
+      "weekendhourly":8.5,
+      "mileagehourly":0,
+      "latenighthourly":5.95,
+      "weekdaydaily":68,
+      "weekenddaily":73,
+      "mileagedaily":0,
+      "dailymileagecap":180,
+      "mileageoverage":0.45,
+      "percentdiscount":15
+    }
+  },
+  "driving": {
+    "small sedan":{
+      "gas": 9.24,
+      "maintenance": 4.21,
+      "tires": 0.65,
+      "operatingcosts": 14.1,
+      "10000": 56.4,
+      "15000": 43.3,
+      "20000": 36.6
+    },
+    "medium sedan":{
+      "gas": 11.97,
+      "maintenance": 4.42,
+      "tires": 0.91,
+      "operatingcosts": 17.3,
+      "10000": 72.9,
+      "15000": 56.2,
+      "20000": 47.6
+    },
+    "large sedan":{
+      "gas": 12.88,
+      "maintenance": 5.0,
+      "tires": 0.94,
+      "operatingcosts": 18.82,
+      "10000": 92.6,
+      "15000": 70.2,
+      "20000": 58.6
+    },
+    "4wd sport utlity vehicle":{
+      "gas": 16.38,
+      "maintenance": 4.95,
+      "tires": 0.98,
+      "operatingcosts": 22.31,
+      "10000": 96.9,
+      "15000": 73.9,
+      "20000": 62.1
+    },
+    "minivan":{
+      "gas": 19.31,
+      "maintenance": 4.86,
+      "tires": 0.75,
+      "operatingcosts": 19.31,
+      "10000": 80.6,
+      "15000": 62.0,
+      "20000": 52.4
+    }
+  },
+  "cabfares": {
+    "firstfifth":3.1,
+    "additionalfifth":0.45,
+    "waitingminute":0.45,
+    "tippercent":10
+  },
+  "uberfares": {
+    "flag":8,
+    "mileage":4.9,
+    "idleminute":1.25
+  }
+}
+
 
 function clearOverlays() {
   if (trip.markerArray) {
@@ -144,8 +310,8 @@ function calculateTrip(response) {
   //Reset Trip
   trip = {
     markerArray : [],
-    departure_date : dates.convert($('#departure_date').val()+" "+$('#departure_time').val()),
-    end_date : dates.convert($('#end_date').val()+" "+$('#end_time').val()),
+    start_date : convertDates($('#start_date').val()+" "+$('#start_time').val()),
+    end_date : convertDates($('#end_date').val()+" "+$('#end_time').val()),
     passengers : Number($('#passengers').val()),
     onewaydistance : 0,
     onewaytime : 0
@@ -158,12 +324,12 @@ function calculateTrip(response) {
   }
   
   trip.departure = {};
-  trip.departure.day = (trip.departure_date.getDate()<10) ? "0"+trip.departure_date.getDate() : trip.departure_date.getDate();
-  trip.departure.month = ((trip.departure_date.getMonth()+1)<10) ? "0"+(trip.departure_date.getMonth()+1) : (trip.departure_date.getMonth()+1);
-  trip.departure.dateFormattedDashed = trip.departure_date.getFullYear() + '-' + trip.departure.month + '-' + trip.departure.day;
-  trip.departure.dateFormattedSlashed = trip.departure.month + '/' + trip.departure.day + '/' + trip.departure_date.getFullYear();
-  trip.departure.timeFormatted = trip.departure_date.getHours() + ':' + trip.departure_date.getMinutes();
-  trip.totaltime = (trip.end_date-trip.departure_date)/(1000*60); //Total trip time in minutes
+  trip.departure.day = (trip.start_date.getDate()<10) ? "0"+trip.start_date.getDate() : trip.start_date.getDate();
+  trip.departure.month = ((trip.start_date.getMonth()+1)<10) ? "0"+(trip.start_date.getMonth()+1) : (trip.start_date.getMonth()+1);
+  trip.departure.dateFormattedDashed = trip.start_date.getFullYear() + '-' + trip.departure.month + '-' + trip.departure.day;
+  trip.departure.dateFormattedSlashed = trip.departure.month + '/' + trip.departure.day + '/' + trip.start_date.getFullYear();
+  trip.departure.timeFormatted = trip.start_date.getHours() + ':' + trip.start_date.getMinutes();
+  trip.totaltime = (trip.end_date-trip.start_date)/(1000*60); //Total trip time in minutes
   trip.distance = Math.round(trip.onewaydistance*2*10)/10;
   trip.onewaydistance = Math.round(trip.onewaydistance*10)/10;
   trip.drivingtime = trip.onewaytime*2; //Traveling time by driving in minutes
@@ -264,7 +430,7 @@ function calculateTrip(response) {
   $("#results").show(); 
   
   //Create Permalink URL
-	linkURL = "?saddr=" + $('#start_location').val().replace(/&/g, "and").replace(/ /g, "+") + "&daddr=" + $('#end_location').val().replace(/&/g, "and").replace(/ /g, "+") + "&stime=" + $("#departure_time").val() + "&sdate="  + $("#departure_date").val() + "&etime=" + $("#end_time").val() + "&edate="  + $("#end_date").val() + "&ccsplan=" + $("#ccsplan").val() + "&zipcarplan=" + $("#zipcarplan").val() + "&zipcarrate=" + $("#zipcarrate").val() + "&zipcardailyrate=" + $("#zipcardailyrate").val() + "&passengers=" + $("#passengers").val();
+	linkURL = "?saddr=" + $('#start_location').val().replace(/&/g, "and").replace(/ /g, "+") + "&daddr=" + $('#end_location').val().replace(/&/g, "and").replace(/ /g, "+") + "&stime=" + $("#start_time").val() + "&sdate="  + $("#start_date").val() + "&etime=" + $("#end_time").val() + "&edate="  + $("#end_date").val() + "&ccsplan=" + $("#ccsplan").val() + "&zipcarplan=" + $("#zipcarplan").val() + "&zipcarrate=" + $("#zipcarrate").val() + "&zipcardailyrate=" + $("#zipcardailyrate").val() + "&passengers=" + $("#passengers").val();
 	
   //Add Permalink Control on top of map
 	$("#permalink").html("<a href='" + linkURL + "' title='Direct Link to this trip'><img src='images/link.png'> Permalink to Route</a>");
@@ -405,7 +571,7 @@ function calculateTransitTrip(start,end){
             trip.transit.routes[option].transitTime = parseInt(d[0])*2;
           }
           
-          var waitingTime = (Date.parse(dates.convert(trip.departure.dateFormattedSlashed+" "+time24(trip.transit.routes[option].startTime))) - Date.parse(trip.departure_date))/(60*1000);
+          var waitingTime = (Date.parse(convertDates(trip.departure.dateFormattedSlashed+" "+time24(trip.transit.routes[option].startTime))) - Date.parse(trip.start_date))/(60*1000);
           //If negative that means the trip departs the next day, so add a day
           waitingTime = (waitingTime<0) ? (waitingTime + 24*60) : waitingTime;
           trip.transit.routes[option].waitingTime = formatTime(waitingTime);
@@ -510,8 +676,8 @@ function calculateCCS(){
   }
   //Calculate number of minutes from midnight Monday
   //Shift getDay function by one day
-  startday = (trip.departure_date.getDay()==0) ? 6 : trip.departure_date.getDay()-1;
-  departurecode = startday*(24*60) + trip.departure_date.getHours()*60 + trip.departure_date.getMinutes();
+  startday = (trip.start_date.getDay()==0) ? 6 : trip.start_date.getDay()-1;
+  departurecode = startday*(24*60) + trip.start_date.getHours()*60 + trip.start_date.getMinutes();
   endday = (trip.end_date.getDay()==0) ? 6 : trip.end_date.getDay()-1;
 
   returncode = endday*(24*60) + trip.end_date.getHours()*60 + trip.end_date.getMinutes();
@@ -525,28 +691,28 @@ function calculateCCS(){
   //Assume no reservtions over 7 days length
   
   //Calculate latenight time
-  departuremidnight = new Date(trip.departure_date.getFullYear(),trip.departure_date.getMonth(),trip.departure_date.getDate());
+  departuremidnight = new Date(trip.start_date.getFullYear(),trip.start_date.getMonth(),trip.start_date.getDate());
   returnmidnight = new Date(trip.end_date.getFullYear(),trip.end_date.getMonth(),trip.end_date.getDate());
-    if(trip.departure_date.getHours()<8){
+    if(trip.start_date.getHours()<8){
     //departure time before 8 AM
-    if(trip.end_date.getDate()==trip.departure_date.getDate()){
+    if(trip.end_date.getDate()==trip.start_date.getDate()){
       //Return is same day
       if(trip.end_date.getHours()<8){
         //depart and return before 8 AM
-        trip.ccs.latenighttime += (trip.end_date-trip.departure_date)/(1000*60);
+        trip.ccs.latenighttime += (trip.end_date-trip.start_date)/(1000*60);
       }
       else {
         //Return after 8 AM
-        trip.ccs.latenighttime += (8*60)-((trip.departure_date-departuremidnight)/(1000*60));
+        trip.ccs.latenighttime += (8*60)-((trip.start_date-departuremidnight)/(1000*60));
       }
     } else {
       //Return is next day
-      trip.ccs.latenighttime += (8*60)-((trip.departure_date-departuremidnight)/(1000*60));
+      trip.ccs.latenighttime += (8*60)-((trip.start_date-departuremidnight)/(1000*60));
       trip.ccs.latenighttime += (trip.end_date-returnmidnight)/(1000*60);
     }
   } else {
     //Departure is after 8 AM
-    if(trip.end_date.getDate()==trip.departure_date.getDate()){
+    if(trip.end_date.getDate()==trip.start_date.getDate()){
       //Return is same day, no late night
     } else {
       //Return is next day
@@ -562,11 +728,11 @@ function calculateCCS(){
   }
   
   //Weekend calculation for CCS with weeknights
-  if(trip.departure_date.getDay()==5){
+  if(trip.start_date.getDay()==5){
     //departure day is friday
-    if(trip.end_date.getDate()==trip.departure_date.getDate()){
+    if(trip.end_date.getDate()==trip.start_date.getDate()){
       //Return is same day
-      if(trip.departure_date.getHours()<17){
+      if(trip.start_date.getHours()<17){
         //depart before 5 PM
         if(trip.end_date.getHours()>=17){
           //return after 5 PM
@@ -574,107 +740,107 @@ function calculateCCS(){
         }
       } else {
         //Depart after 5 PM
-        trip.ccs.weekendtime += (trip.end_date-trip.departure_date)/(1000*60);
+        trip.ccs.weekendtime += (trip.end_date-trip.start_date)/(1000*60);
       }
     } else {
       //Return is next day
-      if(trip.departure_date.getHours()<17){
+      if(trip.start_date.getHours()<17){
         //depart before 5 PM
         trip.ccs.weekendtime += (7*60);
       } else {
         //depart after 5 PM
-        trip.ccs.weekendtime += (24*60)-((trip.departure_date-departuremidnight)/(1000*60));
+        trip.ccs.weekendtime += (24*60)-((trip.start_date-departuremidnight)/(1000*60));
       }
       if(trip.end_date.getHours()>=8){
         trip.ccs.weekendtime += ((trip.end_date-returnmidnight)/(1000*60))-(8*60);
       }
     }
-  } else if(trip.departure_date.getDay()==6){
+  } else if(trip.start_date.getDay()==6){
     //departure day is Saturday
-    if(trip.end_date.getDate()==trip.departure_date.getDate()){
+    if(trip.end_date.getDate()==trip.start_date.getDate()){
       //Return is same day
-      if(trip.departure_date.getHours()<8){
+      if(trip.start_date.getHours()<8){
         //depart before 8 AM
         if(trip.end_date.getHours()>=8){
           //return after 8 AM
-          trip.ccs.weekendtime += ((trip.end_date-trip.departure_date)/(1000*60)) - ((8*60)-((trip.departure_date-departuremidnight)/(1000*60)));
+          trip.ccs.weekendtime += ((trip.end_date-trip.start_date)/(1000*60)) - ((8*60)-((trip.start_date-departuremidnight)/(1000*60)));
         }
       } else {
         //Depart after 8 AM
-        trip.ccs.weekendtime += (trip.end_date-trip.departure_date)/(1000*60);
+        trip.ccs.weekendtime += (trip.end_date-trip.start_date)/(1000*60);
       }
     } else {
       //Return is next day
-      if(trip.departure_date.getHours()<8){
+      if(trip.start_date.getHours()<8){
         //depart before 8 AM, return must be before 8 AM
         trip.ccs.weekendtime += (16*60);
       } else{
         //departure after 8 AM
         if(trip.end_date.getHours()<8){
           //return before 8 AM
-          trip.ccs.weekendtime += (24*60)-((trip.departure_date-departuremidnight)/(1000*60));
+          trip.ccs.weekendtime += (24*60)-((trip.start_date-departuremidnight)/(1000*60));
         } else {
           //return after 8 AM
-          trip.ccs.weekendtime += (24*60)-((trip.departure_date-departuremidnight)/(1000*60));
+          trip.ccs.weekendtime += (24*60)-((trip.start_date-departuremidnight)/(1000*60));
           trip.ccs.weekendtime += ((trip.end_date-returnmidnight)/(1000*60))-(8*60);
         }
       }
     }
-  } else if(trip.departure_date.getDay()==0){
+  } else if(trip.start_date.getDay()==0){
     //departure day is Sunday
-    if(trip.end_date.getDate()==trip.departure_date.getDate()){
+    if(trip.end_date.getDate()==trip.start_date.getDate()){
       //Return is same day
-      if(trip.departure_date.getHours()<8){
+      if(trip.start_date.getHours()<8){
         //depart before 8 AM
         if(trip.end_date.getHours()>=8){
           //return after 8 AM
-          trip.ccs.weekendtime += ((trip.end_date-trip.departure_date)/(1000*60)) - ((8*60)-((trip.departure_date-departuremidnight)/(1000*60)));
+          trip.ccs.weekendtime += ((trip.end_date-trip.start_date)/(1000*60)) - ((8*60)-((trip.start_date-departuremidnight)/(1000*60)));
         }
       } else {
         //Depart after 8 AM
-        trip.ccs.weekendtime += (trip.end_date-trip.departure_date)/(1000*60);
+        trip.ccs.weekendtime += (trip.end_date-trip.start_date)/(1000*60);
       }
     } else {
       //Return is next day
-      if(trip.departure_date.getHours()<8){
+      if(trip.start_date.getHours()<8){
         //depart before 8 AM, return must be before 8 AM
         trip.ccs.weekendtime += (16*60);
       } else{
         //departure after 8 AM
-        trip.ccs.weekendtime += (24*60)-((trip.departure_date-departuremidnight)/(1000*60));
+        trip.ccs.weekendtime += (24*60)-((trip.start_date-departuremidnight)/(1000*60));
       }
     }
   }
   
   //Weekend calculation CCS with no weeknights
-  if(trip.departure_date.getDay()==5){
+  if(trip.start_date.getDay()==5){
     //departure day is friday
-   if(trip.departure_date.getHours()<17){
+   if(trip.start_date.getHours()<17){
       //depart before 5 PM
-      if(trip.end_date.getHours()>=17 || trip.end_date.getDate()!=trip.departure_date.getDate()){
+      if(trip.end_date.getHours()>=17 || trip.end_date.getDate()!=trip.start_date.getDate()){
         //return after 5 PM
-        trip.ccs.weekendtime2 += (trip.end_date-trip.departure_date)/(1000*60) - ((17*60)-((trip.departure_date-departuremidnight)/(1000*60)));
+        trip.ccs.weekendtime2 += (trip.end_date-trip.start_date)/(1000*60) - ((17*60)-((trip.start_date-departuremidnight)/(1000*60)));
       }
     } else {
       //depart after 5 PM
-      trip.ccs.weekendtime2 += (trip.end_date-trip.departure_date)/(1000*60);
+      trip.ccs.weekendtime2 += (trip.end_date-trip.start_date)/(1000*60);
     }
-  } else if(trip.departure_date.getDay()==6){
+  } else if(trip.start_date.getDay()==6){
     //departure day is Saturday
-    trip.ccs.weekendtime2 += (trip.end_date-trip.departure_date)/(1000*60);
-  } else if(trip.departure_date.getDay()==0){
+    trip.ccs.weekendtime2 += (trip.end_date-trip.start_date)/(1000*60);
+  } else if(trip.start_date.getDay()==0){
     //departure day is Sunday
-    if(trip.end_date.getDate()==trip.departure_date.getDate()){
+    if(trip.end_date.getDate()==trip.start_date.getDate()){
       //Return is same day
-      trip.ccs.weekendtime2 += (trip.end_date-trip.departure_date)/(1000*60);
+      trip.ccs.weekendtime2 += (trip.end_date-trip.start_date)/(1000*60);
     } else {
       //Return is next day
       if(trip.end_date.getHours()<8){
         //return before 8 AM
-        trip.ccs.weekendtime2 += (trip.end_date-trip.departure_date)/(1000*60);
+        trip.ccs.weekendtime2 += (trip.end_date-trip.start_date)/(1000*60);
       } else{
         //return after 8 AM
-        trip.ccs.weekendtime2 += (trip.end_date-trip.departure_date)/(1000*60) - ((trip.end_date-returnmidnight)/(1000*60)-(8*60));
+        trip.ccs.weekendtime2 += (trip.end_date-trip.start_date)/(1000*60) - ((trip.end_date-returnmidnight)/(1000*60)-(8*60));
       }
     }
   }
@@ -733,8 +899,8 @@ function calculateZipcar(){
   
   //Calculate number of minutes from midnight Monday
   //Shift getDay function by one day
-  startday = (trip.departure_date.getDay()==0) ? 6 : trip.departure_date.getDay()-1;
-  departurecode = startday*(24*60) + trip.departure_date.getHours()*60 + trip.departure_date.getMinutes();
+  startday = (trip.start_date.getDay()==0) ? 6 : trip.start_date.getDay()-1;
+  departurecode = startday*(24*60) + trip.start_date.getHours()*60 + trip.start_date.getMinutes();
   endday = (trip.end_date.getDay()==0) ? 6 : trip.end_date.getDay()-1;
 
   returncode = endday*(24*60) + trip.end_date.getHours()*60 + trip.end_date.getMinutes();
@@ -1075,18 +1241,18 @@ function recalc(){
   
   $('#results').hide();
   
-  var departure_date=dates.convert(""+$('#departure_date').val()+" "+$('#departure_time').val());
-  var end_date=dates.convert(""+$('#end_date').val()+" "+$('#end_time').val());
+  var start_date=convertDates(""+$('#start_date').val()+" "+$('#start_time').val());
+  var end_date=convertDates(""+$('#end_date').val()+" "+$('#end_time').val());
   
   //Check if return date is after todays date
-  if(dates.compare(end_date,departure_date)<0){
+  if(compareDates(end_date,start_date)<0){
     $('#warnings_panel').append("<li>Your departure date is before your return date.</li>");
     return false;
   } else {
   
     //Check if after todays date
     today = new Date();
-    if(dates.compare(departure_date,(today.getMonth()+1)+"/"+today.getDate()+"/"+today.getFullYear())<0){
+    if(compareDates(start_date,(today.getMonth()+1)+"/"+today.getDate()+"/"+today.getFullYear())<0){
       $('#warnings_panel').append("<li>Your departure date has already passed.</li>");
       //Keep going as this is a valid trip, its just in the past
     }
@@ -1224,12 +1390,16 @@ google.setOnLoadCallback(function(){
 
   //Read the page's GET URL variables and process trip
   //Sample URL: ?saddr=101+15th+St,+San+Francisco&daddr=1010+Mission+St,+San+Francisco&stime=06:45&sdate=12/21/2010&etime=07:45&edate=12/21/2010
-  urlVars = getUrlVars();
+  urlVars = {};
+  window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    urlVars[key] = value;
+  });
+  
   if('saddr' in urlVars && 'daddr' in urlVars && 'stime' in urlVars && 'sdate' in urlVars && 'etime' in urlVars && 'edate' in urlVars){
     //We have all the variables needed to process a trip
     $("#start_location").val(urlVars['saddr'].replace(/\+/g,' '));
-    $("#departure_time").val(urlVars['stime']);
-    $("#departure_date").val(urlVars['sdate']);
+    $("#start_time").val(urlVars['stime']);
+    $("#start_date").val(urlVars['sdate']);
     $("#end_location").val(urlVars['daddr'].replace(/\+/g,' '));
     $("#end_time").val(urlVars['etime']);
     $("#end_date").val(urlVars['edate']);
@@ -1244,20 +1414,20 @@ google.setOnLoadCallback(function(){
     mapSetup();
   }
 
-  $("#departure_date").datepicker({
+  $("#start_date").datepicker({
     onSelect: function(dateText, inst){
       //Make return date at least departure date
-      if(dates.compare($("#end_date").val(),dateText)<0){
+      if(compareDates($("#end_date").val(),dateText)<0){
         $("#end_date").val(dateText);
       }
     }
   });
   $("#end_date").datepicker();
   
-  $("#start_departure_date").datepicker({
+  $("#start_start_date").datepicker({
     onSelect: function(dateText, inst){
       //Make return date at least departure date
-      if(dates.compare($("#start_end_date").val(),dateText)<0){
+      if(compareDates($("#start_end_date").val(),dateText)<0){
         $("#start_end_date").val(dateText);
       }
     }
@@ -1285,7 +1455,7 @@ google.setOnLoadCallback(function(){
   var day = currentTime.getDate();
   var year = currentTime.getFullYear();
   
-  $("#start_departure_date").val(month + "/" + day + "/" + year);
+  $("#start_start_date").val(month + "/" + day + "/" + year);
   $("#start_end_date").val(month + "/" + day + "/" + year);
   
   minutes = Math.round((minutes/15+1))*15;
@@ -1301,9 +1471,9 @@ google.setOnLoadCallback(function(){
   }
 
   if (hours < 10){
-    $('#start_departure_time').val("0" + hours + ":" + minutes);
+    $('#start_start_time').val("0" + hours + ":" + minutes);
   } else {
-    $('#start_departure_time').val(hours + ":" + minutes);
+    $('#start_start_time').val(hours + ":" + minutes);
   }
 
   if(hours+1>23){
@@ -1319,18 +1489,18 @@ google.setOnLoadCallback(function(){
   }
   
   //Set return time to at least departure time on change
-  $('#start_departure_time').change(function(){
-    var departure_date=dates.convert(""+$('#start_departure_date').val()+" "+$('#start_departure_time').val());
-    var end_date=dates.convert(""+$('#start_end_date').val()+" "+$('#start_end_time').val());
-    if(end_date-departure_date<0){
-      $('#start_end_time').val($('#start_departure_time').val());
+  $('#start_start_time').change(function(){
+    var start_date=convertDates(""+$('#start_start_date').val()+" "+$('#start_start_time').val());
+    var end_date=convertDates(""+$('#start_end_date').val()+" "+$('#start_end_time').val());
+    if(end_date-start_date<0){
+      $('#start_end_time').val($('#start_start_time').val());
     }
   });
-  $('#departure_time').change(function(){
-    var departure_date=dates.convert(""+$('#departure_date').val()+" "+$('#departure_time').val());
-    var end_date=dates.convert(""+$('#end_date').val()+" "+$('#end_time').val());
-    if(end_date-departure_date<0){
-      $('#end_time').val($('#departure_time').val());
+  $('#start_time').change(function(){
+    var start_date=convertDates(""+$('#start_date').val()+" "+$('#start_time').val());
+    var end_date=convertDates(""+$('#end_date').val()+" "+$('#end_time').val());
+    if(end_date-start_date<0){
+      $('#end_time').val($('#start_time').val());
     }
   });
   
@@ -1401,8 +1571,8 @@ google.setOnLoadCallback(function(){
     if($("#start_start_location").val()!='' && $("#start_end_location").val()!=''){
       //Move all variables to sidebar form
       $("#start_location").val($("#start_start_location").val());
-      $("#departure_time").val($("#start_departure_time").val());
-      $("#departure_date").val($("#start_departure_date").val());
+      $("#start_time").val($("#start_start_time").val());
+      $("#start_date").val($("#start_start_date").val());
       $("#end_location").val($("#start_end_location").val());
       $("#end_time").val($("#start_end_time").val());
       $("#end_date").val($("#start_end_date").val());
